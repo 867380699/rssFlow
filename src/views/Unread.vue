@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-back-button></ion-back-button>
         </ion-buttons>
-        <ion-title>Ionic Vite - About</ion-title>
+        <ion-title>Unread</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
