@@ -8,17 +8,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import {
-  IonContent,
-  IonButton,
-  IonButtons,
-  IonBackButton,
-  IonPage,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonModal,
-} from "@ionic/vue";
+
 import AboutModal from "../components/AboutModal.vue";
 
 export default defineComponent({

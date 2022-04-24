@@ -14,26 +14,9 @@
 
 <script lang="ts">
 import { ref, defineComponent } from "vue";
-import {
-  IonContent,
-  IonButton,
-  IonButtons,
-  IonBackButton,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-} from "@ionic/vue";
+
 export default defineComponent({
   name: "AboutModal",
-  components: {
-    IonHeader,
-    IonButton,
-    IonButtons,
-    IonBackButton,
-    IonContent,
-    IonTitle,
-    IonToolbar,
-  },
   emits: ["onClose"],
   setup: () => {},
 });

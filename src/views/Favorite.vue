@@ -13,33 +13,12 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import {
-  IonContent,
-  IonButton,
-  IonButtons,
-  IonBackButton,
-  IonPage,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonModal,
-} from "@ionic/vue";
+
 import AboutModal from "../components/AboutModal.vue";
 
 export default defineComponent({
   name: "About",
-  components: {
-    IonHeader,
-    IonPage,
-    IonButton,
-    IonButtons,
-    IonBackButton,
-    IonContent,
-    IonTitle,
-    IonToolbar,
-    IonModal,
-    AboutModal,
-  },
+
   setup() {
     const modalIsOpen = ref(false);
     const showModal = () => {

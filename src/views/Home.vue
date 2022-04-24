@@ -25,23 +25,6 @@
 
 <script lang="ts" setup>
 
-import {
-  IonContent,
-  IonLabel,
-  IonButton,
-  IonIcon,
-  IonBadge,
-  IonPage,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonFooter,
-  IonTabs,
-  IonTabBar,
-  IonTabButton,
-  IonRouterOutlet,
-} from "@ionic/vue";
-
 import { eyeOffOutline, listOutline, starOutline } from 'ionicons/icons';
 </script>
 
