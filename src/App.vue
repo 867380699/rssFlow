@@ -20,5 +20,4 @@
 </template>
 <script lang="ts" setup>
 
-import Aside from './components/Aside.vue'
 </script>

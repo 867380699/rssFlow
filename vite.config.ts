@@ -16,5 +16,12 @@ export default defineConfig({
         },
       ],
      }),
-  ]
+  ],
+  server: {
+    proxy: {
+      '^/rss': {
+        target: 'http://localhost'
+      }
+    }
+  }
 })
