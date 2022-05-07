@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@capacitor-community/http': ^1.4.1
   '@capacitor/android': ^3.5.1
   '@capacitor/cli': ^3.5.1
   '@capacitor/core': ^3.5.1
@@ -19,6 +20,7 @@ specifiers:
   vue-tsc: ^0.29.8
 
 dependencies:
+  '@capacitor-community/http': 1.4.1
   '@capacitor/android': 3.5.1_@capacitor+core@3.5.1
   '@capacitor/core': 3.5.1
   '@ionic/vue': 6.0.9
@@ -62,6 +64,15 @@ packages:
       to-fast-properties: 2.0.0
     dev: true
 
+  /@capacitor-community/http/1.4.1:
+    resolution: {integrity: sha512-+pCkBXrwfm97UfjOgjV950H/qZ8SE36Mrcb46BlL1ps3VIsGuIO+AulL8GqTC6LewheRVtGJpRspNtneXQotNA==}
+    dependencies:
+      '@capacitor/android': 3.5.1_@capacitor+core@3.5.1
+      '@capacitor/core': 3.5.1
+      '@capacitor/filesystem': 1.1.0_@capacitor+core@3.5.1
+      '@capacitor/ios': 3.5.1_@capacitor+core@3.5.1
+    dev: false
+
   /@capacitor/android/3.5.1_@capacitor+core@3.5.1:
     resolution: {integrity: sha512-rjehS0+BQBlwoN8hUyrMuzexn/9QJsONb1kmN5uXcL8JuTEbv35fa7z0tSD4x1LKwUFd+3Zeuwt60QRuwijlmw==}
     peerDependencies:
@@ -99,6 +110,22 @@ packages:
     resolution: {integrity: sha512-UTROxB7q/hZBnhDLcCN7mVsAX3SxXNMhVuPbtddsDOUCm4hExLXN62gPD7rjgmumhfHMjeXmkw/EfRzSjttL1g==}
     dependencies:
       tslib: 2.3.1
+    dev: false
+
+  /@capacitor/filesystem/1.1.0_@capacitor+core@3.5.1:
+    resolution: {integrity: sha512-8O3UuvL8HNUEJvZnmn8yUmvgB1evtXfcF0oxIo3YbSlylqywJwS3JTiuhKmsvSxCdpbTy8IaTsutVh3gZgWbKg==}
+    peerDependencies:
+      '@capacitor/core': ^3.0.0
+    dependencies:
+      '@capacitor/core': 3.5.1
+    dev: false
+
+  /@capacitor/ios/3.5.1_@capacitor+core@3.5.1:
+    resolution: {integrity: sha512-295L9dHe/QaejUpGI8Pxwb1i2yVgick1ExIDK26xk+tk1km3B1HVjsIS8qkf2SOp7tuwP9+W5T5p7rLMNN4v5g==}
+    peerDependencies:
+      '@capacitor/core': ^3.5.0
+    dependencies:
+      '@capacitor/core': 3.5.1
     dev: false
 
   /@emmetio/abbreviation/2.2.3:

@@ -32,6 +32,8 @@
 import { ref } from "vue";
 import { closeOutline } from 'ionicons/icons';
 import { Feed, parseFeed } from "../service/feedService";
+import { Capacitor } from '@capacitor/core';
+import { Http } from '@capacitor-community/http';
 
 defineEmits(['onClose'])
 
@@ -45,9 +47,15 @@ const searchFeed = async () => {
   const match = /(https?:\/\/)?(.*)/.exec(url);
   if (match) {
     try {
-      const resp = await fetch('/rss/' + match[2]);
-      const feedText = await resp.text();
-      feedRef.value = parseFeed(feedText);
+      if (Capacitor.getPlatform() === 'web') {
+        const resp = await fetch('/rss/' + match[2]);
+        const feedText = await resp.text();
+        feedRef.value = parseFeed(feedText);
+      } else {
+        const scheme = match[1] || 'http://'
+        const resp = await Http.get({url: scheme + match[2]});
+        feedRef.value = parseFeed(resp.data);
+      }
       console.log(feedRef.value);
     } catch (e) {
       console.log(e);
