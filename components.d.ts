@@ -5,7 +5,6 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    AboutModal: typeof import('./src/components/AboutModal.vue')['default']
     AddFeedModal: typeof import('./src/components/AddFeedModal.vue')['default']
     Aside: typeof import('./src/components/Aside.vue')['default']
     FeedList: typeof import('./src/components/FeedList.vue')['default']
@@ -35,7 +34,6 @@ declare module '@vue/runtime-core' {
     IonTabBar: typeof import('@ionic/vue')['IonTabBar']
     IonTabButton: typeof import('@ionic/vue')['IonTabButton']
     IonTabs: typeof import('@ionic/vue')['IonTabs']
-    IonTextarea: typeof import('@ionic/vue')['IonTextarea']
     IonTitle: typeof import('@ionic/vue')['IonTitle']
     IonToolbar: typeof import('@ionic/vue')['IonToolbar']
     RouterLink: typeof import('vue-router')['RouterLink']

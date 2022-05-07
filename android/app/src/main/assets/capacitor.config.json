@@ -1,0 +1,6 @@
+{
+	"appId": "com.ll.rssflow",
+	"appName": "RssFlow",
+	"webDir": "public",
+	"bundledWebRuntime": false
+}
