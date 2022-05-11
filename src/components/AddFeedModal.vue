@@ -20,10 +20,11 @@
     <ion-card v-if="feedRef">
       <img :src="feedRef.imageUrl" referrerpolicy="no-referrer">
       <ion-card-header>
-        <ion-card-title>{{feedRef.title}}</ion-card-title>
-        <ion-card-subtitle>{{feedRef.link}}</ion-card-subtitle>
+        <ion-card-title>{{ feedRef.title }}</ion-card-title>
+        <ion-card-subtitle>{{ feedRef.link }}</ion-card-subtitle>
       </ion-card-header>
-      <ion-card-content>{{feedRef.description}}</ion-card-content>
+      <ion-card-content>{{ feedRef.description }}</ion-card-content>
+      <ion-button @click="subscribeFeed">Subscribe</ion-button>
     </ion-card>
   </ion-content>
 </template>
@@ -31,9 +32,11 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { closeOutline } from 'ionicons/icons';
-import { Feed, parseFeed } from "../service/feedService";
 import { Capacitor } from '@capacitor/core';
 import { Http } from '@capacitor-community/http';
+import { Feed } from "../types";
+import { storeFeed } from "../service/dbService";
+import { parseFeed } from "../service/feedService";
 
 defineEmits(['onClose'])
 
@@ -53,7 +56,7 @@ const searchFeed = async () => {
         feedRef.value = parseFeed(feedText);
       } else {
         const scheme = match[1] || 'http://'
-        const resp = await Http.get({url: scheme + match[2]});
+        const resp = await Http.get({ url: scheme + match[2] });
         feedRef.value = parseFeed(resp.data);
       }
       console.log(feedRef.value);
@@ -62,6 +65,12 @@ const searchFeed = async () => {
     }
   } else {
     console.log('invalid url:', url);
+  }
+}
+
+const subscribeFeed = async () => {
+  if (feedRef.value) {
+    await storeFeed(feedRef.value)
   }
 }
 </script>

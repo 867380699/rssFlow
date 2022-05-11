@@ -14,13 +14,16 @@
       </ion-modal>
     </ion-fab>
     <ion-list>
-      <ion-item>Core</ion-item>
+      <ion-item v-for="feed in feeds" :key="feed.id">{{feed.title}}</ion-item>
     </ion-list>
   </ion-content>
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
 import { add } from 'ionicons/icons'
+import { liveQuery } from "dexie";
+import { feedDB } from "../service/dbService";
+import { Feed } from "../types";
 
 const modalIsOpen = ref(false);
 const showModal = () => {
@@ -30,4 +33,14 @@ const showModal = () => {
 const closeModal = () => {
   modalIsOpen.value = false;
 };
+
+const feeds = ref<Feed[]>();
+
+liveQuery(() => feedDB.feeds.toArray()).subscribe({
+  next: result => {
+    feeds.value = result;
+  },
+  error: error => console.error(error)
+})
+
 </script>
