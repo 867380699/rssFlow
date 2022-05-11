@@ -1,18 +1,28 @@
 <template>
 <ion-page>
   <ion-content class="ion-padding">
-    <h1>Unread</h1>
+    <ion-list>
+      <ion-item v-for="item in feedItems" :key="item.id">
+       <ion-avatar slot="start"></ion-avatar>
+       <ion-label>
+         <h2>{{item.title}}</h2>
+         <p>{{item.description}}</p>
+       </ion-label>
+      </ion-item>
+    </ion-list>
   </ion-content>
 </ion-page>
 
 </template>
-
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+  export default {
+    name: 'Unread',
+  }
+</script>
+<script lang="ts" setup>
+import { useFeedItems } from "../composables";
 
-export default defineComponent({
-  name: "About",
-});
+const { feedItems } = useFeedItems();
 </script>
 
 <style>
