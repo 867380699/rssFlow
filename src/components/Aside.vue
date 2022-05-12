@@ -5,16 +5,29 @@
     </ion-toolbar>
   </ion-header>
   <ion-content>
-    <ion-fab vertical="top" horizontal="end" slot="fixed" edge>
+    <ion-fab
+      slot="fixed"
+      vertical="top"
+      horizontal="end"
+      edge
+    >
       <ion-fab-button @click="showModal">
-        <ion-icon :icon="add"></ion-icon>
+        <ion-icon :icon="add" />
       </ion-fab-button>
-      <ion-modal :is-open="modalIsOpen" @didDismiss="closeModal()">
-        <add-feed-modal @onClose="closeModal" />
+      <ion-modal
+        :is-open="modalIsOpen"
+        @did-dismiss="closeModal()"
+      >
+        <add-feed-modal @on-close="closeModal" />
       </ion-modal>
     </ion-fab>
     <ion-list>
-      <ion-item v-for="feed in feeds" :key="feed.id">{{feed.title}}</ion-item>
+      <ion-item
+        v-for="feed in feeds"
+        :key="feed.id"
+      >
+        {{ feed.title }}
+      </ion-item>
     </ion-list>
   </ion-content>
 </template>
