@@ -36,6 +36,3 @@
 
 import { eyeOffOutline, listOutline, starOutline } from 'ionicons/icons';
 </script>
-
-<style>
-</style>

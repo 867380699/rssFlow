@@ -1,4 +1,5 @@
 import { FeedItem, Feed } from "../types";
+import DOMPurify from 'dompurify';
 
 const parser = new DOMParser();
 
@@ -28,4 +29,9 @@ export const parseFeed = (feed: string): Feed => {
     imageUrl,
     items
   };
-} 
+}
+
+export const parseFeedContent = (content: string) => {
+  const contentDocument = parser.parseFromString(DOMPurify.sanitize(content), 'text/html');
+  return DOMPurify.sanitize(content);
+}

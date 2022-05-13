@@ -4,6 +4,7 @@ import Home from "../views/Home.vue"
 import All from "../views/All.vue"
 import Unread from "../views/Unread.vue"
 import Favorite from "../views/Favorite.vue"
+import DetailVue from '../views/Detail.vue';
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -25,7 +26,11 @@ const routes: Array<RouteRecordRaw> = [
       }
     ]
   },
-
+  {
+    path: '/detail/:id',
+    component: DetailVue,
+    props: true
+  }
 ]
 
 // https://vitejs.dev/guide/env-and-mode.html

@@ -2,7 +2,6 @@ import Dexie, { Table } from 'dexie';
 import { Feed, FeedItem } from '../types';
 
 const DB_NAME = 'feedDB';
-const DB_VERSION = 1;
 
 export class FeedDB extends Dexie {
   feeds!: Table<Feed>;
@@ -10,9 +9,17 @@ export class FeedDB extends Dexie {
 
   constructor() {
     super(DB_NAME);
-    this.version(DB_VERSION).stores({
+    this.version(1).stores({
       feeds: '++id, title, &link',
       feedItems: '++id, feedId, title, link'
+    })
+    this.version(2).stores({
+      feedItems: '++id, feedId, title, link, isRead, isFavorite'
+    }).upgrade(tx => {
+      return tx.table("feedItems").toCollection().modify(item => {
+        item.isRead = false;
+        item.isFavorite = false;
+      });
     })
   }
 }
@@ -27,4 +34,9 @@ export const storeFeed = async (feed: Feed) => {
   if (items && items.length) {
     await feedDB.feedItems.bulkAdd(items.map(({ title, description, link }) => ({ feedId, title, description, link })));
   }
+}
+
+export const loadFeedItem = async (id: number | string) => {
+  const feedItem = await feedDB.feedItems.get(Number(id))
+  return feedItem;
 }

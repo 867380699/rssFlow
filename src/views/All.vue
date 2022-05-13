@@ -1,18 +1,10 @@
 <template>
   <ion-page>
     <ion-content class="ion-padding">
-      <h1>All</h1>
+      <FeedItemList />
     </ion-content>
   </ion-page>
 </template>
-
-<script lang="ts">
-import { defineComponent, ref } from "vue";
-
-export default defineComponent({
-  name: "About",
-});
+<script lang="ts" setup>
+import FeedItemList from "../components/FeedItemList.vue";
 </script>
-
-<style>
-</style>
