@@ -36,6 +36,11 @@ export const storeFeed = async (feed: Feed) => {
   }
 }
 
+export const loadFeed = async (id: number) => {
+  const feed = await feedDB.feeds.get(Number(id))
+  return feed;
+}
+
 export const loadFeedItem = async (id: number | string) => {
   const feedItem = await feedDB.feedItems.get(Number(id))
   return feedItem;

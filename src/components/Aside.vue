@@ -23,8 +23,15 @@
     </ion-fab>
     <ion-list>
       <ion-item
+        :key="0"
+        @click="selectItem()"
+      >
+        All
+      </ion-item>
+      <ion-item
         v-for="feed in feeds"
         :key="feed.id"
+        @click="selectItem(feed.id)"
       >
         {{ feed.title }}
       </ion-item>
@@ -37,6 +44,11 @@ import { add } from 'ionicons/icons'
 import { liveQuery } from "dexie";
 import { feedDB } from "../service/dbService";
 import { Feed } from "../types";
+import { useStore } from "../store";
+
+const emit = defineEmits(['itemSelected'])
+
+const store = useStore();
 
 const modalIsOpen = ref(false);
 const showModal = () => {
@@ -46,6 +58,11 @@ const showModal = () => {
 const closeModal = () => {
   modalIsOpen.value = false;
 };
+
+const selectItem = (id?: number) => {
+  store.setFeedId(id||0)
+  emit('itemSelected', id)
+}
 
 const feeds = ref<Feed[]>();
 

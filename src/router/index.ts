@@ -29,7 +29,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/detail/:id',
     component: DetailVue,
-    props: true
+    props(route) {
+      const { id } = route.params
+      return { id: Number(id) }
+    },
   }
 ]
 
