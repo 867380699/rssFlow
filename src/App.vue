@@ -1,11 +1,7 @@
 <template>
   <ion-app>
     <!-- side menu -->
-    <ion-menu
-      menu-id="menu"
-      side="start"
-      content-id="main-content"
-    >
+    <ion-menu menu-id="menu" side="start" content-id="main-content">
       <Aside @item-selected="onItemSelected" />
     </ion-menu>
     <!-- main content -->
@@ -22,7 +18,8 @@
     </ion-page>
   </ion-app>
 </template>
-<script lang="ts" setup>import { menuController } from '@ionic/vue';
+<script lang="ts" setup>
+import { menuController } from '@ionic/vue';
 import { watch } from 'vue';
 import { ref } from 'vue';
 import { feedDB } from './service/dbService';
@@ -31,16 +28,16 @@ import { Feed } from './types';
 
 const store = useStore();
 
-
 const onItemSelected = () => {
-  menuController.close('menu')
-}
+  menuController.close('menu');
+};
 
 const feed = ref<Feed>();
 
-watch(()=>[store.feedId], async ()=>{
-  feed.value = await feedDB.feeds.get(store.feedId)
-})
-
-
+watch(
+  () => [store.feedId],
+  async () => {
+    feed.value = await feedDB.feeds.get(store.feedId);
+  }
+);
 </script>

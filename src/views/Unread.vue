@@ -7,5 +7,4 @@
 </template>
 <script lang="ts" setup>
 import FeedItemList from '../components/FeedItemList.vue';
-
 </script>

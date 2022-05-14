@@ -11,41 +11,32 @@
   </ion-header>
   <ion-content class="ion-padding">
     <ion-item>
-      <ion-label position="floating">
-        Feed URL
-      </ion-label>
+      <ion-label position="floating"> Feed URL </ion-label>
       <ion-input v-model="rssUrl" />
     </ion-item>
-    <ion-button @click="searchFeed">
-      Search
-    </ion-button>
+    <ion-button @click="searchFeed"> Search </ion-button>
     <ion-card v-if="feedRef">
-      <img
-        :src="feedRef.imageUrl"
-        referrerpolicy="no-referrer"
-      >
+      <img :src="feedRef.imageUrl" referrerpolicy="no-referrer" />
       <ion-card-header>
         <ion-card-title>{{ feedRef.title }}</ion-card-title>
         <ion-card-subtitle>{{ feedRef.link }}</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>{{ feedRef.description }}</ion-card-content>
-      <ion-button @click="subscribeFeed">
-        Subscribe
-      </ion-button>
+      <ion-button @click="subscribeFeed"> Subscribe </ion-button>
     </ion-card>
   </ion-content>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref } from 'vue';
 import { closeOutline } from 'ionicons/icons';
 import { Capacitor } from '@capacitor/core';
 import { Http } from '@capacitor-community/http';
-import { Feed } from "../types";
-import { storeFeed } from "../service/dbService";
-import { parseFeed } from "../service/feedService";
+import { Feed } from '../types';
+import { storeFeed } from '../service/dbService';
+import { parseFeed } from '../service/feedService';
 
-defineEmits(['onClose'])
+defineEmits(['onClose']);
 
 const rssUrl = ref('');
 
@@ -62,7 +53,7 @@ const searchFeed = async () => {
         const feedText = await resp.text();
         feedRef.value = parseFeed(feedText);
       } else {
-        const scheme = match[1] || 'http://'
+        const scheme = match[1] || 'http://';
         const resp = await Http.get({ url: scheme + match[2] });
         feedRef.value = parseFeed(resp.data);
       }
@@ -73,12 +64,11 @@ const searchFeed = async () => {
   } else {
     console.log('invalid url:', url);
   }
-}
+};
 
 const subscribeFeed = async () => {
   if (feedRef.value) {
-    await storeFeed(feedRef.value)
+    await storeFeed(feedRef.value);
   }
-}
+};
 </script>
-

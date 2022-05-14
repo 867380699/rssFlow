@@ -14,21 +14,25 @@
   </ion-list>
 </template>
 <script lang="ts" setup>
-import { storeToRefs } from "pinia";
-import { computed } from "vue";
-import { useRouter } from "vue-router";
-import { useFeedItems } from "../composables";
-import { useStore } from "../store";
+import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useFeedItems } from '../composables';
+import { useStore } from '../store';
 
 const { feedItems } = useFeedItems();
 
-const shownFeedItems = computed(()=>feedItems.value?.filter((item)=>!feedId.value || item.feedId===feedId.value))
+const shownFeedItems = computed(() =>
+  feedItems.value?.filter(
+    (item) => !feedId.value || item.feedId === feedId.value
+  )
+);
 
 const router = useRouter();
-const store = useStore()
-const {feedId} = storeToRefs(store);
+const store = useStore();
+const { feedId } = storeToRefs(store);
 
-const toDetail = (id: number) =>{
-  router.push(`/detail/${id}`)
-}
+const toDetail = (id: number) => {
+  router.push(`/detail/${id}`);
+};
 </script>

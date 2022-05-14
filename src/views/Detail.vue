@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <div v-html="feedItemContent"></div>
+    <div v-html="feedItemContent" />
   </ion-page>
 </template>
 <script lang="ts">
@@ -10,19 +10,19 @@ import { parseFeedContent } from '../service/feedService';
 import { FeedItem } from '../types';
 
 export default {
-  name: 'Detail'
-}
+  name: 'Detail',
+};
 </script>
 <script lang="ts" setup>
 const props = defineProps<{
-  id: number
-}>()
+  id: number;
+}>();
 
 const feedItem = ref<FeedItem>();
 const feedItemContent = ref<string>();
 
-onMounted(async ()=>{
+onMounted(async () => {
   feedItem.value = await loadFeedItem(props.id);
-  feedItemContent.value = parseFeedContent(feedItem.value?.description || '')
-})
+  feedItemContent.value = parseFeedContent(feedItem.value?.description || '');
+});
 </script>

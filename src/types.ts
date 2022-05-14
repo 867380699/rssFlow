@@ -4,8 +4,8 @@ export type Feed = {
   description?: string;
   link: string;
   imageUrl?: string;
-  items?: Array<FeedItem>
-}
+  items?: Array<FeedItem>;
+};
 
 export type FeedItem = {
   id?: number;
@@ -14,8 +14,8 @@ export type FeedItem = {
   description?: string;
   link: string;
 } & ItemStatus;
- 
+
 export type ItemStatus = {
   isRead?: boolean;
   isFavorite?: boolean;
-}
+};
