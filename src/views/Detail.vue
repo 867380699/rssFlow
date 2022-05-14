@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <div v-html="feedItemContent" />
+    <div class="p-4 overflow-scroll" v-html="feedItemContent" />
   </ion-page>
 </template>
 <script lang="ts">

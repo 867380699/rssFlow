@@ -20,8 +20,7 @@
 </template>
 <script lang="ts" setup>
 import { menuController } from '@ionic/vue';
-import { watch } from 'vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { feedDB } from './service/dbService';
 import { useStore } from './store';
 import { Feed } from './types';
