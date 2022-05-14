@@ -2,7 +2,7 @@
   <ion-header>
     <ion-toolbar>
       <ion-buttons slot="end">
-        <ion-button @click="$emit('onClose')">
+        <ion-button @click="$emit('close')">
           <ion-icon :icon="closeOutline" />
         </ion-button>
       </ion-buttons>
@@ -28,47 +28,38 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { toastController } from '@ionic/vue';
 import { closeOutline } from 'ionicons/icons';
-import { Capacitor } from '@capacitor/core';
-import { Http } from '@capacitor-community/http';
-import { Feed } from '../types';
+import { ref } from 'vue';
+import { getFeeds } from '../service/apiService';
 import { storeFeed } from '../service/dbService';
 import { parseFeed } from '../service/feedService';
+import { Feed } from '../types';
 
-defineEmits(['onClose']);
+const emit = defineEmits(['close']);
 
 const rssUrl = ref('');
 
 const feedRef = ref<Feed>();
 
 const searchFeed = async () => {
-  const url = rssUrl.value;
-  console.log(url);
-  const match = /(https?:\/\/)?(.*)/.exec(url);
-  if (match) {
-    try {
-      if (Capacitor.getPlatform() === 'web') {
-        const resp = await fetch('/rss/' + match[2]);
-        const feedText = await resp.text();
-        feedRef.value = parseFeed(feedText);
-      } else {
-        const scheme = match[1] || 'http://';
-        const resp = await Http.get({ url: scheme + match[2] });
-        feedRef.value = parseFeed(resp.data);
-      }
-      console.log(feedRef.value);
-    } catch (e) {
-      console.log(e);
-    }
-  } else {
-    console.log('invalid url:', url);
+  try {
+    const feedText = await getFeeds(rssUrl.value);
+    feedRef.value = parseFeed(feedText);
+  } catch (e) {
+    const toast = await toastController.create({
+      duration: 2000,
+      message: `${e}`,
+    });
+    await toast.present();
+    console.log(e);
   }
 };
 
 const subscribeFeed = async () => {
   if (feedRef.value) {
     await storeFeed(feedRef.value);
+    emit('close');
   }
 };
 </script>

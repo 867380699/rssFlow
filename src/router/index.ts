@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import Home from '../views/Home.vue';
 import All from '../views/All.vue';
-import Unread from '../views/Unread.vue';
-import Favorite from '../views/Favorite.vue';
 import DetailVue from '../views/Detail.vue';
+import Favorite from '../views/Favorite.vue';
+import Home from '../views/Home.vue';
+import Unread from '../views/Unread.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -22,6 +22,10 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: '/favorite',
         component: Favorite,
+      },
+      {
+        path: '',
+        redirect: '/unread',
       },
     ],
   },

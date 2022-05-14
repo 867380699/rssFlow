@@ -10,7 +10,7 @@
         <ion-icon :icon="add" />
       </ion-fab-button>
       <ion-modal :is-open="modalIsOpen" @did-dismiss="closeModal()">
-        <add-feed-modal @on-close="closeModal" />
+        <add-feed-modal @close="closeModal" />
       </ion-modal>
     </ion-fab>
     <ion-list>
@@ -26,12 +26,12 @@
   </ion-content>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { add } from 'ionicons/icons';
 import { liveQuery } from 'dexie';
+import { add } from 'ionicons/icons';
+import { ref } from 'vue';
 import { feedDB } from '../service/dbService';
-import { Feed } from '../types';
 import { useStore } from '../store';
+import { Feed } from '../types';
 
 const emit = defineEmits(['itemSelected']);
 
