@@ -1,4 +1,6 @@
+import vueI18n from '@intlify/vite-plugin-vue-i18n';
 import vue from '@vitejs/plugin-vue';
+import path from 'path';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { fileURLToPath } from 'url';
@@ -9,7 +11,7 @@ export default defineConfig({
   plugins: [
     vue(),
     AutoImport({
-      imports: ['vue', 'vue-router'],
+      imports: ['vue', 'vue-router', 'vue-i18n'],
       eslintrc: {
         enabled: true,
       },
@@ -23,6 +25,9 @@ export default defineConfig({
           }
         },
       ],
+    }),
+    vueI18n({
+      include: path.resolve(__dirname, './src/locales/**'),
     }),
   ],
   resolve: {

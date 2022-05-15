@@ -21,6 +21,7 @@ import router from './router';
 const i18n = createI18n({
   locale: 'zh',
   fallbackLocale: 'en',
+  globalInjection: true,
   messages: { en: messageEn, zh: messageCn },
 });
 
