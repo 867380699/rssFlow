@@ -1,4 +1,5 @@
 import Dexie, { Table } from 'dexie';
+
 import { Feed, FeedItem } from '../types';
 
 const DB_NAME = 'feedDB';

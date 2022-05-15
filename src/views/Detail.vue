@@ -5,6 +5,7 @@
 </template>
 <script lang="ts">
 import { onMounted, ref } from 'vue';
+
 import { loadFeedItem } from '../service/dbService';
 import { parseFeedContent } from '../service/feedService';
 import { FeedItem } from '../types';

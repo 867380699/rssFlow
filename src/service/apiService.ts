@@ -1,5 +1,5 @@
-import { Http } from '@capacitor-community/http';
 import { Capacitor } from '@capacitor/core';
+import { Http } from '@capacitor-community/http';
 
 const platform = Capacitor.getPlatform();
 

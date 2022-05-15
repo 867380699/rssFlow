@@ -1,5 +1,6 @@
-import { FeedItem, Feed } from '../types';
 import DOMPurify from 'dompurify';
+
+import { Feed, FeedItem } from '../types';
 
 const parser = new DOMParser();
 

@@ -37,9 +37,11 @@
 import { menuController } from '@ionic/vue';
 import { eyeOffOutline, listOutline, starOutline } from 'ionicons/icons';
 import { ref, watch } from 'vue';
+
 import { feedDB } from '../service/dbService';
 import { useStore } from '../store';
 import { Feed } from '../types';
+
 const store = useStore();
 
 const onItemSelected = () => {

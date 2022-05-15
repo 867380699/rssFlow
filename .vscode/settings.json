@@ -3,13 +3,16 @@
   "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
-    "source.organizeImports": true
   },
   "i18n-ally.localesPaths": [
     "src/locales"
   ],
   "i18n-ally.keystyle": "nested",
   "cSpell.words": [
+    "dexie",
+    "dompurify",
+    "ionicons",
+    "pinia",
     "unplugin",
     "vite",
     "vitejs"
