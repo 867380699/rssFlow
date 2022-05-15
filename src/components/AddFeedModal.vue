@@ -30,7 +30,6 @@
 <script lang="ts" setup>
 import { toastController } from '@ionic/vue';
 import { closeOutline } from 'ionicons/icons';
-import { ref } from 'vue';
 
 import { getFeeds } from '../service/apiService';
 import { storeFeed } from '../service/dbService';

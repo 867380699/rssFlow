@@ -29,6 +29,7 @@ specifiers:
   prettier: 2.6.2
   tailwindcss: ^3.0.24
   typescript: ^4.4.4
+  unplugin-auto-import: ^0.7.1
   unplugin-vue-components: ^0.19.3
   vite: ^2.7.2
   vue: ^3.2.21
@@ -71,6 +72,7 @@ devDependencies:
   prettier: 2.6.2
   tailwindcss: 3.0.24
   typescript: 4.5.5
+  unplugin-auto-import: 0.7.1_vite@2.8.4
   unplugin-vue-components: 0.19.3_vite@2.8.4+vue@3.2.31
   vite: 2.8.4
   vue-eslint-parser: 9.0.1_eslint@8.15.0
@@ -3099,6 +3101,28 @@ packages:
   /universalify/2.0.0:
     resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
     engines: {node: '>= 10.0.0'}
+    dev: true
+
+  /unplugin-auto-import/0.7.1_vite@2.8.4:
+    resolution: {integrity: sha512-9865OV9eP99PNxHR2mtTDExeN01m4M9boT5U2BtIwsU1wDRsaFIYWLwcCBEjvXzXfTTC2NNMskhHGVAMfL2WgA==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      '@vueuse/core': '*'
+    peerDependenciesMeta:
+      '@vueuse/core':
+        optional: true
+    dependencies:
+      '@antfu/utils': 0.5.1
+      '@rollup/pluginutils': 4.2.1
+      local-pkg: 0.4.1
+      magic-string: 0.26.1
+      resolve: 1.22.0
+      unplugin: 0.6.2_vite@2.8.4
+    transitivePeerDependencies:
+      - esbuild
+      - rollup
+      - vite
+      - webpack
     dev: true
 
   /unplugin-vue-components/0.19.3_vite@2.8.4+vue@3.2.31:
