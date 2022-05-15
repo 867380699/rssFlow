@@ -1,10 +1,10 @@
+import All from '@/views/All.vue';
+import DetailVue from '@/views/Detail.vue';
+import Favorite from '@/views/Favorite.vue';
+import Home from '@/views/Home.vue';
+import Unread from '@/views/Unread.vue';
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import All from '../views/All.vue';
-import DetailVue from '../views/Detail.vue';
-import Favorite from '../views/Favorite.vue';
-import Home from '../views/Home.vue';
-import Unread from '../views/Unread.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
