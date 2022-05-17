@@ -31,6 +31,7 @@ declare module '@vue/runtime-core' {
     IonMenuButton: typeof import('@ionic/vue')['IonMenuButton']
     IonModal: typeof import('@ionic/vue')['IonModal']
     IonPage: typeof import('@ionic/vue')['IonPage']
+    IonPopover: typeof import('@ionic/vue')['IonPopover']
     IonRouterOutlet: typeof import('@ionic/vue')['IonRouterOutlet']
     IonTabBar: typeof import('@ionic/vue')['IonTabBar']
     IonTabButton: typeof import('@ionic/vue')['IonTabButton']

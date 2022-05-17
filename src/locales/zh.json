@@ -1,5 +1,10 @@
 {
   "unread": "未读",
   "all": "全部",
-  "favorite": "收藏"
+  "favorite": "收藏",
+  "edit": "编辑",
+  "delete": "删除",
+  "confirmDeleteFeed": "确认删除「{name}」?",
+  "confirm": "确认",
+  "cancel": "取消"
 }

@@ -57,6 +57,14 @@ export const loadFeed = async (id: number) => {
   return feed;
 };
 
+export const deleteFeed = async (id: number) => {
+  await feedDB.feeds.delete(id);
+};
+
+export const updateFeed = async (id: number, changes: Partial<Feed>) => {
+  await feedDB.feeds.update(id, changes);
+};
+
 export const loadFeedItem = async (id: number | string) => {
   const feedItem = await feedDB.feedItems.get(Number(id));
   return feedItem;
