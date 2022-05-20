@@ -14,6 +14,7 @@ specifiers:
   '@typescript-eslint/parser': ^5.23.0
   '@vitejs/plugin-vue': ^2.0.0
   '@vue/compiler-sfc': 3.2.21
+  '@vueuse/rxjs': ^8.5.0
   autoprefixer: ^10.4.7
   axios: ^0.26.1
   dexie: ^3.2.2
@@ -28,6 +29,7 @@ specifiers:
   pinia: ^2.0.14
   postcss: ^8.4.13
   prettier: 2.6.2
+  rxjs: ^7.5.5
   tailwindcss: ^3.0.24
   typescript: ^4.4.4
   unplugin-auto-import: ^0.7.1
@@ -45,11 +47,13 @@ dependencies:
   '@capacitor/core': 3.5.1
   '@ionic/vue': 6.0.9
   '@ionic/vue-router': 6.0.9
+  '@vueuse/rxjs': 8.5.0_rxjs@7.5.5+vue@3.2.31
   axios: 0.26.1
   dexie: 3.2.2
   dompurify: 2.3.6
   ionicons: 6.0.1
   pinia: 2.0.14_yiky6a7nq42a76m3cgtakyoff4
+  rxjs: 7.5.5
   vue: 3.2.31
   vue-i18n: 9.1.10_vue@3.2.31
   vue-router: 4.0.12_vue@3.2.31
@@ -831,6 +835,34 @@ packages:
 
   /@vue/shared/3.2.31:
     resolution: {integrity: sha512-ymN2pj6zEjiKJZbrf98UM2pfDd6F2H7ksKw7NDt/ZZ1fh5Ei39X5tABugtT03ZRlWd9imccoK0hE8hpjpU7irQ==}
+
+  /@vueuse/rxjs/8.5.0_rxjs@7.5.5+vue@3.2.31:
+    resolution: {integrity: sha512-SaEqENdv/vT8xf4sajuLEeRQI7ZAeeDMtv72aT7RQBsAF9ECFWrf6Lv8TrWPFjpCghvLAx4hmv4oUGq1pHjKBQ==}
+    peerDependencies:
+      rxjs: '>=6.0.0'
+    dependencies:
+      '@vueuse/shared': 8.5.0_vue@3.2.31
+      rxjs: 7.5.5
+      vue-demi: 0.12.5_vue@3.2.31
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+    dev: false
+
+  /@vueuse/shared/8.5.0_vue@3.2.31:
+    resolution: {integrity: sha512-qKG+SZb44VvGD4dU5cQ63z4JE2Yk39hQUecR0a9sEdJA01cx+XrxAvFKJfPooxwoiqalAVw/ktWK6xbyc/jS3g==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.0
+      vue: ^2.6.0 || ^3.2.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+      vue:
+        optional: true
+    dependencies:
+      vue: 3.2.31
+      vue-demi: 0.12.5_vue@3.2.31
+    dev: false
 
   /acorn-jsx/5.3.2_acorn@7.4.1:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -2909,6 +2941,12 @@ packages:
     dependencies:
       queue-microtask: 1.2.3
     dev: true
+
+  /rxjs/7.5.5:
+    resolution: {integrity: sha512-sy+H0pQofO95VDmFLzyaw9xNJU4KTRSwQIGM6+iG3SypAtCiLDzpeG8sJrNCWn2Up9km+KhkvTdbkrdy+yzZdw==}
+    dependencies:
+      tslib: 2.3.1
+    dev: false
 
   /safe-buffer/5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}

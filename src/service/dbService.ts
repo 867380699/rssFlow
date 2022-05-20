@@ -12,21 +12,8 @@ export class FeedDB extends Dexie {
     super(DB_NAME);
     this.version(1).stores({
       feeds: '++id, title, &link',
-      feedItems: '++id, feedId, title, link',
+      feedItems: '++id, feedId, title, link, isRead, isFavorite',
     });
-    this.version(2)
-      .stores({
-        feedItems: '++id, feedId, title, link, isRead, isFavorite',
-      })
-      .upgrade((tx) => {
-        return tx
-          .table('feedItems')
-          .toCollection()
-          .modify((item) => {
-            item.isRead = false;
-            item.isFavorite = false;
-          });
-      });
   }
 }
 
@@ -47,6 +34,8 @@ export const storeFeed = async (feed: Feed) => {
         title,
         description,
         link,
+        isRead: 0,
+        isFavorite: 0,
       }))
     );
   }
@@ -68,4 +57,11 @@ export const updateFeed = async (id: number, changes: Partial<Feed>) => {
 export const loadFeedItem = async (id: number | string) => {
   const feedItem = await feedDB.feedItems.get(Number(id));
   return feedItem;
+};
+
+export const updateFeedItem = async (
+  id: number,
+  changes: Partial<FeedItem>
+) => {
+  await feedDB.feedItems.update(id, changes);
 };

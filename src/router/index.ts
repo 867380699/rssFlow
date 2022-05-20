@@ -13,8 +13,13 @@ const routes: Array<RouteRecordRaw> = [
     component: Home,
     children: [
       {
-        path: '/unread',
+        name: 'unread',
+        path: '/unread/:id?',
         component: Unread,
+        props(route) {
+          const { id } = route.params;
+          return { id: Number(id) };
+        },
       },
       {
         path: '/all',

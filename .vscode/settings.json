@@ -9,6 +9,7 @@
   ],
   "i18n-ally.keystyle": "nested",
   "cSpell.words": [
+    "composables",
     "dexie",
     "dompurify",
     "intlify",
@@ -16,6 +17,7 @@
     "pinia",
     "unplugin",
     "vite",
-    "vitejs"
+    "vitejs",
+    "vueuse"
   ]
 }

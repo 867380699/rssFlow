@@ -16,6 +16,6 @@ export type FeedItem = {
 } & ItemStatus;
 
 export type ItemStatus = {
-  isRead?: boolean;
-  isFavorite?: boolean;
+  isRead?: 0 | 1;
+  isFavorite?: 0 | 1;
 };

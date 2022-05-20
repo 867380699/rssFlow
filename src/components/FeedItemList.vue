@@ -1,10 +1,6 @@
 <template>
   <ion-list>
-    <ion-item
-      v-for="item in shownFeedItems"
-      :key="item.id"
-      @click="toDetail(item.id!)"
-    >
+    <ion-item v-for="item in items" :key="item.id" @click="toDetail(item.id!)">
       <ion-avatar slot="start" />
       <ion-label>
         <h2>{{ item.title }}</h2>
@@ -14,26 +10,23 @@
   </ion-list>
 </template>
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { useFeedItems } from '../composables';
-import { useStore } from '../store';
+import { updateFeedItem } from '@/service/dbService';
+import { FeedItem } from '@/types';
 
-const { feedItems } = useFeedItems();
-
-const shownFeedItems = computed(() =>
-  feedItems.value?.filter(
-    (item) => !feedId.value || item.feedId === feedId.value
-  )
+withDefaults(
+  defineProps<{
+    items?: FeedItem[];
+  }>(),
+  { items: () => [] }
 );
 
 const router = useRouter();
-const store = useStore();
-const { feedId } = storeToRefs(store);
 
 const toDetail = (id: number) => {
-  router.push(`/detail/${id}`);
+  router.push(`/detail/${id}`).then(() => {
+    updateFeedItem(id, { isRead: 1 });
+  });
 };
 </script>

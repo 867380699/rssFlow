@@ -43,6 +43,7 @@ import { liveQuery } from 'dexie';
 import { add } from 'ionicons/icons';
 import { ref } from 'vue';
 
+import router from '@/router';
 import { deleteFeed, feedDB, updateFeed } from '@/service/dbService';
 import { useStore } from '@/store';
 import { Feed } from '@/types';
@@ -74,6 +75,7 @@ liveQuery(() => feedDB.feeds.toArray()).subscribe({
 const selectItem = (id?: number) => {
   store.setFeedId(id || 0);
   emit('itemSelected', id);
+  router.replace({ name: 'unread', params: { id } });
 };
 
 type Action = {
