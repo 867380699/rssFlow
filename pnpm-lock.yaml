@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@capacitor-community/http': ^1.4.1
   '@capacitor/android': ^3.5.1
+  '@capacitor/app': ^1.1.1
   '@capacitor/cli': ^3.5.1
   '@capacitor/core': ^3.5.1
   '@intlify/vite-plugin-vue-i18n': ^3.4.0
@@ -44,6 +45,7 @@ specifiers:
 dependencies:
   '@capacitor-community/http': 1.4.1
   '@capacitor/android': 3.5.1_@capacitor+core@3.5.1
+  '@capacitor/app': 1.1.1_@capacitor+core@3.5.1
   '@capacitor/core': 3.5.1
   '@ionic/vue': 6.0.9
   '@ionic/vue-router': 6.0.9
@@ -121,6 +123,14 @@ packages:
     resolution: {integrity: sha512-rjehS0+BQBlwoN8hUyrMuzexn/9QJsONb1kmN5uXcL8JuTEbv35fa7z0tSD4x1LKwUFd+3Zeuwt60QRuwijlmw==}
     peerDependencies:
       '@capacitor/core': ^3.5.0
+    dependencies:
+      '@capacitor/core': 3.5.1
+    dev: false
+
+  /@capacitor/app/1.1.1_@capacitor+core@3.5.1:
+    resolution: {integrity: sha512-8ADkldHnoE1xkWvPUsGlERVGm6/Zvcxy6hCI80AxydIKyaCG7kbDAvUclebbnw/eFRxj2zBoVatGLjmJNvTbYw==}
+    peerDependencies:
+      '@capacitor/core': ^3.0.0
     dependencies:
       '@capacitor/core': 3.5.1
     dev: false

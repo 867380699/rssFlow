@@ -12,6 +12,7 @@
     "composables",
     "dexie",
     "dompurify",
+    "execpath",
     "intlify",
     "ionicons",
     "pinia",

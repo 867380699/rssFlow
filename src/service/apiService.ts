@@ -15,7 +15,7 @@ export const getFeeds = async (url: string) => {
       const feedText = await resp.text();
       return feedText;
     } else {
-      const resp = await Http.get({ url: protocol || 'http://' + rest });
+      const resp = await Http.get({ url: (protocol || 'http://') + rest });
       return resp.data;
     }
   } else {

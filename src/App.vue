@@ -8,7 +8,15 @@
   </ion-app>
 </template>
 <script lang="ts" setup>
-import { menuController } from '@ionic/vue';
+import { App } from '@capacitor/app';
+import { menuController, useBackButton, useIonRouter } from '@ionic/vue';
+
+const ionRouter = useIonRouter();
+useBackButton(-1, () => {
+  if (!ionRouter.canGoBack()) {
+    App.exitApp();
+  }
+});
 
 const onItemSelected = () => {
   menuController.close('menu');
