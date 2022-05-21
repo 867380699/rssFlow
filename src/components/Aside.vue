@@ -75,7 +75,10 @@ liveQuery(() => feedDB.feeds.toArray()).subscribe({
 const selectItem = (id?: number) => {
   store.setFeedId(id || 0);
   emit('itemSelected', id);
-  router.replace({ name: 'unread', params: { id } });
+  router.replace({
+    name: 'home',
+    params: { ...router.currentRoute.value.params, id },
+  });
 };
 
 type Action = {

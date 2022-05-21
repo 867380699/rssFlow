@@ -1,52 +1,73 @@
 <template>
-  <ion-page id="main-content">
+  <ion-page>
     <ion-header>
       <ion-toolbar>
         <ion-menu-button slot="start" />
         <ion-title>{{ feed?.title || 'All' }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content>
-      <ion-tabs>
-        <ion-router-outlet />
-        <ion-tab-bar slot="bottom">
-          <ion-tab-button tab="unread" href="/unread">
-            <ion-icon :icon="eyeOffOutline" />
-            <ion-label>{{ $t('unread') }}</ion-label>
-            <ion-badge>6</ion-badge>
-          </ion-tab-button>
-          <ion-tab-button tab="all" href="/all">
-            <ion-icon :icon="listOutline" />
-            <ion-label>{{ $t('all') }}</ion-label>
-            <ion-badge>6</ion-badge>
-          </ion-tab-button>
-          <ion-tab-button tab="favorite" href="/favorite">
-            <ion-icon :icon="starOutline" />
-            <ion-label>{{ $t('favorite') }}</ion-label>
-            <ion-badge>6</ion-badge>
-          </ion-tab-button>
-        </ion-tab-bar>
-      </ion-tabs>
+    <ion-content id="main-content" class="ion-padding">
+      <FeedItemList :items="feedItems" />
     </ion-content>
+    <ion-segment :value="type" @ion-change="segmentChanged($event)">
+      <ion-segment-button v-for="tab in tabs" :key="tab.key" :value="tab.key">
+        <ion-label>{{ tab.label }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
   </ion-page>
 </template>
 
 <script lang="ts" setup>
 import { eyeOffOutline, listOutline, starOutline } from 'ionicons/icons';
-import { ref, watch } from 'vue';
 
+import FeedItemList from '@/components/FeedItemList.vue';
+import { useFeedItems } from '@/composables';
+import router from '@/router';
 import { feedDB } from '@/service/dbService';
-import { useStore } from '@/store';
-import { Feed } from '@/types';
+import { Feed, FeedItem } from '@/types';
 
-const store = useStore();
+const { t } = useI18n();
+
+const route = useRoute();
+
+const type = ref('unread');
+const id = ref(0);
+
+watchEffect(() => {
+  if (route.name === 'home') {
+    type.value = (route.params.type as string) || 'unread';
+    id.value = Number(route.params.id) || 0;
+  }
+});
+
+const tabs = [
+  { key: 'unread', label: t('unread'), icon: eyeOffOutline },
+  { key: 'all', label: t('all'), icon: listOutline },
+  { key: 'favorite', label: t('favorite'), icon: starOutline },
+];
+
+const segmentChanged = async ($event: CustomEvent) => {
+  await router.replace(`/home/${$event.detail.value}/${id.value}`);
+};
 
 const feed = ref<Feed>();
 
-watch(
-  () => [store.feedId],
-  async () => {
-    feed.value = await feedDB.feeds.get(store.feedId);
+watchEffect(async () => {
+  feed.value = await feedDB.feeds.get(id.value);
+});
+
+let feedItems = ref<FeedItem[] | undefined>([]);
+
+watchEffect(() => {
+  switch (type.value) {
+    case 'unread':
+      let { feedItems: unreadItems } = useFeedItems(id.value, true);
+      feedItems = unreadItems;
+      break;
+    case 'all':
+      let { feedItems: allItems } = useFeedItems(id.value);
+      feedItems = allItems;
+      break;
   }
-);
+});
 </script>

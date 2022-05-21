@@ -15,11 +15,25 @@ export const useAllFeedItems = () => {
   };
 };
 
-export const useUnreadFeedItems = (feedId?: number) => {
-  const idQuery = feedId ? { feedId } : {};
+export const useFeedItems = (
+  feedId?: number,
+  isUnRead?: boolean,
+  isFavorite?: boolean
+) => {
   const feedItems = useObservable<FeedItem[]>(
     liveQuery(() =>
-      feedDB.feedItems.where({ isRead: 0, ...idQuery }).toArray()
+      feedDB.feedItems
+        .toCollection()
+        .filter((feedItem) => {
+          return !feedId || feedItem.feedId === feedId;
+        })
+        .filter((feedItem) => {
+          return isUnRead ? feedItem.isRead === 0 : true;
+        })
+        .filter((feedItem) => {
+          return isFavorite ? feedItem.isFavorite === 1 : true;
+        })
+        .toArray()
     ) as any
   );
   return {
