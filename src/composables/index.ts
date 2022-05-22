@@ -40,3 +40,12 @@ export const useFeedItems = (
     feedItems,
   };
 };
+
+export const useFeedItem = (id: number) => {
+  const feedItem = useObservable<FeedItem>(
+    liveQuery(() => feedDB.feedItems.get(id)) as any
+  );
+  return {
+    feedItem,
+  };
+};

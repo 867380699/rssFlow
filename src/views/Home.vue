@@ -12,6 +12,7 @@
     <ion-segment :value="type" @ion-change="segmentChanged($event)">
       <ion-segment-button v-for="tab in tabs" :key="tab.key" :value="tab.key">
         <ion-label>{{ tab.label }}</ion-label>
+        <ion-icon :icon="tab.icon"></ion-icon>
       </ion-segment-button>
     </ion-segment>
   </ion-page>
@@ -67,6 +68,10 @@ watchEffect(() => {
     case 'all':
       let { feedItems: allItems } = useFeedItems(id.value);
       feedItems = allItems;
+      break;
+    case 'favorite':
+      let { feedItems: favoriteItems } = useFeedItems(id.value, false, true);
+      feedItems = favoriteItems;
       break;
   }
 });
