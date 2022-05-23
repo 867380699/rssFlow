@@ -1,6 +1,8 @@
 import DOMPurify from 'dompurify';
 
 import { Feed, FeedItem } from '../types';
+import { getFeeds } from './apiService';
+import { feedDB, storeFeedItems } from './dbService';
 
 const parser = new DOMParser();
 
@@ -19,7 +21,7 @@ const parseFeedItems = (nodeTree: Document): Array<FeedItem> => {
   return items;
 };
 
-export const parseFeed = (feed: string): Feed => {
+export const parseFeed = (feed: string, source: string): Feed => {
   const nodeTree = parser.parseFromString(feed, 'text/xml');
   const title =
     nodeTree.querySelector('rss > channel > title')?.textContent || '';
@@ -34,6 +36,7 @@ export const parseFeed = (feed: string): Feed => {
   const items = parseFeedItems(nodeTree);
   console.log(nodeTree);
   return {
+    source,
     title,
     description,
     link,
@@ -48,4 +51,32 @@ export const parseFeedContent = (content: string) => {
     'text/html'
   );
   return DOMPurify.sanitize(content);
+};
+
+let syncTimeout: ReturnType<typeof setTimeout>;
+
+export const initSync = () => {
+  syncAllFeeds();
+  syncTimeout = setInterval(syncAllFeeds, 1000 * 60 * 10);
+};
+
+export const destroySync = () => {
+  clearTimeout(syncTimeout);
+};
+
+export const syncAllFeeds = async () => {
+  const feeds = await feedDB.feeds.toArray();
+  feeds.forEach(async (feed) => {
+    const now = new Date().getTime();
+    const syncInterval = 1000 * 60 * 60 * 2;
+    if (!feed.lastUpdateTime || now - feed.lastUpdateTime > syncInterval) {
+      console.log('sync feed:', feed.source);
+      const feedText = await getFeeds(feed.source);
+      const newItems = parseFeed(feedText, feed.source).items;
+      if (newItems) {
+        await storeFeedItems(newItems, Number(feed.id));
+        feedDB.feeds.update(Number(feed.id), { lastUpdateTime: now });
+      }
+    }
+  });
 };

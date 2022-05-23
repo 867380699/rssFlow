@@ -11,6 +11,8 @@
 import { App } from '@capacitor/app';
 import { menuController, useBackButton, useIonRouter } from '@ionic/vue';
 
+import { destroySync, initSync } from './service/feedService';
+
 const ionRouter = useIonRouter();
 useBackButton(-1, () => {
   if (!ionRouter.canGoBack()) {
@@ -21,4 +23,8 @@ useBackButton(-1, () => {
 const onItemSelected = () => {
   menuController.close('menu');
 };
+
+initSync();
+
+onBeforeUnmount(destroySync);
 </script>

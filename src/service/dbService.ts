@@ -19,17 +19,36 @@ export class FeedDB extends Dexie {
 
 export const feedDB = new FeedDB();
 
-export const storeFeed = async (feed: Feed) => {
+export const storeFeed = async (feed: Feed, source: string) => {
   const { title, description, link, imageUrl, items } = feed;
   const feedId = (await feedDB.feeds.add({
+    source,
     title,
     description,
     link,
     imageUrl,
+    lastUpdateTime: new Date().getTime(),
   })) as number;
   if (items && items.length) {
+    await storeFeedItems(items, feedId);
+  }
+};
+
+export const storeFeedItems = async (feedItems: FeedItem[], feedId: number) => {
+  if (feedItems.length) {
+    const newItemsLinks = feedItems.map((item) => item.link);
+    const duplicateItems = await feedDB.feedItems
+      .where({ feedId })
+      .filter((item) => {
+        return newItemsLinks.findIndex((link) => item.link === link) !== -1;
+      })
+      .toArray();
+    const duplicateLinks = duplicateItems.map((item) => item.link);
+    const deduplicateItems = feedItems.filter(
+      (item) => duplicateLinks.indexOf(item.link) === -1
+    );
     await feedDB.feedItems.bulkAdd(
-      items.map(({ title, description, link }) => ({
+      deduplicateItems.map(({ title, description, link }) => ({
         feedId,
         title,
         description,
@@ -37,6 +56,9 @@ export const storeFeed = async (feed: Feed) => {
         isRead: 0,
         isFavorite: 0,
       }))
+    );
+    console.log(
+      `[storeFeedItems]: ${deduplicateItems.length} stored, ${duplicateItems.length} duplicated.`
     );
   }
 };

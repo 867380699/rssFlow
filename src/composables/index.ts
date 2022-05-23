@@ -1,10 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useObservable } from '@vueuse/rxjs';
 import { liveQuery } from 'dexie';
-import { Ref } from 'vue';
 
 import { feedDB } from '../service/dbService';
-import { FeedItem } from '../types';
+import { Feed, FeedItem } from '../types';
+
+export const useAllFeeds = () => {
+  const feeds = useObservable<Feed[]>(
+    liveQuery(() => feedDB.feeds.toArray()) as any
+  );
+  return {
+    feeds,
+  };
+};
 
 export const useAllFeedItems = () => {
   const feedItems = useObservable<FeedItem[]>(

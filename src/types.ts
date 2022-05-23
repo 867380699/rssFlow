@@ -1,10 +1,12 @@
 export type Feed = {
   id?: number;
+  source: string;
   title: string;
   description?: string;
   link: string;
   imageUrl?: string;
   items?: Array<FeedItem>;
+  lastUpdateTime?: number;
 };
 
 export type FeedItem = {

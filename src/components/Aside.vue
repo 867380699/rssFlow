@@ -39,12 +39,12 @@
 </template>
 <script lang="ts" setup>
 import { alertController } from '@ionic/vue';
-import { liveQuery } from 'dexie';
 import { add } from 'ionicons/icons';
 import { ref } from 'vue';
 
+import { useAllFeeds } from '@/composables';
 import router from '@/router';
-import { deleteFeed, feedDB, updateFeed } from '@/service/dbService';
+import { deleteFeed, updateFeed } from '@/service/dbService';
 import { useStore } from '@/store';
 import { Feed } from '@/types';
 
@@ -63,14 +63,7 @@ const closeModal = () => {
   modalIsOpen.value = false;
 };
 
-const feeds = ref<Feed[]>();
-
-liveQuery(() => feedDB.feeds.toArray()).subscribe({
-  next: (result) => {
-    feeds.value = result;
-  },
-  error: (error) => console.error(error),
-});
+const { feeds } = useAllFeeds();
 
 const selectItem = (id?: number) => {
   store.setFeedId(id || 0);

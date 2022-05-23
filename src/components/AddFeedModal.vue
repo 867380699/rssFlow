@@ -45,7 +45,7 @@ const feedRef = ref<Feed>();
 const searchFeed = async () => {
   try {
     const feedText = await getFeeds(rssUrl.value);
-    feedRef.value = parseFeed(feedText);
+    feedRef.value = parseFeed(feedText, rssUrl.value);
   } catch (e) {
     const toast = await toastController.create({
       duration: 2000,
@@ -58,7 +58,7 @@ const searchFeed = async () => {
 
 const subscribeFeed = async () => {
   if (feedRef.value) {
-    await storeFeed(feedRef.value);
+    await storeFeed(feedRef.value, rssUrl.value);
     emit('close');
   }
 };
