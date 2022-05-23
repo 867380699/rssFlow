@@ -14,6 +14,11 @@ export class FeedDB extends Dexie {
       feeds: '++id, title, &link',
       feedItems: '++id, feedId, title, link, isRead, isFavorite',
     });
+    this.version(2).stores({
+      feeds: '++id, title, &link',
+      feedItems:
+        '++id, feedId, title, link, isRead, isFavorite,[feedId+isRead]',
+    });
   }
 }
 

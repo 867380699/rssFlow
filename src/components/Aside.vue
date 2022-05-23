@@ -18,6 +18,9 @@
       <template v-for="feed in feeds" :key="feed.id">
         <ion-item :id="`aside-item-${feed.id}`" @click="selectItem(feed.id)">
           {{ feed.title }}
+          <ion-badge slot="end">
+            {{ itemCounts && itemCounts[feed.id || 0] }}
+          </ion-badge>
         </ion-item>
         <ion-popover
           :trigger="`aside-item-${feed.id}`"
@@ -27,9 +30,9 @@
         >
           <ion-content>
             <ion-list v-for="action in actions" :key="action.key">
-              <ion-item @click="handleFeedAction(action, feed)">{{
-                action.label
-              }}</ion-item>
+              <ion-item @click="handleFeedAction(action, feed)">
+                {{ action.label }}
+              </ion-item>
             </ion-list>
           </ion-content>
         </ion-popover>
@@ -42,15 +45,13 @@ import { alertController } from '@ionic/vue';
 import { add } from 'ionicons/icons';
 import { ref } from 'vue';
 
-import { useAllFeeds } from '@/composables';
+import { useAllFeeds, useFeedItemCounts } from '@/composables';
 import router from '@/router';
 import { deleteFeed, updateFeed } from '@/service/dbService';
-import { useStore } from '@/store';
 import { Feed } from '@/types';
 
 const emit = defineEmits(['itemSelected']);
 
-const store = useStore();
 const { t } = useI18n();
 
 const modalIsOpen = ref(false);
@@ -65,8 +66,9 @@ const closeModal = () => {
 
 const { feeds } = useAllFeeds();
 
+const { counts: itemCounts } = useFeedItemCounts();
+
 const selectItem = (id?: number) => {
-  store.setFeedId(id || 0);
   emit('itemSelected', id);
   router.replace({
     name: 'home',
@@ -78,6 +80,7 @@ type Action = {
   key: 'edit' | 'delete';
   label: string;
 };
+
 const actions: Action[] = [
   {
     key: 'edit',

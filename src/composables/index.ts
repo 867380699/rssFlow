@@ -23,6 +23,30 @@ export const useAllFeedItems = () => {
   };
 };
 
+export const useFeedItemCounts = () => {
+  const counts = useObservable<Record<number, number>>(
+    liveQuery(async () => {
+      const feedIds = (await feedDB.feeds
+        .orderBy('id')
+        .uniqueKeys()) as number[];
+
+      const counts = await Promise.all(
+        feedIds.map((feedId) =>
+          feedDB.feedItems.where({ feedId, isRead: 0 }).count()
+        )
+      );
+
+      return feedIds.reduce((o, v, i) => {
+        o[v] = counts[i];
+        return o;
+      }, {} as Record<number, number>);
+    }) as any
+  );
+  return {
+    counts,
+  };
+};
+
 export const useFeedItems = (
   feedId?: number,
   isUnRead?: boolean,

@@ -11,6 +11,7 @@ declare module '@vue/runtime-core' {
     IonApp: typeof import('@ionic/vue')['IonApp']
     IonAvatar: typeof import('@ionic/vue')['IonAvatar']
     IonBackButton: typeof import('@ionic/vue')['IonBackButton']
+    IonBadge: typeof import('@ionic/vue')['IonBadge']
     IonButton: typeof import('@ionic/vue')['IonButton']
     IonButtons: typeof import('@ionic/vue')['IonButtons']
     IonCard: typeof import('@ionic/vue')['IonCard']
