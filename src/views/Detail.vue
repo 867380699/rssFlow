@@ -14,6 +14,7 @@
     <ion-footer>
       <ion-toolbar>
         <div class="flex justify-around">
+          <ion-icon :icon="openOutline" @click="openLink(feedItem)" />
           <ion-icon
             :icon="feedItem?.isRead ? ellipseOutline : ellipse"
             @click="toggleRead()"
@@ -29,9 +30,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ellipse, ellipseOutline, star, starOutline } from 'ionicons/icons';
+import {
+  ellipse,
+  ellipseOutline,
+  openOutline,
+  star,
+  starOutline,
+} from 'ionicons/icons';
 
 import { useFeedItem } from '@/composables';
+import { FeedItem } from '@/types';
 
 import { updateFeedItem } from '../service/dbService';
 import { parseFeedContent } from '../service/feedService';
@@ -59,6 +67,12 @@ const toggleFavorite = () => {
     updateFeedItem(feedItem.value.id, {
       isFavorite: feedItem.value.isFavorite ? 0 : 1,
     });
+  }
+};
+
+const openLink = (feedItem?: FeedItem) => {
+  if (feedItem) {
+    window.open(feedItem.link);
   }
 };
 </script>
