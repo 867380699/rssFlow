@@ -30,6 +30,7 @@ specifiers:
   pinia: ^2.0.14
   postcss: ^8.4.13
   prettier: 2.6.2
+  rollup-plugin-analyzer: ^4.0.0
   rxjs: ^7.5.5
   tailwindcss: ^3.0.24
   typescript: ^4.4.4
@@ -78,6 +79,7 @@ devDependencies:
   eslint-plugin-vue: 8.7.1_eslint@8.15.0
   postcss: 8.4.13
   prettier: 2.6.2
+  rollup-plugin-analyzer: 4.0.0
   tailwindcss: 3.0.24
   typescript: 4.5.5
   unplugin-auto-import: 0.7.1_vite@2.8.4
@@ -2936,6 +2938,11 @@ packages:
     hasBin: true
     dependencies:
       glob: 7.2.0
+    dev: true
+
+  /rollup-plugin-analyzer/4.0.0:
+    resolution: {integrity: sha512-LL9GEt3bkXp6Wa19SNR5MWcvHNMvuTFYg+eYBZN2OIFhSWN+pEJUQXEKu5BsOeABob3x9PDaLKW7w5iOJnsESQ==}
+    engines: {node: '>=8.0.0'}
     dev: true
 
   /rollup/2.68.0:
