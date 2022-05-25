@@ -8,7 +8,9 @@ export const getFeeds = async (url: string) => {
   if (match) {
     const [, protocol, rest] = match;
     if (platform === 'web') {
-      const resp = await fetch('/rss/' + rest);
+      const host = import.meta.env.VITE_PROXY_HOST || '/rss';
+      const origin = (protocol || 'http://') + rest;
+      const resp = await fetch(host + origin);
       if (resp.status !== 200) {
         throw new Error(resp.statusText);
       }
