@@ -16,6 +16,8 @@
     "intlify",
     "ionicons",
     "pinia",
+    "precache",
+    "precaching",
     "referrerpolicy",
     "tailwindcss",
     "unplugin",

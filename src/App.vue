@@ -10,6 +10,7 @@
 <script lang="ts" setup>
 import { App } from '@capacitor/app';
 import { menuController, useBackButton, useIonRouter } from '@ionic/vue';
+import { useRegisterSW } from 'virtual:pwa-register/vue';
 
 import { destroySync, initSync } from './service/feedService';
 
@@ -27,4 +28,11 @@ const onItemSelected = () => {
 initSync();
 
 onBeforeUnmount(destroySync);
+
+useRegisterSW({
+  immediate: true,
+  onRegistered(r) {
+    console.log(`SW Registered: ${r}`);
+  },
+});
 </script>
