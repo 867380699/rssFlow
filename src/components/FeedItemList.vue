@@ -1,7 +1,9 @@
 <template>
   <ion-list>
     <ion-item v-for="item in items" :key="item.id" @click="toDetail(item.id!)">
-      <ion-avatar slot="start" />
+      <ion-thumbnail slot="start">
+        <ion-img v-if="item.image" :src="item.image" />
+      </ion-thumbnail>
       <ion-label>
         <h2>{{ item.title }}</h2>
         <p>{{ item.description }}</p>

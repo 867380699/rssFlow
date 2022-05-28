@@ -9,15 +9,22 @@ const parser = new DOMParser();
 const parseFeedItems = (nodeTree: Document): Array<FeedItem> => {
   const itemNodes = nodeTree.querySelectorAll('rss > channel > item');
   const items: Array<FeedItem> = [];
-  itemNodes.forEach((node) =>
+  itemNodes.forEach((node) => {
+    const description = node.querySelector('description')?.textContent || '';
+    const contentDocument = parser.parseFromString(
+      DOMPurify.sanitize(description),
+      'text/html'
+    );
+    const image = contentDocument.querySelector('img')?.src;
     items.push({
       title: node.querySelector('title')?.textContent || '',
-      description: node.querySelector('description')?.textContent || '',
+      image,
+      description,
       link:
         node.querySelector('link')?.textContent?.replace(/^https?/, 'https') ||
         '',
-    })
-  );
+    });
+  });
   return items;
 };
 
@@ -50,6 +57,15 @@ export const parseFeedContent = (content: string) => {
     DOMPurify.sanitize(content),
     'text/html'
   );
+  console.log(contentDocument);
+  const image = document.evaluate(
+    '//img/@src',
+    contentDocument,
+    null,
+    XPathResult.STRING_TYPE,
+    null
+  );
+  console.log(image.stringValue);
   return DOMPurify.sanitize(content);
 };
 

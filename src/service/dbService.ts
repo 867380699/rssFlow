@@ -53,9 +53,10 @@ export const storeFeedItems = async (feedItems: FeedItem[], feedId: number) => {
       (item) => duplicateLinks.indexOf(item.link) === -1
     );
     await feedDB.feedItems.bulkAdd(
-      deduplicateItems.map(({ title, description, link }) => ({
+      deduplicateItems.map(({ title, description, link, image }) => ({
         feedId,
         title,
+        image,
         description,
         link,
         isRead: 0,
