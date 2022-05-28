@@ -1,10 +1,12 @@
 import { clientsClaim } from 'workbox-core';
+import { ExpirationPlugin } from 'workbox-expiration';
 import {
   cleanupOutdatedCaches,
   createHandlerBoundToURL,
   precacheAndRoute,
 } from 'workbox-precaching';
-import { NavigationRoute, registerRoute } from 'workbox-routing';
+import { NavigationRoute, registerRoute, Route } from 'workbox-routing';
+import { CacheFirst } from 'workbox-strategies';
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -39,3 +41,20 @@ self.addEventListener('message', (event) => {
     event.ports[0].postMessage(SW_VERSION);
   }
 });
+
+const imageRoute = new Route(
+  (match) => {
+    console.log(match);
+    return match.request.destination === 'image';
+  },
+  new CacheFirst({
+    cacheName: 'images',
+    plugins: [
+      new ExpirationPlugin({
+        maxAgeSeconds: 60 * 60 * 24 * 1,
+      }),
+    ],
+  })
+);
+
+registerRoute(imageRoute);

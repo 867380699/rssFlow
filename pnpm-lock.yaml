@@ -45,8 +45,10 @@ specifiers:
   vue-router: ^4.0.12
   vue-tsc: ^0.29.8
   workbox-core: ^6.5.3
+  workbox-expiration: ^6.5.3
   workbox-precaching: ^6.5.3
   workbox-routing: ^6.5.3
+  workbox-strategies: ^6.5.3
   workbox-window: ^6.5.3
 
 dependencies:
@@ -66,6 +68,7 @@ dependencies:
   vue: 3.2.31
   vue-i18n: 9.1.10_vue@3.2.31
   vue-router: 4.0.12_vue@3.2.31
+  workbox-expiration: 6.5.3
 
 devDependencies:
   '@capacitor/cli': 3.5.1
@@ -98,6 +101,7 @@ devDependencies:
   workbox-core: 6.5.3
   workbox-precaching: 6.5.3
   workbox-routing: 6.5.3
+  workbox-strategies: 6.5.3
   workbox-window: 6.5.3
 
 packages:
@@ -3564,7 +3568,6 @@ packages:
 
   /idb/6.1.5:
     resolution: {integrity: sha512-IJtugpKkiVXQn5Y+LteyBCNk1N8xpGV3wWZk9EVtZWH8DYkjBn0bX1XnGP9RkyZF0sAcywa6unHqSWKe7q4LGw==}
-    dev: true
 
   /ignore/5.2.0:
     resolution: {integrity: sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ==}
@@ -5474,14 +5477,12 @@ packages:
 
   /workbox-core/6.5.3:
     resolution: {integrity: sha512-Bb9ey5n/M9x+l3fBTlLpHt9ASTzgSGj6vxni7pY72ilB/Pb3XtN+cZ9yueboVhD5+9cNQrC9n/E1fSrqWsUz7Q==}
-    dev: true
 
   /workbox-expiration/6.5.3:
     resolution: {integrity: sha512-jzYopYR1zD04ZMdlbn/R2Ik6ixiXbi15c9iX5H8CTi6RPDz7uhvMLZPKEndZTpfgmUk8mdmT9Vx/AhbuCl5Sqw==}
     dependencies:
       idb: 6.1.5
       workbox-core: 6.5.3
-    dev: true
 
   /workbox-google-analytics/6.5.3:
     resolution: {integrity: sha512-3GLCHotz5umoRSb4aNQeTbILETcrTVEozSfLhHSBaegHs1PnqCmN0zbIy2TjTpph2AGXiNwDrWGF0AN+UgDNTw==}

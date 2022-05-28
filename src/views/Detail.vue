@@ -51,7 +51,9 @@ const props = defineProps<{
 const { feedItem } = useFeedItem(props.id);
 
 const feedItemContent = computed(() => {
-  return parseFeedContent(feedItem.value?.description || '');
+  return (
+    feedItem.value?.description && parseFeedContent(feedItem.value?.description)
+  );
 });
 
 const toggleRead = () => {
