@@ -11,6 +11,7 @@
 import { App } from '@capacitor/app';
 import { menuController, useBackButton, useIonRouter } from '@ionic/vue';
 import { useRegisterSW } from 'virtual:pwa-register/vue';
+import { messageSW } from 'workbox-window';
 
 import { destroySync, initSync } from './service/feedService';
 
@@ -31,8 +32,14 @@ onBeforeUnmount(destroySync);
 
 useRegisterSW({
   immediate: true,
-  onRegistered(r) {
-    console.log(`SW Registered: ${r}`);
+  async onRegistered(r) {
+    if (r && r.active) {
+      const v = await messageSW(r.active, { type: 'GET_VERSION' });
+      console.log(v);
+    }
+    console.log(
+      `SW Registered: [active]:${r?.active}, [waiting]:${r?.waiting}`
+    );
   },
 });
 </script>
