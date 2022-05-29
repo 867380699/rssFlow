@@ -24,6 +24,7 @@
     "vue": "^3.2.21",
     "vue-i18n": "9",
     "vue-router": "^4.0.12",
+    "vue-virtual-scroller": "2.0.0-alpha.1",
     "workbox-expiration": "^6.5.3"
   },
   "devDependencies": {

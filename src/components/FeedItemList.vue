@@ -1,15 +1,23 @@
 <template>
-  <ion-list>
-    <ion-item v-for="item in items" :key="item.id" @click="toDetail(item.id!)">
-      <ion-thumbnail slot="start">
-        <ion-img v-if="item.image" :src="item.image" />
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ item.title }}</h2>
-        <p>{{ item.description }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+  <RecycleScroller
+    class="h-full"
+    :items="items"
+    :item-size="72"
+    key-field="id"
+    :buffer="50"
+  >
+    <template #default="{ item }">
+      <ion-item @click="toDetail(item.id!)">
+        <ion-thumbnail slot="start">
+          <ion-img v-if="item.image" :key="item.id" :src="item.image" />
+        </ion-thumbnail>
+        <ion-label>
+          <h2>{{ item.title }}</h2>
+          <p>{{ item.description }}</p>
+        </ion-label>
+      </ion-item>
+    </template>
+  </RecycleScroller>
 </template>
 <script lang="ts" setup>
 import { useRouter } from 'vue-router';

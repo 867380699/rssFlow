@@ -5,6 +5,7 @@ import '@ionic/vue/css/normalize.css';
 import '@ionic/vue/css/structure.css';
 import '@ionic/vue/css/typography.css';
 import './theme/index.css';
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 /* Theme variables */
 import './theme/variables.css';
 
@@ -12,6 +13,7 @@ import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import { createI18n } from 'vue-i18n';
+import VueVirtualScroller from 'vue-virtual-scroller';
 
 import App from './App.vue';
 import messageEn from './locales/en.json';
@@ -29,7 +31,8 @@ const app = createApp(App)
   .use(IonicVue)
   .use(router)
   .use(i18n)
-  .use(createPinia());
+  .use(createPinia())
+  .use(VueVirtualScroller);
 
 router.isReady().then(() => {
   app.mount('#app');
