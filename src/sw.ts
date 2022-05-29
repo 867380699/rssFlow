@@ -43,9 +43,9 @@ self.addEventListener('message', (event) => {
 });
 
 const imageRoute = new Route(
-  (match) => {
-    console.log(match);
-    return match.request.destination === 'image';
+  ({ request }) => {
+    console.log(request);
+    return request.destination === 'image';
   },
   new CacheFirst({
     cacheName: 'images',

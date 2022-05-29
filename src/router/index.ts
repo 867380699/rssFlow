@@ -7,7 +7,7 @@ import Home from '@/views/Home.vue';
 const routes: Array<RouteRecordRaw> = [
   {
     name: 'home',
-    path: '/home/:type/:id?',
+    path: '/home',
     component: Home,
   },
   {
@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/:path(.*)*',
-    redirect: '/home/unread/0',
+    redirect: '/home?type=unread&id=0',
   },
 ];
 

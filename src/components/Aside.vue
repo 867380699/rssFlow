@@ -72,7 +72,7 @@ const selectItem = (id?: number) => {
   emit('itemSelected', id);
   router.replace({
     name: 'home',
-    params: { ...router.currentRoute.value.params, id },
+    query: { ...router.currentRoute.value.query, id },
   });
 };
 

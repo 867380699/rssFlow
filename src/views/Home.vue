@@ -22,22 +22,23 @@
 import { eyeOffOutline, listOutline, starOutline } from 'ionicons/icons';
 
 import FeedItemList from '@/components/FeedItemList.vue';
-import { useFeedItems } from '@/composables';
-import router from '@/router';
+import { useAllFeedItems } from '@/composables';
 import { feedDB } from '@/service/dbService';
-import { Feed, FeedItem } from '@/types';
+import { Feed } from '@/types';
 
 const { t } = useI18n();
 
 const route = useRoute();
+
+const ionRouter = useRouter();
 
 const type = ref('unread');
 const id = ref(0);
 
 watchEffect(() => {
   if (route.name === 'home') {
-    type.value = (route.params.type as string) || 'unread';
-    id.value = Number(route.params.id) || 0;
+    type.value = (route.query.type as string) || 'unread';
+    id.value = Number(route.query.id) || 0;
   }
 });
 
@@ -48,7 +49,7 @@ const tabs = [
 ];
 
 const segmentChanged = async ($event: CustomEvent) => {
-  await router.replace(`/home/${$event.detail.value}/${id.value}`);
+  ionRouter.replace(`/home?type=${$event.detail.value}&id=${id.value}`);
 };
 
 const feed = ref<Feed>();
@@ -57,22 +58,27 @@ watchEffect(async () => {
   feed.value = await feedDB.feeds.get(id.value);
 });
 
-let feedItems = ref<FeedItem[] | undefined>([]);
+let { feedItems: allFeedItems } = useAllFeedItems();
 
-watchEffect(() => {
-  switch (type.value) {
-    case 'unread':
-      let { feedItems: unreadItems } = useFeedItems(id.value, true);
-      feedItems = unreadItems;
-      break;
-    case 'all':
-      let { feedItems: allItems } = useFeedItems(id.value);
-      feedItems = allItems;
-      break;
-    case 'favorite':
-      let { feedItems: favoriteItems } = useFeedItems(id.value, false, true);
-      feedItems = favoriteItems;
-      break;
+let feedItems = computed(() => {
+  if (allFeedItems.value) {
+    return allFeedItems.value.filter((item) => {
+      if (id.value && item.feedId !== id.value) return false;
+      switch (type.value) {
+        case 'unread':
+          return !item.isRead;
+        case 'favorite':
+          return item.isFavorite;
+        default:
+          return true;
+      }
+    });
+  } else {
+    return [];
   }
+});
+
+onBeforeUnmount(() => {
+  console.log('unmount');
 });
 </script>
