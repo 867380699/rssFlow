@@ -92,8 +92,12 @@ export default defineConfig({
   server: {
     https: false,
     proxy: {
-      '^/rss': {
-        target: 'http://localhost',
+      '^/rss/.*': {
+        target: 'http://localhost:2999',
+      },
+      '^/img/.*': {
+        changeOrigin: true,
+        target: 'http://localhost:2999',
       },
     },
   },

@@ -1,3 +1,5 @@
+import { Capacitor } from '@capacitor/core';
+import { Http } from '@capacitor-community/http';
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import {
@@ -7,6 +9,8 @@ import {
 } from 'workbox-precaching';
 import { NavigationRoute, registerRoute, Route } from 'workbox-routing';
 import { CacheFirst } from 'workbox-strategies';
+
+import Logger from './utils/log';
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -44,7 +48,6 @@ self.addEventListener('message', (event) => {
 
 const imageRoute = new Route(
   ({ request }) => {
-    console.log(request);
     return request.destination === 'image';
   },
   new CacheFirst({
@@ -53,6 +56,27 @@ const imageRoute = new Route(
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24 * 1,
       }),
+      {
+        cachedResponseWillBeUsed: async (params) => {
+          Logger.log('cachedResponseWillBeUsed', params);
+          const platform = Capacitor.getPlatform();
+          if (params.cachedResponse || platform === 'web') {
+            return params.cachedResponse;
+          } else {
+            const result = await Http.get({ url: params.request.url });
+            console.log(platform, result);
+          }
+        },
+        requestWillFetch: async ({ request }) => {
+          const proxyRequest = new Request(
+            `/img/${encodeURIComponent(request.url)}`,
+            { mode: 'cors' }
+          );
+
+          Logger.log('requestWillFetch', request);
+          return proxyRequest;
+        },
+      },
     ],
   })
 );

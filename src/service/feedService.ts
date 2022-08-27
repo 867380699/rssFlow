@@ -41,7 +41,6 @@ export const parseFeed = (feed: string, source: string): Feed => {
       .querySelector('rss > channel > image > url')
       ?.textContent?.replace(/^https?/, 'https') || '';
   const items = parseFeedItems(nodeTree);
-  console.log(nodeTree);
   return {
     source,
     title,
@@ -53,19 +52,19 @@ export const parseFeed = (feed: string, source: string): Feed => {
 };
 
 export const parseFeedContent = (content: string) => {
-  const contentDocument = parser.parseFromString(
-    DOMPurify.sanitize(content),
-    'text/html'
-  );
-  console.log(contentDocument);
-  const image = document.evaluate(
-    '//img/@src',
-    contentDocument,
-    null,
-    XPathResult.STRING_TYPE,
-    null
-  );
-  console.log(image.stringValue);
+  // const contentDocument = parser.parseFromString(
+  //   DOMPurify.sanitize(content),
+  //   'text/html'
+  // );
+  // console.log(contentDocument);
+  // const image = document.evaluate(
+  //   '//img/@src',
+  //   contentDocument,
+  //   null,
+  //   XPathResult.STRING_TYPE,
+  //   null
+  // );
+  // console.log(image.stringValue);
   return DOMPurify.sanitize(content);
 };
 

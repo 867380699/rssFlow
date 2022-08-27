@@ -9,7 +9,12 @@
     <template #default="{ item }">
       <ion-item @click="toDetail(item.id!)">
         <ion-thumbnail slot="start">
-          <ion-img v-if="item.image" :key="item.id" :src="item.image" />
+          <img
+            v-if="item.image"
+            :key="item.id"
+            :src="item.image"
+            crossorigin="anonymous"
+          />
         </ion-thumbnail>
         <ion-label>
           <h2>{{ item.title }}</h2>
