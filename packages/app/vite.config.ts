@@ -6,10 +6,11 @@ import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
+import proxyTable from 'vite-plugin-proxy';
 import { VitePWA } from 'vite-plugin-pwa';
 
-// https://vitejs.dev/config/
 export default defineConfig({
+  base: '/app/',
   build: {
     rollupOptions: {
       plugins: [
@@ -21,6 +22,15 @@ export default defineConfig({
     },
   },
   plugins: [
+    proxyTable({
+      '^/rss/.*': {
+        target: 'http://localhost:2999',
+      },
+      '^/img/.*': {
+        changeOrigin: true,
+        target: 'http://localhost:2999',
+      },
+    }),
     vue(),
     AutoImport({
       imports: ['vue', 'vue-router', 'vue-i18n'],
@@ -43,7 +53,7 @@ export default defineConfig({
     }),
     VitePWA({
       mode: 'development',
-      base: '/',
+      base: '/app/',
       strategies: 'injectManifest',
       srcDir: 'src',
       filename: 'sw.ts',
@@ -91,14 +101,5 @@ export default defineConfig({
   },
   server: {
     https: false,
-    proxy: {
-      '^/rss/.*': {
-        target: 'http://localhost:2999',
-      },
-      '^/img/.*': {
-        changeOrigin: true,
-        target: 'http://localhost:2999',
-      },
-    },
   },
 });

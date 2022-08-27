@@ -19,6 +19,7 @@
     "execpath",
     "intlify",
     "ionicons",
+    "middlewares",
     "pinia",
     "precache",
     "precaching",
