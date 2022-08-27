@@ -4,7 +4,10 @@ const config: CapacitorConfig = {
   appId: 'com.ll.rssflow',
   appName: 'RssFlow',
   webDir: 'dist',
-  bundledWebRuntime: false
+  bundledWebRuntime: false,
+  server: {
+    androidScheme: 'https',
+  },
 };
 
 export default config;
