@@ -10,7 +10,7 @@
             "name": "dev",
             "runtimeExecutable": "pnpm",
             "cwd": "${workspaceFolder}",
-            "runtimeArgs": ["dev"],
+            "runtimeArgs": ["dev:app"],
         }
     ]
 }
