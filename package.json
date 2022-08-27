@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "proxy": "pnpm --filter proxy-server run serve",
     "dev:app": "pnpm --filter rss-flow-app run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
