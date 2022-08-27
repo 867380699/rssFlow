@@ -14,6 +14,7 @@ import { useRegisterSW } from 'virtual:pwa-register/vue';
 import { messageSW } from 'workbox-window';
 
 import { destroySync, initSync } from './service/feedService';
+import Logger from './utils/log';
 
 const ionRouter = useIonRouter();
 useBackButton(-1, () => {
@@ -35,11 +36,9 @@ useRegisterSW({
   async onRegistered(r) {
     if (r && r.active) {
       const v = await messageSW(r.active, { type: 'GET_VERSION' });
-      console.log(v);
+      Logger.log('SW version:', v);
     }
-    console.log(
-      `SW Registered: [active]:${r?.active}, [waiting]:${r?.waiting}`
-    );
+    Logger.log(`SW Registered: [active]:${r?.active}, [waiting]:${r?.waiting}`);
   },
 });
 </script>
