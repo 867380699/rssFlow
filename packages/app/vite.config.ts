@@ -12,6 +12,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
   base: '/app/',
   build: {
+    minify: false,
     rollupOptions: {
       plugins: [
         analyze({

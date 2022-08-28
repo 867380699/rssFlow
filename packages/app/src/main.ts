@@ -9,6 +9,7 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 /* Theme variables */
 import './theme/variables.css';
 
+import { Capacitor } from '@capacitor/core';
 import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
@@ -19,6 +20,7 @@ import App from './App.vue';
 import messageEn from './locales/en.json';
 import messageCn from './locales/zh.json';
 import router from './router';
+import Logger from './utils/log';
 
 const i18n = createI18n({
   locale: 'zh',
@@ -37,3 +39,5 @@ const app = createApp(App)
 router.isReady().then(() => {
   app.mount('#app');
 });
+
+Logger.log('Platform', Capacitor.getPlatform());
