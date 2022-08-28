@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "proxy": "pnpm --filter proxy-server run serve",
     "dev:app": "pnpm --filter rss-flow-app run dev",
