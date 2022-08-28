@@ -9,6 +9,7 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
     hostname: 'rss-flow.vercel.app/',
   },
+  includePlugins: ['@capacitor/app', '@capacitor-community/http'],
 };
 
 export default config;
