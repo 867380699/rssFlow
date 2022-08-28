@@ -69,7 +69,9 @@ const imageRoute = new Route(
         },
         requestWillFetch: async ({ request }) => {
           const proxyRequest = new Request(
-            `/img/${encodeURIComponent(request.url)}`,
+            `${import.meta.env.VITE_PROXY_HOST || '/img/'}${encodeURIComponent(
+              request.url
+            )}`,
             { mode: 'cors' }
           );
 
