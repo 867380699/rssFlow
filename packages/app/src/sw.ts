@@ -38,7 +38,11 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-const SW_VERSION = '1.0.0';
+const SW_VERSION = '1.0.1';
+
+const platform = Capacitor.getPlatform();
+
+Logger.log(SW_VERSION, platform);
 
 self.addEventListener('message', (event) => {
   if (event.data.type === 'GET_VERSION') {
@@ -59,7 +63,7 @@ const imageRoute = new Route(
       {
         cachedResponseWillBeUsed: async (params) => {
           Logger.log('cachedResponseWillBeUsed', params);
-          const platform = Capacitor.getPlatform();
+
           if (params.cachedResponse || platform === 'web') {
             return params.cachedResponse;
           } else {
