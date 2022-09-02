@@ -12,7 +12,7 @@
           <img
             v-if="item.image"
             :key="item.id"
-            :src="item.image"
+            :src="'/img/' + item.image"
             crossorigin="anonymous"
           />
         </ion-thumbnail>

@@ -6,9 +6,10 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   bundledWebRuntime: false,
   server: {
-    androidScheme: 'https',
-    hostname: 'rss-flow.vercel.app/',
-    url: 'https://rss-flow.vercel.app/',
+    androidScheme: 'http',
+    hostname: 'localhost',
+    // url: 'https://rss-flow.vercel.app',
+    cleartext: true,
   },
   includePlugins: ['@capacitor/app', '@capacitor-community/http'],
 };

@@ -1,4 +1,5 @@
 import vueI18n from '@intlify/vite-plugin-vue-i18n';
+import basicSsl from '@vitejs/plugin-basic-ssl';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import analyze from 'rollup-plugin-analyzer';
@@ -10,7 +11,6 @@ import proxyTable from 'vite-plugin-proxy';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  base: '/app/',
   build: {
     minify: false,
     rollupOptions: {
@@ -23,6 +23,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    // basicSsl(),
     proxyTable({
       '^/rss/.*': {
         target: 'http://localhost:2999',
@@ -54,7 +55,6 @@ export default defineConfig({
     }),
     VitePWA({
       mode: 'development',
-      base: '/app/',
       strategies: 'injectManifest',
       srcDir: 'src',
       filename: 'sw.ts',
@@ -65,7 +65,7 @@ export default defineConfig({
       },
       includeAssets: [
         'favicon.svg',
-        'favicon.ico',
+        'assets/favicon.ico',
         'robots.txt',
         'apple-touch-icon.png',
       ],
@@ -101,6 +101,6 @@ export default defineConfig({
     },
   },
   server: {
-    https: false,
+    // https: true,
   },
 });
