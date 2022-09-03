@@ -17,6 +17,8 @@ const getStyles = (method: keyof typeof colorMap) => {
   ].join(';');
 };
 
+const debugMode = true;
+
 export const log = (...msg: any[]) => {
   console.log(`%c${TAG}`, getStyles('log'), ...msg);
 };

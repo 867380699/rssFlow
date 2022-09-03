@@ -58,10 +58,8 @@ self.addEventListener('message', (event) => {
 const imageRoute = new Route(
   ({ request }) => {
     const url = new URL(request.url);
-    console.log('abc', url.pathname);
-
     return (
-      (url.host !== 'localhost' || /^\/(rss|img)/.test(url.pathname)) &&
+      (url.hostname !== 'localhost' || /^\/(rss|img)/.test(url.pathname)) &&
       request.destination === 'image'
     );
   },
@@ -74,7 +72,11 @@ const imageRoute = new Route(
       {
         cachedResponseWillBeUsed: async (params) => {
           const platform = Capacitor.getPlatform();
-          Logger.log('cachedResponseWillBeUsed', params, platform);
+          Logger.log(
+            'cachedResponseWillBeUsed',
+            params.cachedResponse,
+            platform
+          );
 
           if (params.cachedResponse || platform === 'web') {
             return params.cachedResponse;
@@ -87,7 +89,7 @@ const imageRoute = new Route(
           const url = new URL(request.url);
           const proxyRequest = new Request(
             `${import.meta.env.VITE_PROXY_HOST || '/img/'}${encodeURIComponent(
-              url.host === 'localhost'
+              url.hostname === 'localhost'
                 ? url.pathname.replace('/img/', '')
                 : url.toString()
             )}`,
