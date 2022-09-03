@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import analyze from 'rollup-plugin-analyzer';
 import AutoImport from 'unplugin-auto-import/vite';
+import { VueUseComponentsResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
@@ -35,13 +36,21 @@ export default defineConfig({
     }),
     vue(),
     AutoImport({
-      imports: ['vue', 'vue-router', 'vue-i18n'],
+      imports: [
+        'vue',
+        'vue-router',
+        'vue-i18n',
+        {
+          '@vueuse/core': ['useVModel'],
+        },
+      ],
       eslintrc: {
         enabled: true,
       },
     }),
     Components({
       resolvers: [
+        VueUseComponentsResolver(),
         (componentName) => {
           // where `componentName` is always CapitalCase
           if (componentName.startsWith('Ion')) {

@@ -50,6 +50,7 @@
     "useRoute": true,
     "useRouter": true,
     "useSlots": true,
+    "useVModel": true,
     "watch": true,
     "watchEffect": true,
     "watchPostEffect": true,
