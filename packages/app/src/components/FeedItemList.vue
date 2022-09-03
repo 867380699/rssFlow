@@ -7,7 +7,7 @@
     :buffer="50"
   >
     <template #default="{ item }">
-      <ion-item @click="toDetail(item.id!)">
+      <ion-item lines="none" @click="toDetail(item.id!)">
         <ion-thumbnail slot="start">
           <LazyImage
             :key="item.id"
@@ -18,7 +18,7 @@
         </ion-thumbnail>
         <ion-label>
           <h2>{{ item.title }}</h2>
-          <p>{{ item.description }}</p>
+          <p>{{ item.shortDescription }}</p>
         </ion-label>
       </ion-item>
     </template>

@@ -58,15 +58,18 @@ export const storeFeedItems = async (feedItems: FeedItem[], feedId: number) => {
       (item) => duplicateLinks.indexOf(item.link) === -1
     );
     await feedDB.feedItems.bulkAdd(
-      deduplicateItems.map(({ title, description, link, image }) => ({
-        feedId,
-        title,
-        image,
-        description,
-        link,
-        isRead: 0,
-        isFavorite: 0,
-      }))
+      deduplicateItems.map(
+        ({ title, description, shortDescription, link, image }) => ({
+          feedId,
+          title,
+          image,
+          description,
+          shortDescription,
+          link,
+          isRead: 0,
+          isFavorite: 0,
+        })
+      )
     );
     console.log(
       `[storeFeedItems]: ${deduplicateItems.length} stored, ${duplicateItems.length} duplicated.`
@@ -81,6 +84,7 @@ export const loadFeed = async (id: number) => {
 
 export const deleteFeed = async (id: number) => {
   await feedDB.feeds.delete(id);
+  await feedDB.feedItems.where('feedId').equals(id).delete();
 };
 
 export const updateFeed = async (id: number, changes: Partial<Feed>) => {

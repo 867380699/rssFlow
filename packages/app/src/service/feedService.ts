@@ -12,15 +12,16 @@ const parseFeedItems = (nodeTree: Document): Array<FeedItem> => {
   const itemNodes = nodeTree.querySelectorAll('rss > channel > item');
   const items: Array<FeedItem> = [];
   itemNodes.forEach((node) => {
-    const description = node.querySelector('description')?.textContent || '';
-    const contentDocument = parser.parseFromString(
-      DOMPurify.sanitize(description),
-      'text/html'
+    const description = DOMPurify.sanitize(
+      node.querySelector('description')?.textContent || ''
     );
+
+    const contentDocument = parser.parseFromString(description, 'text/html');
     const image = contentDocument.querySelector('img')?.src;
     items.push({
       title: node.querySelector('title')?.textContent || '',
       image,
+      shortDescription: contentDocument.body.textContent || '',
       description,
       link:
         node.querySelector('link')?.textContent?.replace(/^https?/, 'https') ||
@@ -54,19 +55,6 @@ export const parseFeed = (feed: string, source: string): Feed => {
 };
 
 export const parseFeedContent = (content: string) => {
-  // const contentDocument = parser.parseFromString(
-  //   DOMPurify.sanitize(content),
-  //   'text/html'
-  // );
-  // console.log(contentDocument);
-  // const image = document.evaluate(
-  //   '//img/@src',
-  //   contentDocument,
-  //   null,
-  //   XPathResult.STRING_TYPE,
-  //   null
-  // );
-  // console.log(image.stringValue);
   DOMPurify.addHook('beforeSanitizeElements', (node) => {
     if (node.nodeName === 'P') {
       node.classList.add('mb-4');

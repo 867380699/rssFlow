@@ -13,6 +13,7 @@ export type FeedItem = {
   id?: number;
   feedId?: number;
   title: string;
+  shortDescription?: string;
   description?: string;
   image?: string;
   link: string;
