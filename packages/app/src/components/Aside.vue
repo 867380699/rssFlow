@@ -48,6 +48,7 @@ import { ref } from 'vue';
 import { useAllFeeds, useFeedItemCounts } from '@/composables';
 import router from '@/router';
 import { deleteFeed, updateFeed } from '@/service/dbService';
+import { useFeedStore } from '@/store';
 import { Feed } from '@/types';
 
 const emit = defineEmits(['itemSelected']);
@@ -68,7 +69,10 @@ const { feeds } = useAllFeeds();
 
 const { counts: itemCounts } = useFeedItemCounts();
 
+const { setFeedId } = useFeedStore();
+
 const selectItem = (id?: number) => {
+  setFeedId(id || 0);
   emit('itemSelected', id);
   router.replace({
     name: 'home',
