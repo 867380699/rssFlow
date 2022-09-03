@@ -62,17 +62,22 @@ let { feedItems: allFeedItems } = useAllFeedItems();
 
 let feedItems = computed(() => {
   if (allFeedItems.value) {
-    return allFeedItems.value.filter((item) => {
-      if (id.value && item.feedId !== id.value) return false;
-      switch (type.value) {
-        case 'unread':
-          return !item.isRead;
-        case 'favorite':
-          return item.isFavorite;
-        default:
-          return true;
-      }
-    });
+    return allFeedItems.value
+      .filter((item) => {
+        if (id.value && item.feedId !== id.value) return false;
+        switch (type.value) {
+          case 'unread':
+            return !item.isRead;
+          case 'favorite':
+            return item.isFavorite;
+          default:
+            return true;
+        }
+      })
+      .map((item) => ({
+        ...item,
+        image: item.image && `/img/${item.image}`,
+      }));
   } else {
     return [];
   }

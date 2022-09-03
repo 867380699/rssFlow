@@ -9,10 +9,10 @@
     <template #default="{ item }">
       <ion-item @click="toDetail(item.id!)">
         <ion-thumbnail slot="start">
-          <img
-            v-if="item.image"
+          <LazyImage
             :key="item.id"
-            :src="'/img/' + item.image"
+            v-model:src="item.image"
+            class="rounded"
             crossorigin="anonymous"
           />
         </ion-thumbnail>
@@ -29,6 +29,8 @@ import { useRouter } from 'vue-router';
 
 import { updateFeedItem } from '@/service/dbService';
 import { FeedItem } from '@/types';
+
+import LazyImage from './LazyImage.vue';
 
 withDefaults(
   defineProps<{
