@@ -9,7 +9,7 @@
     </ion-header>
     <ion-content :fullscreen="true">
       <h1 class="p-4 font-bold">{{ feedItem?.title }}</h1>
-      <div class="p-4" v-html="feedItemContent" />
+      <div ref="content" class="p-4" />
     </ion-content>
     <ion-footer>
       <ion-toolbar>
@@ -37,6 +37,7 @@ import {
   star,
   starOutline,
 } from 'ionicons/icons';
+import { ComponentPublicInstance } from 'vue';
 
 import { useFeedItem } from '@/composables';
 import { FeedItem } from '@/types';
@@ -50,10 +51,21 @@ const props = defineProps<{
 
 const { feedItem } = useFeedItem(props.id);
 
+const content = ref<ComponentPublicInstance<HTMLElement> | null>(null);
+
 const feedItemContent = computed(() => {
   return (
     feedItem.value?.description && parseFeedContent(feedItem.value?.description)
   );
+});
+
+watchEffect(() => {
+  if (content.value && feedItemContent.value) {
+    console.log(content.value, feedItemContent.value);
+
+    content.value.innerHTML = '';
+    content.value.append(feedItemContent.value);
+  }
 });
 
 const toggleRead = () => {

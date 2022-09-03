@@ -8,6 +8,13 @@
     "android/**": true,
     "**/pnpm-lock.yaml": true
   },
+  "editor.quickSuggestions": {
+		"strings": true
+	},
+  "tailwindCSS.includeLanguages": {
+    "vue": "html",
+    "vue-html": "html",
+  },
   "i18n-ally.localesPaths": [
     "src/locales"
   ],

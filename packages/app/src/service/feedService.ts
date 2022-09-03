@@ -1,5 +1,7 @@
 import DOMPurify from 'dompurify';
+import { createVNode, render } from 'vue';
 
+import LazyImage from '../components/LazyImage.vue';
 import { Feed, FeedItem } from '../types';
 import { getFeeds } from './apiService';
 import { feedDB, storeFeedItems } from './dbService';
@@ -65,7 +67,24 @@ export const parseFeedContent = (content: string) => {
   //   null
   // );
   // console.log(image.stringValue);
-  return DOMPurify.sanitize(content);
+  DOMPurify.addHook('beforeSanitizeElements', (node) => {
+    if (node.nodeName === 'P') {
+      node.classList.add('mb-4');
+    }
+    if (
+      node.nodeName === 'IMG' &&
+      !node.classList.contains('flow-lazy-image')
+    ) {
+      node.setAttribute('loading', 'lazy');
+      const div = document.createElement('div');
+      const vNode = createVNode(LazyImage, {
+        src: (node as HTMLImageElement).src,
+      });
+      render(vNode, div);
+      node.replaceWith(div.children[0]);
+    }
+  });
+  return DOMPurify.sanitize(content, { RETURN_DOM_FRAGMENT: true });
 };
 
 let syncTimeout: ReturnType<typeof setTimeout>;

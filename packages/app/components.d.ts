@@ -39,6 +39,7 @@ declare module '@vue/runtime-core' {
     IonThumbnail: typeof import('@ionic/vue')['IonThumbnail']
     IonTitle: typeof import('@ionic/vue')['IonTitle']
     IonToolbar: typeof import('@ionic/vue')['IonToolbar']
+    LazyImage: typeof import('./src/components/LazyImage.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
