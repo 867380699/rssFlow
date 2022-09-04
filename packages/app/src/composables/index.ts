@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useObservable } from '@vueuse/rxjs';
 import { liveQuery } from 'dexie';
+import { Ref } from 'vue';
 
 import { feedDB } from '../service/dbService';
 import { Feed, FeedItem } from '../types';
@@ -73,9 +74,9 @@ export const useFeedItems = (
   };
 };
 
-export const useFeedItem = (id: number) => {
+export const useFeedItem = (id: Ref<number>) => {
   const feedItem = useObservable<FeedItem>(
-    liveQuery(() => feedDB.feedItems.get(id)) as any
+    liveQuery(() => feedDB.feedItems.get(id.value)) as any
   );
   return {
     feedItem,

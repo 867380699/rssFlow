@@ -7,9 +7,28 @@
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="true">
-      <h1 class="p-4 font-bold">{{ feedItem?.title }}</h1>
-      <div ref="content" class="p-4" />
+    <ion-content :fullscreen="false">
+      <swiper
+        :grab-cursor="true"
+        class="h-full"
+        :modules="[Virtual]"
+        :initial-slide="index"
+        :slides-per-view="1"
+        :space-between="50"
+        :virtual="{ addSlidesAfter: 1, addSlidesBefore: 1 }"
+        @slideChange="onSlideChange"
+      >
+        <swiper-slide
+          v-for="feed in feedItems"
+          :key="feed.id"
+          :virtual-index="feed.id"
+        >
+          <div class="content-container overflow-auto h-full">
+            <h1 class="p-4 font-bold">{{ feed?.title }}</h1>
+            <FeedItemContent :feed-item="feed"></FeedItemContent>
+          </div>
+        </swiper-slide>
+      </swiper>
     </ion-content>
     <ion-footer>
       <ion-toolbar>
@@ -37,36 +56,36 @@ import {
   star,
   starOutline,
 } from 'ionicons/icons';
-import { ComponentPublicInstance } from 'vue';
+import { storeToRefs } from 'pinia';
+import { Virtual } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/vue';
 
-import { useFeedItem } from '@/composables';
+import FeedItemContent from '@/components/FeedItemContent.vue';
+import { useFeedStore } from '@/store';
 import { FeedItem } from '@/types';
 
 import { updateFeedItem } from '../service/dbService';
-import { parseFeedContent } from '../service/feedService';
 
-const props = defineProps<{
-  id: number;
-}>();
-
-const { feedItem } = useFeedItem(props.id);
-
-const content = ref<ComponentPublicInstance<HTMLElement> | null>(null);
-
-const feedItemContent = computed(() => {
-  return (
-    feedItem.value?.description && parseFeedContent(feedItem.value?.description)
-  );
+withDefaults(defineProps<{ index?: number }>(), {
+  index: 0,
 });
 
-watchEffect(() => {
-  if (content.value && feedItemContent.value) {
-    console.log(content.value, feedItemContent.value);
+const feedStore = useFeedStore();
 
-    content.value.innerHTML = '';
-    content.value.append(feedItemContent.value);
+const { feedItem, feedItems } = storeToRefs(feedStore);
+
+const onSlideChange = (swiper) => {
+  // console.log(swiper);
+  const newFeedItem = feedItems.value[swiper.activeIndex];
+  if (newFeedItem && newFeedItem.id) {
+    updateFeedItem(newFeedItem.id, {
+      isRead: 1,
+      readTime: new Date().getTime(),
+    });
+    feedItem.value = newFeedItem;
+    // feedStore.setFeedId(feedItem.id);
   }
-});
+};
 
 const toggleRead = () => {
   if (feedItem.value && feedItem.value.id) {
@@ -90,3 +109,8 @@ const openLink = (feedItem?: FeedItem) => {
   }
 };
 </script>
+<style>
+.content-container {
+  background-color: var(--ion-background-color, #fff);
+}
+</style>

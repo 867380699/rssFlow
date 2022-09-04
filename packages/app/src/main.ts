@@ -9,6 +9,7 @@ import './theme/ionic.css';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 /* Theme variables */
 import './theme/variables.css';
+import 'swiper/css';
 
 import { Capacitor } from '@capacitor/core';
 import { IonicVue } from '@ionic/vue';

@@ -6,8 +6,12 @@
     key-field="id"
     :buffer="50"
   >
-    <template #default="{ item }">
-      <ion-item lines="none" @click="toDetail(item.id!)">
+    <template #default="{ item, index }">
+      <ion-item
+        lines="none"
+        :class="{ 'opacity-50': item.isRead }"
+        @click="toDetail(item.id!, index)"
+      >
         <ion-thumbnail slot="start">
           <LazyImage
             :key="item.id"
@@ -41,9 +45,9 @@ withDefaults(
 
 const router = useRouter();
 
-const toDetail = (id: number) => {
-  router.push(`/detail/${id}`).then(() => {
-    updateFeedItem(id, { isRead: 1 });
+const toDetail = (id: number, index: number) => {
+  router.push(`/detail/${id}?index=${index}`).then(() => {
+    updateFeedItem(id, { isRead: 1, readTime: new Date().getTime() });
   });
 };
 </script>

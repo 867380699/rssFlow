@@ -7,6 +7,7 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AddFeedModal: typeof import('./src/components/AddFeedModal.vue')['default']
     Aside: typeof import('./src/components/Aside.vue')['default']
+    FeedItemContent: typeof import('./src/components/FeedItemContent.vue')['default']
     FeedItemList: typeof import('./src/components/FeedItemList.vue')['default']
     IonApp: typeof import('@ionic/vue')['IonApp']
     IonBackButton: typeof import('@ionic/vue')['IonBackButton']

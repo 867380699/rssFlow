@@ -15,7 +15,8 @@ const routes: Array<RouteRecordRaw> = [
     component: DetailVue,
     props(route) {
       const { id } = route.params;
-      return { id: Number(id) };
+      const { index } = route.query;
+      return { id: Number(id), index: Number(index) };
     },
   },
   {
