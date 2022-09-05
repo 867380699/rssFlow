@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import { createVNode, render } from 'vue';
+import { cloneVNode, createVNode, render } from 'vue';
 
 import LazyImage from '../components/LazyImage.vue';
 import { Feed, FeedItem } from '../types';
@@ -55,6 +55,7 @@ export const parseFeed = (feed: string, source: string): Feed => {
 };
 
 export const parseFeedContent = (content: string) => {
+  const vNode = createVNode(LazyImage, { src: '' });
   DOMPurify.addHook('beforeSanitizeElements', (node) => {
     if (node.nodeName === 'P') {
       node.classList.add('mb-4');
@@ -65,14 +66,14 @@ export const parseFeedContent = (content: string) => {
     ) {
       node.setAttribute('loading', 'lazy');
       const div = document.createElement('div');
-      const vNode = createVNode(LazyImage, {
-        src: (node as HTMLImageElement).src,
-      });
-      render(vNode, div);
+      const picNode = cloneVNode(vNode);
+      picNode.props && (picNode.props.src = (node as HTMLImageElement).src);
+      render(picNode, div);
       node.replaceWith(div.children[0]);
     }
   });
-  return DOMPurify.sanitize(content, { RETURN_DOM_FRAGMENT: true });
+  const result = DOMPurify.sanitize(content, { RETURN_DOM_FRAGMENT: true });
+  return result;
 };
 
 let syncTimeout: ReturnType<typeof setTimeout>;
