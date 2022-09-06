@@ -56,6 +56,7 @@ export const parseFeed = (feed: string, source: string): Feed => {
 
 export const parseFeedContent = (content: string) => {
   const vNode = createVNode(LazyImage, { src: '' });
+  let imageCount = 0;
   DOMPurify.addHook('beforeSanitizeElements', (node) => {
     if (node.nodeName === 'P') {
       node.classList.add('mb-4');
@@ -66,8 +67,10 @@ export const parseFeedContent = (content: string) => {
     ) {
       node.setAttribute('loading', 'lazy');
       const div = document.createElement('div');
-      const picNode = cloneVNode(vNode);
-      picNode.props && (picNode.props.src = (node as HTMLImageElement).src);
+      const picNode = cloneVNode(vNode, {
+        src: (node as HTMLImageElement).src,
+        loading: imageCount++ < 2 ? 'eager' : 'lazy',
+      });
       render(picNode, div);
       node.replaceWith(div.children[0]);
     }

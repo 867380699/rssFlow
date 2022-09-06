@@ -4,7 +4,7 @@
     ref="img"
     class="flow-lazy-image bg-slate-400 rounded-sm my-1"
     :style="minStyle"
-    loading="lazy"
+    :loading="loading"
     :src="imageSrc"
     :onload="onLoad"
     :onerror="onError"
@@ -15,7 +15,12 @@
 <script setup lang="ts">
 import { ComponentPublicInstance } from 'vue';
 
-const props = defineProps<{ src: string }>();
+const props = withDefaults(
+  defineProps<{ src: string; loading?: 'lazy' | 'eager' }>(),
+  {
+    loading: 'lazy',
+  }
+);
 
 const imageSrc = useVModel(props, 'src');
 
