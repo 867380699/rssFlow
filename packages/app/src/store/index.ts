@@ -19,11 +19,8 @@ export const useFeedStore = defineStore('feed', () => {
 
   const { feedItems: allFeedItems } = useAllFeedItems();
 
-  const { feedItem } = useFeedItem(feedId);
-
-  const now = new Date().getTime();
-
   const feedItems = computed(() => {
+    const now = new Date().getTime();
     if (allFeedItems.value) {
       return allFeedItems.value
         .filter((item) => {
@@ -46,6 +43,12 @@ export const useFeedStore = defineStore('feed', () => {
     }
   });
 
+  const feedItemId = ref(0);
+  const setFeedItemId = (id: number) => {
+    feedItemId.value = id;
+  };
+  const { feedItem } = toRefs(useFeedItem(feedItemId));
+
   return {
     feedId,
     setFeedId,
@@ -53,5 +56,7 @@ export const useFeedStore = defineStore('feed', () => {
     setFeedItemFilter,
     feedItems,
     feedItem,
+    feedItemId,
+    setFeedItemId,
   };
 });

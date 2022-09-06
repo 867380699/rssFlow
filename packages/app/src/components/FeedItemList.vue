@@ -46,8 +46,8 @@ withDefaults(
 const router = useRouter();
 
 const toDetail = (id: number, index: number) => {
-  router.push(`/detail/${id}?index=${index}`).then(() => {
-    updateFeedItem(id, { isRead: 1, readTime: new Date().getTime() });
+  updateFeedItem(id, { isRead: 1, readTime: new Date().getTime() }).then(() => {
+    router.push(`/detail/${id}?index=${index}`);
   });
 };
 </script>

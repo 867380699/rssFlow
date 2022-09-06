@@ -66,24 +66,29 @@ import { FeedItem } from '@/types';
 
 import { updateFeedItem } from '../service/dbService';
 
-withDefaults(defineProps<{ index?: number }>(), {
+const props = withDefaults(defineProps<{ id: number; index?: number }>(), {
   index: 0,
 });
 
 const feedStore = useFeedStore();
 
+feedStore.setFeedItemId(props.id);
+
 const { feedItem, feedItems } = storeToRefs(feedStore);
 
-const onSlideChange = (swiper) => {
-  // console.log(swiper);
+console.log('Detail', feedItem);
+
+const onSlideChange = (swiper: typeof Swiper) => {
   const newFeedItem = feedItems.value[swiper.activeIndex];
+  console.log('nfi', newFeedItem);
   if (newFeedItem && newFeedItem.id) {
-    updateFeedItem(newFeedItem.id, {
+    const newId = newFeedItem.id;
+    updateFeedItem(newId, {
       isRead: 1,
       readTime: new Date().getTime(),
+    }).then(() => {
+      feedStore.setFeedItemId(newId);
     });
-    feedItem.value = newFeedItem;
-    // feedStore.setFeedId(feedItem.id);
   }
 };
 

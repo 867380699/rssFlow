@@ -75,10 +75,14 @@ export const useFeedItems = (
 };
 
 export const useFeedItem = (id: Ref<number>) => {
-  const feedItem = useObservable<FeedItem>(
-    liveQuery(() => feedDB.feedItems.get(id.value)) as any
-  );
-  return {
-    feedItem,
-  };
+  const itemStore = reactive<{ feedItem?: any }>({});
+
+  watchEffect(() => {
+    itemStore.feedItem = useObservable<FeedItem>(
+      liveQuery(() => feedDB.feedItems.get(id.value)) as any
+    );
+
+    console.log('useFeedItem', id.value, itemStore);
+  });
+  return itemStore;
 };
