@@ -15,7 +15,7 @@
         :initial-slide="index"
         :slides-per-view="1"
         :space-between="50"
-        :virtual="{ enabled: true, cache: false }"
+        :virtual="{ enabled: true }"
         @slideChange="onSlideChange"
       >
         <swiper-slide

@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const content = ref<ComponentPublicInstance<HTMLElement> | null>(null);
 
-watchEffect(() => {
+onMounted(() => {
   if (content.value) {
     const t0 = window.performance.now();
     content.value.innerHTML = '';
