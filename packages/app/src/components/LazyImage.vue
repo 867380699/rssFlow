@@ -16,8 +16,9 @@
 import { ComponentPublicInstance } from 'vue';
 
 const props = withDefaults(
-  defineProps<{ src: string; loading?: 'lazy' | 'eager' }>(),
+  defineProps<{ src?: string; loading?: 'lazy' | 'eager' }>(),
   {
+    src: '',
     loading: 'lazy',
   }
 );

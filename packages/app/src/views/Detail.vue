@@ -76,11 +76,8 @@ feedStore.setFeedItemId(props.id);
 
 const { feedItem, feedItems } = storeToRefs(feedStore);
 
-console.log('Detail', feedItem);
-
 const onSlideChange = (swiper: typeof Swiper) => {
   const newFeedItem = feedItems.value[swiper.activeIndex];
-  console.log('nfi', newFeedItem);
   if (newFeedItem && newFeedItem.id) {
     const newId = newFeedItem.id;
     updateFeedItem(newId, {

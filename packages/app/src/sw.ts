@@ -1,5 +1,4 @@
 import { Capacitor } from '@capacitor/core';
-import { Http } from '@capacitor-community/http';
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import {
@@ -71,19 +70,7 @@ const imageRoute = new Route(
       }),
       {
         cachedResponseWillBeUsed: async (params) => {
-          const platform = Capacitor.getPlatform();
-          Logger.log(
-            'cachedResponseWillBeUsed',
-            params.cachedResponse,
-            platform
-          );
-
-          if (params.cachedResponse || platform === 'web') {
-            return params.cachedResponse;
-          } else {
-            const result = await Http.get({ url: params.request.url });
-            console.log(platform, result);
-          }
+          return params.cachedResponse;
         },
         requestWillFetch: async ({ request }) => {
           const url = new URL(request.url);
@@ -96,7 +83,7 @@ const imageRoute = new Route(
             { mode: 'cors' }
           );
 
-          Logger.log('requestWillFetch', request);
+          // Logger.log('requestWillFetch', request);
           return proxyRequest;
         },
       },
@@ -105,39 +92,3 @@ const imageRoute = new Route(
 );
 
 registerRoute(imageRoute);
-
-const getRequestInit = async (request: Request) => ({
-  method: request.method,
-  headers: request.headers,
-  body: ['GET', 'HEAD'].includes(request.method)
-    ? undefined
-    : await request.blob(),
-  referrer: request.referrer,
-  referrerPolicy: request.referrerPolicy,
-  mode: request.mode,
-  credentials: request.credentials,
-  cache: request.cache,
-  redirect: request.redirect,
-  integrity: request.integrity,
-});
-
-const addAcceptHeaderWhenNavigate = async (req: Request) => {
-  const headers = new Headers(req.headers);
-  headers.set(
-    'accept',
-    'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-  );
-  return new Request(req.url, { ...(await getRequestInit(req)), headers });
-};
-
-const HTMLStrategy = (): Strategy => {
-  class NetworkReplaceHost extends NetworkOnly {
-    async _handle(request: Request, handler: StrategyHandler) {
-      return super._handle(await addAcceptHeaderWhenNavigate(request), handler);
-    }
-  }
-
-  return new NetworkReplaceHost();
-};
-
-registerRoute(({ request }) => request.mode === 'navigate', HTMLStrategy());
