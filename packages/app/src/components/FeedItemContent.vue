@@ -19,10 +19,10 @@ onMounted(
   Logger.time(() => {
     if (content.value) {
       content.value.innerHTML = '';
-      const feedItemContent =
-        props.feedItem?.description &&
-        parseFeedContent(props.feedItem?.description);
-      feedItemContent && content.value.append(feedItemContent);
+      if (props.feedItem.description) {
+        const feedItemContent = parseFeedContent(props.feedItem.description);
+        feedItemContent && content.value.append(feedItemContent);
+      }
     }
   }, 'parseFeedContent')
 );

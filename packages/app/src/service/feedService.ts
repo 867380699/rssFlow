@@ -57,7 +57,8 @@ export const parseFeed = (feed: string, source: string): Feed => {
 export const parseFeedContent = (content: string) => {
   const vNode = createVNode(LazyImage, { src: '' });
   let imageCount = 0;
-  DOMPurify.addHook('beforeSanitizeElements', (node) => {
+  DOMPurify.removeAllHooks();
+  DOMPurify.addHook('afterSanitizeElements', (node) => {
     if (node.nodeName === 'P') {
       node.classList.add('mb-4');
     }
