@@ -96,6 +96,11 @@ export const loadFeedItem = async (id: number | string) => {
   return feedItem;
 };
 
+export const loadFeedItems = async (feedId: number | string) => {
+  const feedItem = await feedDB.feedItems.where({ feedId }).toArray();
+  return ref(feedItem);
+};
+
 export const updateFeedItem = async (
   id: number,
   changes: Partial<FeedItem>

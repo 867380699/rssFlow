@@ -4,7 +4,7 @@
     :items="items"
     :item-size="68"
     key-field="id"
-    :buffer="40"
+    :buffer="20"
   >
     <template #default="{ item, index }">
       <ion-item-sliding>

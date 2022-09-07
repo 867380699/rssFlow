@@ -3,6 +3,8 @@ import { useObservable } from '@vueuse/rxjs';
 import { liveQuery } from 'dexie';
 import { Ref } from 'vue';
 
+import { FeedItemFilter } from '@/enums';
+
 import { feedDB } from '../service/dbService';
 import { Feed, FeedItem } from '../types';
 
@@ -16,7 +18,7 @@ export const useAllFeeds = () => {
 };
 
 export const useAllFeedItems = () => {
-  const feedItems = useObservable<FeedItem[]>(
+  const feedItems = useObservable<FeedItem[], FeedItem[]>(
     liveQuery(() => feedDB.feedItems.toArray()) as any
   );
   return {
@@ -49,29 +51,27 @@ export const useFeedItemCounts = () => {
 };
 
 export const useFeedItems = (
-  feedId?: number,
-  isUnRead?: boolean,
-  isFavorite?: boolean
+  feedItems: Ref<FeedItem[]>,
+  feedId: Ref<number> = ref(0),
+  feedItemFilter: Ref<FeedItemFilter> = ref(FeedItemFilter.UNREAD)
 ) => {
-  const feedItems = useObservable<FeedItem[]>(
-    liveQuery(() =>
-      feedDB.feedItems
-        .toCollection()
-        .filter((feedItem) => {
-          return !feedId || feedItem.feedId === feedId;
-        })
-        .filter((feedItem) => {
-          return isUnRead ? feedItem.isRead === 0 : true;
-        })
-        .filter((feedItem) => {
-          return isFavorite ? feedItem.isFavorite === 1 : true;
-        })
-        .toArray()
-    ) as any
-  );
-  return {
-    feedItems,
-  };
+  const now = new Date().getTime();
+  return feedItems.value
+    .filter((item) => {
+      if (feedId.value && item.feedId !== feedId.value) return false;
+      switch (feedItemFilter.value) {
+        case FeedItemFilter.UNREAD:
+          return !item.isRead || (item.readTime || 0) + 1000 * 60 * 2 > now;
+        case FeedItemFilter.FAVORITE:
+          return item.isFavorite;
+        default:
+          return true;
+      }
+    })
+    .map((item) => ({
+      ...item,
+      image: item.image && `/img/${item.image}`,
+    }));
 };
 
 export const useFeedItem = (id: Ref<number>) => {
