@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { useAllFeedItems, useFeedItem } from '@/composables';
+import { useAllFeedItems, useFeedItem, useFeedItems } from '@/composables';
 import { FeedItemFilter } from '@/enums';
 
 export const useFeedStore = defineStore('feed', () => {
@@ -20,24 +20,8 @@ export const useFeedStore = defineStore('feed', () => {
   const { feedItems: allFeedItems } = useAllFeedItems();
 
   const feedItems = computed(() => {
-    const now = new Date().getTime();
     if (allFeedItems.value) {
-      return allFeedItems.value
-        .filter((item) => {
-          if (feedId.value && item.feedId !== feedId.value) return false;
-          switch (feedItemFilter.value) {
-            case FeedItemFilter.UNREAD:
-              return !item.isRead || (item.readTime || 0) + 1000 * 60 * 2 > now;
-            case FeedItemFilter.FAVORITE:
-              return item.isFavorite;
-            default:
-              return true;
-          }
-        })
-        .map((item) => ({
-          ...item,
-          image: item.image && `/img/${item.image}`,
-        }));
+      return useFeedItems(allFeedItems, feedId, feedItemFilter);
     } else {
       return [];
     }

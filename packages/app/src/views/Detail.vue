@@ -61,20 +61,29 @@ import { Swiper as SwiperClass, Virtual } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
 import FeedItemContent from '@/components/FeedItemContent.vue';
+import { useFeedItems } from '@/composables';
 import { useFeedStore } from '@/store';
 import { FeedItem } from '@/types';
 
-import { updateFeedItem } from '../service/dbService';
+import { loadFeedItems, updateFeedItem } from '../service/dbService';
 
-const props = withDefaults(defineProps<{ id: number; index?: number }>(), {
-  index: 0,
-});
+const props = defineProps<{ id: number }>();
 
 const feedStore = useFeedStore();
 
 feedStore.setFeedItemId(props.id);
 
-const { feedItem, feedItems } = storeToRefs(feedStore);
+const { feedId, feedItem, feedItemFilter } = storeToRefs(feedStore);
+
+const allFeedItems = await loadFeedItems(feedId.value);
+
+const feedItems = computed(() =>
+  useFeedItems(allFeedItems, feedId, feedItemFilter)
+);
+
+const index = computed(() =>
+  feedItems.value.findIndex((feed) => feed.id === props.id)
+);
 
 const onSlideChange = (swiper: SwiperClass) => {
   const newFeedItem = feedItems.value[swiper.activeIndex];

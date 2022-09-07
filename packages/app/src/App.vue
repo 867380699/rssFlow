@@ -4,7 +4,7 @@
     <ion-menu menu-id="menu" side="start" content-id="main-content">
       <Aside @item-selected="onItemSelected" />
     </ion-menu>
-    <ion-router-outlet />
+    <suspense><ion-router-outlet /></suspense>
   </ion-app>
 </template>
 <script lang="ts" setup>
