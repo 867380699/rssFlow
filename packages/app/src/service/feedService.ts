@@ -21,7 +21,7 @@ const parseFeedItems = (nodeTree: Document): Array<FeedItem> => {
     items.push({
       title: node.querySelector('title')?.textContent || '',
       image,
-      shortDescription: contentDocument.body.textContent || '',
+      shortDescription: (contentDocument.body.textContent || '').trim(),
       description,
       link:
         node.querySelector('link')?.textContent?.replace(/^https?/, 'https') ||

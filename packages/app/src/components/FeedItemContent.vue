@@ -1,5 +1,5 @@
 <template>
-  <div ref="content" class="p-4" />
+  <div ref="content" class="p-2" />
 </template>
 
 <script setup lang="ts">

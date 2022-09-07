@@ -2,14 +2,14 @@
   <img
     v-if="imageSrc"
     ref="img"
-    class="flow-lazy-image bg-slate-400 rounded-sm my-1"
+    class="flow-lazy-image bg-slate-400 rounded-sm"
     :style="minStyle"
     :loading="loading"
     :src="imageSrc"
     :onload="onLoad"
     :onerror="onError"
   />
-  <div v-else class="bg-slate-400 rounded-sm my-1 h-full"></div>
+  <div v-else class="bg-slate-400 rounded-sm h-full"></div>
 </template>
 
 <script setup lang="ts">

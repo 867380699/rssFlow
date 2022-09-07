@@ -14,9 +14,9 @@
         :modules="[Virtual]"
         :initial-slide="index"
         :slides-per-view="1"
-        :space-between="50"
+        :space-between="24"
         :virtual="{ enabled: true }"
-        @slideChange="onSlideChange"
+        @slide-change="onSlideChange"
       >
         <swiper-slide
           v-for="feed in feedItems"
@@ -24,7 +24,7 @@
           :virtual-index="feed.id"
         >
           <div class="content-container overflow-auto h-full">
-            <h1 class="p-4 font-bold">{{ feed?.title }}</h1>
+            <h1 class="p-2 font-bold">{{ feed?.title }}</h1>
             <FeedItemContent :feed-item="feed"></FeedItemContent>
           </div>
         </swiper-slide>
@@ -57,7 +57,7 @@ import {
   starOutline,
 } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
-import { Virtual } from 'swiper';
+import { Swiper as SwiperClass, Virtual } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
 import FeedItemContent from '@/components/FeedItemContent.vue';
@@ -76,7 +76,7 @@ feedStore.setFeedItemId(props.id);
 
 const { feedItem, feedItems } = storeToRefs(feedStore);
 
-const onSlideChange = (swiper: typeof Swiper) => {
+const onSlideChange = (swiper: SwiperClass) => {
   const newFeedItem = feedItems.value[swiper.activeIndex];
   if (newFeedItem && newFeedItem.id) {
     const newId = newFeedItem.id;
