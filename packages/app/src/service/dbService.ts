@@ -102,3 +102,7 @@ export const updateFeedItem = async (
 ) => {
   await feedDB.feedItems.update(id, changes);
 };
+
+export const deleteFeedItem = async (id: number) => {
+  await feedDB.feedItems.delete(id);
+};

@@ -50,6 +50,7 @@ import router from '@/router';
 import { deleteFeed, updateFeed } from '@/service/dbService';
 import { useFeedStore } from '@/store';
 import { Feed } from '@/types';
+import { useAlertConfirm } from '@/utils/alert';
 
 const emit = defineEmits(['itemSelected']);
 
@@ -108,25 +109,15 @@ const handleFeedAction = (action: Action, feed: Feed) => {
   }
 };
 
+const { alertConfirm } = useAlertConfirm();
+
 const alertDeleteFeed = async (feed: Feed) => {
-  const alert = await alertController.create({
+  await alertConfirm({
     message: t('confirmDeleteFeed', { name: feed.title }),
-    buttons: [
-      {
-        text: t('cancel'),
-        role: 'cancel',
-      },
-      {
-        text: t('confirm'),
-        role: 'confirm',
-        handler: async () => {
-          await deleteFeed(Number(feed.id));
-          return true;
-        },
-      },
-    ],
+    onConfirm: async () => {
+      await deleteFeed(Number(feed.id));
+    },
   });
-  await alert.present();
 };
 
 const alertEditFeed = async (feed: Feed) => {
