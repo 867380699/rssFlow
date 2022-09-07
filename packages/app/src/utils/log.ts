@@ -35,6 +35,20 @@ export const error = (...msg: any[]) => {
   console.error(`%c${TAG}`, getStyles('error'), ...msg);
 };
 
-const Logger = { log, debug, warn, error };
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function time(fn: Function, name?: string) {
+  const t0 = performance.now();
+  return function (...args: any[]) {
+    const result = fn.apply(this, args);
+    console.log(
+      `%c${fn.name || name}:`,
+      getStyles('log'),
+      `${(performance.now() - t0).toFixed(2)}ms`
+    );
+    return result;
+  };
+}
+
+const Logger = { log, debug, warn, error, time };
 
 export default Logger;

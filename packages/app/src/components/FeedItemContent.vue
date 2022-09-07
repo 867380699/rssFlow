@@ -7,6 +7,7 @@ import { ComponentPublicInstance } from 'vue';
 
 import { parseFeedContent } from '@/service/feedService';
 import { FeedItem } from '@/types';
+import Logger from '@/utils/log';
 
 const props = defineProps<{
   feedItem: FeedItem;
@@ -14,15 +15,15 @@ const props = defineProps<{
 
 const content = ref<ComponentPublicInstance<HTMLElement> | null>(null);
 
-onMounted(() => {
-  if (content.value) {
-    const t0 = window.performance.now();
-    content.value.innerHTML = '';
-    const feedItemContent =
-      props.feedItem?.description &&
-      parseFeedContent(props.feedItem?.description);
-    feedItemContent && content.value.append(feedItemContent);
-    console.log('fic add', props.feedItem.id, window.performance.now() - t0);
-  }
-});
+onMounted(
+  Logger.time(() => {
+    if (content.value) {
+      content.value.innerHTML = '';
+      const feedItemContent =
+        props.feedItem?.description &&
+        parseFeedContent(props.feedItem?.description);
+      feedItemContent && content.value.append(feedItemContent);
+    }
+  }, 'parseFeedContent')
+);
 </script>
