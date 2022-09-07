@@ -16,10 +16,15 @@
 import { ComponentPublicInstance } from 'vue';
 
 const props = withDefaults(
-  defineProps<{ src?: string; loading?: 'lazy' | 'eager' }>(),
+  defineProps<{
+    src?: string;
+    loading?: 'lazy' | 'eager';
+    minHeight?: string;
+  }>(),
   {
     src: '',
     loading: 'lazy',
+    minHeight: '60px',
   }
 );
 
@@ -27,7 +32,7 @@ const imageSrc = useVModel(props, 'src');
 
 const img = ref<ComponentPublicInstance<HTMLImageElement> | null>(null);
 
-const minStyle = ref<Record<string, string>>({ 'min-height': '40px' });
+const minStyle = ref<Record<string, string>>({ 'min-height': props.minHeight });
 
 const onLoad = () => {
   minStyle.value = {};

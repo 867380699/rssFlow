@@ -71,6 +71,7 @@ export const parseFeedContent = (content: string) => {
       const picNode = cloneVNode(vNode, {
         src: (node as HTMLImageElement).src,
         loading: imageCount++ < 2 ? 'eager' : 'lazy',
+        minHeight: '180px',
       });
       render(picNode, div);
       node.replaceWith(div.children[0]);
