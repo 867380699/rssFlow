@@ -1,4 +1,4 @@
-import { Capacitor } from '@capacitor/core';
+import { HttpResponse } from '@capacitor-community/http';
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import {
@@ -7,14 +7,7 @@ import {
   precacheAndRoute,
 } from 'workbox-precaching';
 import { NavigationRoute, registerRoute, Route } from 'workbox-routing';
-import {
-  CacheFirst,
-  NetworkOnly,
-  Strategy,
-  StrategyHandler,
-} from 'workbox-strategies';
-
-import Logger from './utils/log';
+import { CacheFirst } from 'workbox-strategies';
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -36,23 +29,51 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   console.log('Service worker activated', event);
 });
-self.addEventListener('fetch', (event) => {
-  if (event.request.destination === 'image') {
-    console.log('img', event.request.url);
-  }
-});
 
 const SW_VERSION = '1.0.2';
 
-const platform = Capacitor.getPlatform();
-
-Logger.log(SW_VERSION, platform);
+let main: MessagePort;
+let platform = 'web';
 
 self.addEventListener('message', (event) => {
-  if (event.data.type === 'GET_VERSION') {
+  if (event.data.type === 'INIT') {
+    main = event.ports[0];
+    platform = event.data.platform;
     event.ports[0].postMessage(SW_VERSION);
   }
 });
+
+const nativeRequest = (url: string): Promise<HttpResponse> => {
+  return new Promise((resolve) => {
+    const messageChannel = new MessageChannel();
+    messageChannel.port1.onmessage = (event) => {
+      resolve(event.data);
+    };
+    main.postMessage({ type: 'HTTP', url }, [messageChannel.port2]);
+  });
+};
+
+const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
+  const byteCharacters = atob(b64Data);
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const blob = new Blob(byteArrays, { type: contentType });
+  return blob;
+};
+
+const cacheName = 'images';
 
 const imageRoute = new Route(
   ({ request }) => {
@@ -63,13 +84,29 @@ const imageRoute = new Route(
     );
   },
   new CacheFirst({
-    cacheName: 'images',
+    cacheName,
     plugins: [
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24 * 1,
       }),
       {
         cachedResponseWillBeUsed: async (params) => {
+          if (!params.cachedResponse && main && platform !== 'web') {
+            const nativeResp = await nativeRequest(params.request.url);
+            const blob = b64toBlob(
+              nativeResp.data,
+              nativeResp.headers['Content-Type']
+            );
+
+            const resp = new Response(blob, {
+              status: nativeResp.status,
+              headers: nativeResp.headers,
+            });
+            const cache = await caches.open(cacheName);
+            await cache.put(params.request, resp);
+            const cacheResp = await cache.match(params.request.url);
+            return cacheResp;
+          }
           return params.cachedResponse;
         },
         requestWillFetch: async ({ request }) => {
@@ -82,8 +119,6 @@ const imageRoute = new Route(
             )}`,
             { mode: 'cors' }
           );
-
-          // Logger.log('requestWillFetch', request);
           return proxyRequest;
         },
       },

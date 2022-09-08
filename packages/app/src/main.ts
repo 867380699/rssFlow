@@ -12,8 +12,10 @@ import './theme/variables.css';
 import 'swiper/css';
 
 import { Capacitor } from '@capacitor/core';
+import { Http } from '@capacitor-community/http';
 import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
+import { useRegisterSW } from 'virtual:pwa-register/vue';
 import { createApp } from 'vue';
 import { createI18n } from 'vue-i18n';
 import VueVirtualScroller from 'vue-virtual-scroller';
@@ -43,3 +45,50 @@ router.isReady().then(() => {
 });
 
 Logger.log('Platform', Capacitor.getPlatform());
+
+const initChannel = (
+  sw: ServiceWorker,
+  data: any,
+  onmessage: (ev: MessageEvent) => any
+) => {
+  return new Promise((resolve) => {
+    const messageChannel = new MessageChannel();
+    messageChannel.port1.onmessage = (event) => {
+      messageChannel.port1.onmessage = onmessage;
+      resolve(event.data);
+    };
+    sw.postMessage(data, [messageChannel.port2]);
+  });
+};
+
+useRegisterSW({
+  immediate: true,
+  async onRegistered(r) {
+    if (r && r.active) {
+      await initChannel(
+        r.active,
+        {
+          type: 'INIT',
+          platform: Capacitor.getPlatform(),
+        },
+        (event) => {
+          if (event.data.type === 'HTTP') {
+            const url = event.data.url;
+            if (url) {
+              Http.get({ url, responseType: 'arraybuffer' })
+                .then((data) => {
+                  console.log(data);
+                  event.ports[0].postMessage(data);
+                })
+                .catch((e) => {
+                  console.log(e);
+                });
+            }
+          }
+        }
+      );
+    }
+
+    Logger.log(`SW Registered: [active]:${r?.active}, [waiting]:${r?.waiting}`);
+  },
+});

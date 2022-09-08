@@ -81,8 +81,6 @@ export const useFeedItem = (id: Ref<number>) => {
     itemStore.feedItem = useObservable<FeedItem>(
       liveQuery(() => feedDB.feedItems.get(id.value)) as any
     );
-
-    console.log('useFeedItem', id.value, itemStore);
   });
   return itemStore;
 };
