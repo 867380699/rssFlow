@@ -82,6 +82,7 @@ useRegisterSW({
                 })
                 .catch((e) => {
                   console.log(e);
+                  event.ports[0].postMessage({});
                 });
             }
           }

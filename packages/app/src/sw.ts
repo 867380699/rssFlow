@@ -93,19 +93,21 @@ const imageRoute = new Route(
         cachedResponseWillBeUsed: async (params) => {
           if (!params.cachedResponse && main && platform !== 'web') {
             const nativeResp = await nativeRequest(params.request.url);
-            const blob = b64toBlob(
-              nativeResp.data,
-              nativeResp.headers['Content-Type']
-            );
+            if (nativeResp.data) {
+              const blob = b64toBlob(
+                nativeResp.data,
+                nativeResp.headers['Content-Type']
+              );
 
-            const resp = new Response(blob, {
-              status: nativeResp.status,
-              headers: nativeResp.headers,
-            });
-            const cache = await caches.open(cacheName);
-            await cache.put(params.request, resp);
-            const cacheResp = await cache.match(params.request.url);
-            return cacheResp;
+              const resp = new Response(blob, {
+                status: nativeResp.status,
+                headers: nativeResp.headers,
+              });
+              const cache = await caches.open(cacheName);
+              await cache.put(params.request, resp);
+              const cacheResp = await cache.match(params.request.url);
+              return cacheResp;
+            }
           }
           return params.cachedResponse;
         },
