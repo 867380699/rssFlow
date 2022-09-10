@@ -1,10 +1,12 @@
 <template>
   <ion-app>
-    <!-- side menu -->
-    <ion-menu menu-id="menu" side="start" content-id="main-content">
-      <Aside @item-selected="onItemSelected" />
-    </ion-menu>
-    <suspense><ion-router-outlet /></suspense>
+    <ion-split-pane content-id="main">
+      <!-- side menu -->
+      <ion-menu menu-id="menu" side="start" content-id="main">
+        <Aside @item-selected="onItemSelected" />
+      </ion-menu>
+      <suspense><ion-router-outlet id="main" /></suspense>
+    </ion-split-pane>
   </ion-app>
 </template>
 <script lang="ts" setup>

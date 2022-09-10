@@ -40,6 +40,7 @@ declare module '@vue/runtime-core' {
     IonRouterOutlet: typeof import('@ionic/vue')['IonRouterOutlet']
     IonSegment: typeof import('@ionic/vue')['IonSegment']
     IonSegmentButton: typeof import('@ionic/vue')['IonSegmentButton']
+    IonSplitPane: typeof import('@ionic/vue')['IonSplitPane']
     IonThumbnail: typeof import('@ionic/vue')['IonThumbnail']
     IonTitle: typeof import('@ionic/vue')['IonTitle']
     IonToolbar: typeof import('@ionic/vue')['IonToolbar']
