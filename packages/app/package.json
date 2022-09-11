@@ -18,6 +18,7 @@
     "@vueuse/core": "^9.1.1",
     "@vueuse/rxjs": "^8.5.0",
     "axios": "^0.26.1",
+    "date-fns": "^2.29.2",
     "dexie": "^3.2.2",
     "dompurify": "^2.3.6",
     "ionicons": "^6.0.1",

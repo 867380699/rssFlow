@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import { VNode } from 'vue';
 
 import LazyImage from '../components/LazyImage.vue';
 import { Feed, FeedItem } from '../types';
@@ -11,12 +12,12 @@ const parseFeedItems = (nodeTree: Document): Array<FeedItem> => {
   const itemNodes = nodeTree.querySelectorAll('rss > channel > item');
   const items: Array<FeedItem> = [];
   itemNodes.forEach((node) => {
-    const description = DOMPurify.sanitize(
-      node.querySelector('description')?.textContent || ''
-    );
+    const description = node.querySelector('description')?.textContent || '';
 
     const contentDocument = parser.parseFromString(description, 'text/html');
     const image = contentDocument.querySelector('img')?.src;
+    const pubDate = node.querySelector('pubDate')?.textContent;
+
     items.push({
       title: node.querySelector('title')?.textContent || '',
       image,
@@ -25,6 +26,7 @@ const parseFeedItems = (nodeTree: Document): Array<FeedItem> => {
       link:
         node.querySelector('link')?.textContent?.replace(/^https?/, 'https') ||
         '',
+      pubDate: (pubDate ? new Date(pubDate) : new Date()).getTime(),
     });
   });
   return items;
@@ -59,10 +61,13 @@ export const parseFeedContent = (content: string) => {
     if (node.nodeName === 'BR') {
       node.remove();
     }
-    if (node.nodeName === 'P' && !node.textContent) {
+    if (node.nodeName === 'P' && !node.textContent && !node.childNodes.length) {
       node.remove();
     }
-    if (node.nodeType === Node.TEXT_NODE && /^ +$/.test(node.textContent)) {
+    if (
+      node.nodeType === Node.TEXT_NODE &&
+      /^ +$/.test(node.textContent || '')
+    ) {
       node.remove();
     }
   });

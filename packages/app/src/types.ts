@@ -17,6 +17,7 @@ export type FeedItem = {
   description?: string;
   image?: string;
   readTime?: number;
+  pubDate?: number;
   link: string;
 } & ItemStatus;
 

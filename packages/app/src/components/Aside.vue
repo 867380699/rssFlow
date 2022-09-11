@@ -129,7 +129,7 @@ const alertEditFeed = async (feed: Feed) => {
         value: feed.title,
       },
       {
-        value: feed.link,
+        value: feed.source,
         disabled: true,
       },
     ],

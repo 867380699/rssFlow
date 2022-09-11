@@ -1,12 +1,12 @@
 <template>
   <figure class="h-full rounded-sm overflow-hidden">
     <img
-      v-if="imageSrc"
+      v-if="!isError"
       ref="img"
       class="bg-slate-400 h-full w-full object-cover"
       :style="minStyle"
       :loading="loading"
-      :src="imageSrc"
+      :src="src"
       :onload="onLoad"
       :onerror="onError"
     />
@@ -30,7 +30,7 @@ const props = withDefaults(
   }
 );
 
-const imageSrc = useVModel(props, 'src');
+const isError = ref(false);
 
 const img = ref<ComponentPublicInstance<HTMLImageElement> | null>(null);
 
@@ -41,6 +41,6 @@ const onLoad = () => {
 };
 
 const onError = () => {
-  imageSrc.value = '';
+  isError.value = true;
 };
 </script>

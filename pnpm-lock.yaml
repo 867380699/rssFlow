@@ -37,6 +37,7 @@ importers:
       '@vueuse/rxjs': ^8.5.0
       autoprefixer: ^10.4.7
       axios: ^0.26.1
+      date-fns: ^2.29.2
       dexie: ^3.2.2
       dompurify: ^2.3.6
       eslint: ^8.15.0
@@ -84,6 +85,7 @@ importers:
       '@vueuse/core': 9.1.1_vue@3.2.37
       '@vueuse/rxjs': 8.9.4_rxjs@7.5.6+vue@3.2.37
       axios: 0.26.1
+      date-fns: 2.29.2
       dexie: 3.2.2
       dompurify: 2.4.0
       ionicons: 6.0.3
@@ -3054,6 +3056,11 @@ packages:
   /data-uri-to-buffer/4.0.0:
     resolution: {integrity: sha512-Vr3mLBA8qWmcuschSLAOogKgQ/Jwxulv3RNE4FXnYWRGujzrRWQI4m12fQqRkwX06C0KanhLr4hK+GydchZsaA==}
     engines: {node: '>= 12'}
+    dev: false
+
+  /date-fns/2.29.2:
+    resolution: {integrity: sha512-0VNbwmWJDS/G3ySwFSJA3ayhbURMTJLtwM2DTxf9CWondCnh6DTNlO9JgRSq6ibf4eD0lfMJNBxUdEAHHix+bA==}
+    engines: {node: '>=0.11'}
     dev: false
 
   /debug/2.6.9:
