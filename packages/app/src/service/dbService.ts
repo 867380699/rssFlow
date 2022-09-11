@@ -97,7 +97,12 @@ export const loadFeedItem = async (id: number | string) => {
 };
 
 export const loadFeedItems = async (feedId: number | string) => {
-  const feedItem = await feedDB.feedItems.where({ feedId }).toArray();
+  let feedItem;
+  if (feedId) {
+    feedItem = await feedDB.feedItems.where({ feedId }).toArray();
+  } else {
+    feedItem = await feedDB.feedItems.toArray();
+  }
   return ref(feedItem);
 };
 
