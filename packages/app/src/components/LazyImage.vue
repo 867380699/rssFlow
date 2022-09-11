@@ -1,9 +1,9 @@
 <template>
-  <figure class="h-full bg-slate-400 rounded-sm">
+  <figure class="h-full rounded-sm overflow-hidden">
     <img
       v-if="imageSrc"
       ref="img"
-      class="h-full w-full"
+      class="bg-slate-400 h-full w-full object-cover"
       :style="minStyle"
       :loading="loading"
       :src="imageSrc"

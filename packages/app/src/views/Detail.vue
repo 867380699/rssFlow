@@ -9,7 +9,6 @@
     </ion-header>
     <ion-content :fullscreen="false">
       <swiper
-        :grab-cursor="true"
         class="h-full"
         :modules="[Virtual]"
         :initial-slide="index"
@@ -120,8 +119,64 @@ const openLink = (feedItem?: FeedItem) => {
   }
 };
 </script>
-<style>
+<style lang="less" scoped>
 .content-container {
   background-color: var(--ion-background-color, #fff);
+
+  & > h1 {
+    max-width: 800px;
+    margin: auto;
+  }
+
+  :deep(.feed-content-container) {
+    max-width: 800px;
+    margin: auto;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      @apply mb-2 font-bold;
+    }
+
+    h1 {
+      @apply text-lg;
+    }
+    p {
+      @apply mb-4;
+    }
+    blockquote {
+      @apply mb-4 pl-2 border-l-2;
+    }
+    span,
+    strong {
+      @apply mx-1;
+    }
+    a {
+      @apply text-slate-500 mx-2;
+    }
+    ol,
+    ul {
+      @apply mb-4 list-disc ml-4;
+
+      & > * {
+        @apply mr-2;
+      }
+    }
+    figure {
+      @apply mb-2;
+      figcaption {
+        @apply text-sm text-center opacity-70;
+      }
+    }
+    small {
+      @apply opacity-70;
+    }
+    hr {
+      @apply opacity-70 mr-4;
+    }
+  }
 }
 </style>

@@ -1,5 +1,4 @@
 import DOMPurify from 'dompurify';
-import { cloneVNode, createVNode, render, VNode } from 'vue';
 
 import LazyImage from '../components/LazyImage.vue';
 import { Feed, FeedItem } from '../types';
@@ -55,6 +54,18 @@ export const parseFeed = (feed: string, source: string): Feed => {
 };
 
 export const parseFeedContent = (content: string) => {
+  DOMPurify.removeAllHooks();
+  DOMPurify.addHook('afterSanitizeElements', (node) => {
+    if (node.nodeName === 'BR') {
+      node.remove();
+    }
+    if (node.nodeName === 'P' && !node.textContent) {
+      node.remove();
+    }
+    if (node.nodeType === Node.TEXT_NODE && /^ +$/.test(node.textContent)) {
+      node.remove();
+    }
+  });
   const result = DOMPurify.sanitize(content);
   const domObj = parser.parseFromString(result, 'text/html');
   const buildScope = { imageCount: 0 };
@@ -68,18 +79,11 @@ const buildVNode = (e: HTMLElement, scope: any) => {
   const attrNames = e.getAttributeNames();
   const props: any = {};
   for (const attrName of attrNames) {
-    props[attrName] = e.getAttribute(attrName);
+    if (['class'].indexOf(attrName) === -1) {
+      props[attrName] = e.getAttribute(attrName);
+    }
   }
-  let component: any = e.tagName.toLocaleLowerCase();
-  if (e.tagName === 'BODY') {
-    component = 'div';
-  } else if (e.tagName === 'IMG') {
-    component = LazyImage;
-    props['loading'] = scope.imageCount < 2 ? 'eager' : 'lazy';
-    props['minHeight'] = '180px';
-    scope.imageCount += 1;
-  } else {
-  }
+
   const children: (VNode | string)[] = [];
   if (e.childNodes.length) {
     e.childNodes.forEach((node: Node) => {
@@ -91,6 +95,26 @@ const buildVNode = (e: HTMLElement, scope: any) => {
     });
   }
 
+  let component: any = e.tagName.toLocaleLowerCase();
+
+  if (e.tagName === 'BODY') {
+    component = 'div';
+    props['class'] = 'feed-content-container';
+  } else if (e.tagName === 'IMG') {
+    component = LazyImage;
+    props['loading'] = scope.imageCount < 2 ? 'eager' : 'lazy';
+    props['minHeight'] = '180px';
+    scope.imageCount += 1;
+  } else if (e.tagName === 'TABLE') {
+    return h(
+      'div',
+      {
+        style: 'overflow: scroll; max-width: 100%;',
+        class: 'ignoreTouchClass',
+      },
+      [h(component, props, children.length ? children : undefined)]
+    );
+  }
   return h(component, props, children.length ? children : undefined);
 };
 
