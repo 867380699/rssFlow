@@ -1,6 +1,10 @@
-  ion-thumbnail {
-    width: 60px;
-    height: 60px;
-    margin-right: 8px;
-    --border-radius: 8px;
-  }
+ion-thumbnail {
+  width: 60px;
+  height: 60px;
+  margin-right: 8px;
+  --border-radius: 8px;
+}
+
+ion-header.header-md::after {
+  content: none
+}

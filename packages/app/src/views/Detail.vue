@@ -1,15 +1,26 @@
 <template>
   <ion-page>
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar
+        ref="toolbar"
+        :style="topToolbarStyle"
+        class="transition-all"
+      >
         <ion-buttons slot="start">
           <ion-back-button text="" />
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
-    <ion-content :fullscreen="false">
+    <ion-content
+      :fullscreen="true"
+      :scroll-y="false"
+      :style="{
+        '--padding-top': `-${toolbarHeight}px`,
+        '--padding-bottom': `-${toolbarHeight}px`,
+      }"
+    >
       <swiper
-        class="h-full"
+        class="h-full overflow-auto"
         :modules="[Virtual]"
         :initial-slide="index"
         :slides-per-view="1"
@@ -22,15 +33,16 @@
           :key="feed.id"
           :virtual-index="feed.id"
         >
-          <div class="content-container overflow-auto h-full">
-            <h1 class="p-2 font-bold">{{ feed?.title }}</h1>
-            <FeedItemContent :feed-item="feed"></FeedItemContent>
-          </div>
+          <FeedItemContent
+            :ref="`feedItemContent-${feed.id}`"
+            :feed-item="feed"
+            class="content-container overflow-auto h-full py-11"
+          ></FeedItemContent>
         </swiper-slide>
       </swiper>
     </ion-content>
     <ion-footer>
-      <ion-toolbar>
+      <ion-toolbar :style="bottomToolbarStyle" class="transition-all">
         <div class="flex justify-around">
           <ion-icon :icon="openOutline" @click="openLink(feedItem)" />
           <ion-icon
@@ -48,6 +60,7 @@
 </template>
 
 <script lang="ts" setup>
+import { from } from '@vueuse/rxjs';
 import {
   ellipse,
   ellipseOutline,
@@ -56,11 +69,14 @@ import {
   starOutline,
 } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
+import { bufferCount, map, throttleTime } from 'rxjs';
 import { Swiper as SwiperClass, Virtual } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+import { ComponentPublicInstance } from 'vue';
 
 import FeedItemContent from '@/components/FeedItemContent.vue';
 import { useFeedItems } from '@/composables';
+import { scrollState } from '@/composables/scroll';
 import { useFeedStore } from '@/store';
 import { FeedItem } from '@/types';
 
@@ -83,6 +99,48 @@ const feedItems = computed(() =>
 const index = computed(() =>
   feedItems.value.findIndex((feed) => feed.id === props.id)
 );
+
+const currentScrollState = computed(
+  () => scrollState[`detail-${feedItem.value?.id}`] || {}
+);
+
+const showToolbar = ref(true);
+
+const toolbarHeight = ref(44);
+
+const toolbar = ref<ComponentPublicInstance | null>(null);
+
+onMounted(() => {
+  setTimeout(() => {
+    toolbarHeight.value = toolbar.value?.$el.clientHeight;
+  });
+});
+
+from(currentScrollState, { deep: true })
+  .pipe(
+    map((e) => e.y),
+    throttleTime(50),
+    bufferCount(2)
+  )
+  .subscribe(([first, last]) => {
+    // console.log(first - last);
+    const result = first - last;
+    if (Number.isNaN(result)) {
+      showToolbar.value = true;
+    } else if (Math.abs(first - last) > toolbarHeight.value) {
+      showToolbar.value = first - last > toolbarHeight.value;
+    }
+  });
+
+const topToolbarStyle = computed(() => ({
+  opacity: `${showToolbar.value ? 1 : 0}`,
+  top: `${showToolbar.value ? 0 : -toolbarHeight.value}px`,
+}));
+
+const bottomToolbarStyle = computed(() => ({
+  opacity: `${showToolbar.value ? 1 : 0}`,
+  bottom: `${showToolbar.value ? 0 : -toolbarHeight.value}px`,
+}));
 
 const onSlideChange = (swiper: SwiperClass) => {
   const newFeedItem = feedItems.value[swiper.activeIndex];
