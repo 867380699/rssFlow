@@ -85,3 +85,12 @@ await cache.put(request, resp);
 
 const cacheResponse = await cache.match(url);
 ```
+
+# vue
+
+```js
+h('strong', 'Foo')
+// eq
+createVNode('strong', null, 'Foo')
+```
+

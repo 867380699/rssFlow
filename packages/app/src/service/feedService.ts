@@ -1,5 +1,5 @@
 import DOMPurify from 'dompurify';
-import { cloneVNode, createVNode, render } from 'vue';
+import { cloneVNode, createVNode, render, VNode } from 'vue';
 
 import LazyImage from '../components/LazyImage.vue';
 import { Feed, FeedItem } from '../types';
@@ -55,30 +55,42 @@ export const parseFeed = (feed: string, source: string): Feed => {
 };
 
 export const parseFeedContent = (content: string) => {
-  const vNode = createVNode(LazyImage, { src: '' });
-  let imageCount = 0;
-  DOMPurify.removeAllHooks();
-  DOMPurify.addHook('afterSanitizeElements', (node) => {
-    if (node.nodeName === 'P') {
-      node.classList.add('mb-4');
-    }
-    if (
-      node.nodeName === 'IMG' &&
-      !node.classList.contains('flow-lazy-image')
-    ) {
-      node.setAttribute('loading', 'lazy');
-      const div = document.createElement('div');
-      const picNode = cloneVNode(vNode, {
-        src: (node as HTMLImageElement).src,
-        loading: imageCount++ < 2 ? 'eager' : 'lazy',
-        minHeight: '180px',
-      });
-      render(picNode, div);
-      node.replaceWith(div.children[0]);
-    }
-  });
-  const result = DOMPurify.sanitize(content, { RETURN_DOM_FRAGMENT: true });
-  return result;
+  const result = DOMPurify.sanitize(content);
+  const domObj = parser.parseFromString(result, 'text/html');
+  const buildScope = { imageCount: 0 };
+  const vNode = buildVNode(domObj.body, buildScope);
+  console.log(buildScope);
+
+  return () => vNode;
+};
+
+const buildVNode = (e: HTMLElement, scope: any) => {
+  const attrNames = e.getAttributeNames();
+  const props: any = {};
+  for (const attrName of attrNames) {
+    props[attrName] = e.getAttribute(attrName);
+  }
+  let component: any = e.tagName.toLocaleLowerCase();
+  if (e.tagName === 'BODY') {
+    component = 'div';
+  } else if (e.tagName === 'IMG') {
+    component = LazyImage;
+    props['loading'] = scope.imageCount < 2 ? 'eager' : 'lazy';
+    scope.imageCount += 1;
+  } else {
+  }
+  const children: (VNode | string)[] = [];
+  if (e.childNodes.length) {
+    e.childNodes.forEach((node: Node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        children.push(buildVNode(node as HTMLElement, scope));
+      } else if (node.nodeType === Node.TEXT_NODE) {
+        children.push(node.textContent || '');
+      }
+    });
+  }
+
+  return h(component, props, children.length ? children : undefined);
 };
 
 let syncTimeout: ReturnType<typeof setTimeout>;
