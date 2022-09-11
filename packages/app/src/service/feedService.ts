@@ -76,6 +76,7 @@ const buildVNode = (e: HTMLElement, scope: any) => {
   } else if (e.tagName === 'IMG') {
     component = LazyImage;
     props['loading'] = scope.imageCount < 2 ? 'eager' : 'lazy';
+    props['minHeight'] = '180px';
     scope.imageCount += 1;
   } else {
   }

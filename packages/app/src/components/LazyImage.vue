@@ -1,15 +1,17 @@
 <template>
-  <img
-    v-if="imageSrc"
-    ref="img"
-    class="flow-lazy-image bg-slate-400 rounded-sm"
-    :style="minStyle"
-    :loading="loading"
-    :src="imageSrc"
-    :onload="onLoad"
-    :onerror="onError"
-  />
-  <div v-else class="bg-slate-400 rounded-sm h-full"></div>
+  <figure class="h-full bg-slate-400 rounded-sm">
+    <img
+      v-if="imageSrc"
+      ref="img"
+      class="h-full w-full"
+      :style="minStyle"
+      :loading="loading"
+      :src="imageSrc"
+      :onload="onLoad"
+      :onerror="onError"
+    />
+    <div v-else class="bg-slate-400 rounded-sm h-full"></div>
+  </figure>
 </template>
 
 <script setup lang="ts">
