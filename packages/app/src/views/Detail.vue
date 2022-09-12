@@ -36,8 +36,12 @@
           <FeedItemContent
             :ref="`feedItemContent-${feed.id}`"
             :feed-item="feed"
-            class="content-container overflow-auto h-full py-11"
-          ></FeedItemContent>
+            class="content-container overflow-auto h-full"
+            :style="{
+              'padding-top': `${toolbarHeight}px`,
+              'padding-bottom': `${toolbarHeight}px`,
+            }"
+          />
         </swiper-slide>
       </swiper>
     </ion-content>
@@ -113,6 +117,7 @@ const toolbar = ref<ComponentPublicInstance | null>(null);
 onMounted(() => {
   setTimeout(() => {
     toolbarHeight.value = toolbar.value?.$el.clientHeight;
+    console.log('toolbar height:', toolbarHeight.value);
   });
 });
 

@@ -6,5 +6,8 @@ ion-thumbnail {
 }
 
 ion-header.header-md::after {
-  content: none
+  content: none;
+}
+ion-footer.footer-md::before {
+  content: none;
 }
