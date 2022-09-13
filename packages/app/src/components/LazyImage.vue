@@ -1,22 +1,17 @@
 <template>
   <figure class="h-full rounded-sm overflow-hidden">
     <img
-      v-if="!isError"
-      ref="img"
       class="bg-slate-400 h-full w-full object-cover"
       :style="minStyle"
       :loading="loading"
-      :src="src"
+      :src="imageSrc"
       :onload="onLoad"
       :onerror="onError"
     />
-    <div v-else class="bg-slate-400 rounded-sm h-full"></div>
   </figure>
 </template>
 
 <script setup lang="ts">
-import { ComponentPublicInstance } from 'vue';
-
 const props = withDefaults(
   defineProps<{
     src?: string;
@@ -32,7 +27,11 @@ const props = withDefaults(
 
 const isError = ref(false);
 
-const img = ref<ComponentPublicInstance<HTMLImageElement> | null>(null);
+const imageSrc = computed(() =>
+  isError.value || !props.src
+    ? 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+    : props.src
+);
 
 const minStyle = ref<Record<string, string>>({ 'min-height': props.minHeight });
 
