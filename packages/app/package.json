@@ -6,7 +6,8 @@
     "build": "vite build",
     "serve": "$npm_execpath build;vite preview",
     "lint": "eslint --ext .ts,.vue --fix src",
-    "sync": "$npm_execpath build;cap sync"
+    "sync": "$npm_execpath build;cap sync",
+    "ios": "cap open ios"
   },
   "dependencies": {
     "@capacitor-community/http": "^1.4.1",

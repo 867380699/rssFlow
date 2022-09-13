@@ -1,0 +1,15 @@
+{
+	"appId": "com.ll.rssflow",
+	"appName": "RssFlow",
+	"webDir": "dist",
+	"bundledWebRuntime": false,
+	"server": {
+		"androidScheme": "http",
+		"hostname": "localhost",
+		"cleartext": true
+	},
+	"includePlugins": [
+		"@capacitor/app",
+		"@capacitor-community/http"
+	]
+}
