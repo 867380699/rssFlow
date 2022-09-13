@@ -1,6 +1,6 @@
 <template>
   <div ref="content" class="p-2">
-    <h1 class="p-2 font-bold">{{ feedItem?.title }}</h1>
+    <h1 class="font-bold text-xl">{{ feedItem?.title }}</h1>
     <FeedContentComponent />
   </div>
 </template>

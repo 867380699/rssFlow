@@ -1,6 +1,11 @@
 import { defineStore } from 'pinia';
 
-import { useAllFeedItems, useFeedItem, useFeedItems } from '@/composables';
+import {
+  useAllFeedItems,
+  useFeed,
+  useFeedItem,
+  useFeedItems,
+} from '@/composables';
 import { FeedItemFilter } from '@/enums';
 
 export const useFeedStore = defineStore('feed', () => {
@@ -10,6 +15,8 @@ export const useFeedStore = defineStore('feed', () => {
   const setFeedId = (id: number) => {
     feedId.value = id;
   };
+
+  const { feed } = toRefs(useFeed(feedId));
 
   const feedItemFilter = ref(FeedItemFilter.UNREAD);
 
@@ -35,6 +42,7 @@ export const useFeedStore = defineStore('feed', () => {
 
   return {
     feedId,
+    feed,
     setFeedId,
     feedItemFilter,
     setFeedItemFilter,

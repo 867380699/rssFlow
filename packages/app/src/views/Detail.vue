@@ -4,11 +4,20 @@
       <ion-toolbar
         ref="toolbar"
         :style="topToolbarStyle"
-        class="transition-all"
+        class="transition-all duration-200"
       >
         <ion-buttons slot="start">
           <ion-back-button text="" />
         </ion-buttons>
+        <div class="flex items-center">
+          <ion-thumbnail
+            class="rounded-full overflow-hidden"
+            style="--size: 36px"
+          >
+            <LazyImage :src="feed?.imageUrl" />
+          </ion-thumbnail>
+          {{ feed?.title }}
+        </div>
       </ion-toolbar>
     </ion-header>
     <ion-content
@@ -29,13 +38,13 @@
         @slide-change="onSlideChange"
       >
         <swiper-slide
-          v-for="feed in feedItems"
-          :key="feed.id"
-          :virtual-index="feed.id"
+          v-for="feedItem in feedItems"
+          :key="feedItem.id"
+          :virtual-index="feedItem.id"
         >
           <FeedItemContent
-            :ref="`feedItemContent-${feed.id}`"
-            :feed-item="feed"
+            :ref="`feedItemContent-${feedItem.id}`"
+            :feed-item="feedItem"
             class="content-container overflow-auto h-full"
             :style="{
               'padding-top': `${toolbarHeight}px`,
@@ -46,7 +55,10 @@
       </swiper>
     </ion-content>
     <ion-footer>
-      <ion-toolbar :style="bottomToolbarStyle" class="transition-all">
+      <ion-toolbar
+        :style="bottomToolbarStyle"
+        class="transition-all duration-200"
+      >
         <div class="flex justify-around">
           <ion-icon :icon="openOutline" @click="openLink(feedItem)" />
           <ion-icon
@@ -79,7 +91,8 @@ import { Swiper, SwiperSlide } from 'swiper/vue';
 import { ComponentPublicInstance } from 'vue';
 
 import FeedItemContent from '@/components/FeedItemContent.vue';
-import { useFeedItems } from '@/composables';
+import LazyImage from '@/components/LazyImage.vue';
+import { useFeed, useFeedItems } from '@/composables';
 import { scrollState } from '@/composables/scroll';
 import { useFeedStore } from '@/store';
 import { FeedItem } from '@/types';
@@ -93,6 +106,10 @@ const feedStore = useFeedStore();
 feedStore.setFeedItemId(props.id);
 
 const { feedId, feedItem, feedItemFilter } = storeToRefs(feedStore);
+
+const currentFeedId = computed(() => feedItem.value?.feedId || 0);
+
+const { feed } = toRefs(useFeed(currentFeedId));
 
 const allFeedItems = await loadFeedItems(feedId.value);
 

@@ -8,6 +8,17 @@ import { FeedItemFilter } from '@/enums';
 import { feedDB } from '../service/dbService';
 import { Feed, FeedItem } from '../types';
 
+export const useFeed = (id: Ref<number>) => {
+  const feedStore = reactive<{ feed?: any }>({});
+
+  watchEffect(() => {
+    feedStore.feed = useObservable<Feed>(
+      liveQuery(() => feedDB.feeds.get(id.value)) as any
+    );
+  });
+  return feedStore;
+};
+
 export const useAllFeeds = () => {
   const feeds = useObservable<Feed[]>(
     liveQuery(() => feedDB.feeds.toArray()) as any
