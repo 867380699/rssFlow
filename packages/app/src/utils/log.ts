@@ -37,9 +37,9 @@ export const error = (...msg: any[]) => {
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export function time(fn: Function, name?: string) {
-  const t0 = performance.now();
   return function (...args: any[]) {
-    const result = fn.apply(this, args);
+    const t0 = performance.now();
+    const result = fn.apply(fn, args);
     console.log(
       `%c${fn.name || name}:`,
       getStyles('log'),

@@ -1,6 +1,9 @@
 import DOMPurify from 'dompurify';
 import { VNode } from 'vue';
 
+import { time } from '@/utils/log';
+
+import LazyFeedContent from '../components/LazyFeedContent.vue';
 import LazyImage from '../components/LazyImage.vue';
 import { Feed, FeedItem } from '../types';
 import { getFeeds } from './apiService';
@@ -55,7 +58,7 @@ export const parseFeed = (feed: string, source: string): Feed => {
   };
 };
 
-export const parseFeedContent = (content: string) => {
+export const parseFeedContent = time((content: string) => {
   DOMPurify.removeAllHooks();
   DOMPurify.addHook('afterSanitizeElements', (node) => {
     if (node.nodeName === 'BR') {
@@ -78,7 +81,7 @@ export const parseFeedContent = (content: string) => {
   console.log(buildScope);
 
   return () => vNode;
-};
+}, 'parseFeedContent');
 
 const buildVNode = (e: HTMLElement, scope: any) => {
   const attrNames = e.getAttributeNames();
@@ -103,12 +106,24 @@ const buildVNode = (e: HTMLElement, scope: any) => {
   let component: any = e.tagName.toLocaleLowerCase();
 
   if (e.tagName === 'BODY') {
-    component = 'div';
-    props['class'] = 'feed-content-container';
+    console.log('un body', scope.imageCount);
+
+    component = LazyFeedContent;
+    props.imgEls = scope.imgEls;
   } else if (e.tagName === 'IMG') {
-    component = LazyImage;
-    props['loading'] = scope.imageCount < 2 ? 'eager' : 'lazy';
-    props['minHeight'] = '180px';
+    if (scope.imageCount < 2) {
+      component = LazyImage;
+      props['loading'] = 'eager';
+      props['minHeight'] = '180px';
+    } else {
+      component = 'div';
+      props.class = 'img-placeholder';
+      if (!scope.imgEls) {
+        scope.imgEls = [];
+      }
+      scope.imgEls.push(e);
+    }
+
     scope.imageCount += 1;
   } else if (e.tagName === 'TABLE') {
     return h(
@@ -120,7 +135,11 @@ const buildVNode = (e: HTMLElement, scope: any) => {
       [h(component, props, children.length ? children : undefined)]
     );
   }
-  return h(component, props, children.length ? children : undefined);
+  return h(
+    component,
+    props,
+    children.length ? { default: () => children } : undefined
+  );
 };
 
 let syncTimeout: ReturnType<typeof setTimeout>;
