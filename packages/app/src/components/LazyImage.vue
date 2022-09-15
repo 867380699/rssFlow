@@ -1,14 +1,12 @@
 <template>
-  <figure class="h-full rounded-sm overflow-hidden">
-    <img
-      class="bg-slate-400 h-full w-full object-cover"
-      :style="minStyle"
-      :loading="loading"
-      :src="imageSrc"
-      :onload="onLoad"
-      :onerror="onError"
-    />
-  </figure>
+  <img
+    class="bg-slate-400 h-full w-full object-cover rounded-sm"
+    :style="minStyle"
+    :loading="loading"
+    :src="imageSrc"
+    :onload="onLoad"
+    :onerror="onError"
+  />
 </template>
 
 <script setup lang="ts">

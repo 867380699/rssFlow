@@ -251,6 +251,9 @@ const openLink = (feedItem?: FeedItem) => {
         @apply text-sm text-center opacity-70;
       }
     }
+    img {
+      @apply mb-2;
+    }
     small {
       @apply opacity-70;
     }
