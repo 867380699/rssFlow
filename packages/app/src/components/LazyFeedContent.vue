@@ -8,11 +8,16 @@
 import { map, Observable, Subscription } from 'rxjs';
 import { render } from 'vue';
 
+import { useGallery } from '@/composables/gallery';
+
 import LazyImageVue from './LazyImage.vue';
 
 const props = defineProps<{
-  imgEls: Element[];
+  imgs: string[];
+  offset: number;
 }>();
+
+const { openGalleryModal } = useGallery();
 
 const container = ref<HTMLElement | null>(null);
 
@@ -55,13 +60,15 @@ onMounted(() => {
           );
           if (!target.childElementCount) {
             const lazyImage = h(LazyImageVue, {
-              src: props.imgEls[index].src,
+              src: props.imgs[index + (props.offset || 0)],
               minHeight: '180px',
               loading: 'eager',
+              onclick: () => {
+                openGalleryModal(props.imgs, index + (props.offset || 0));
+              },
             });
             target.classList.remove('img-placeholder');
             render(lazyImage, target);
-            // target.append(props.imgEls[index]);
           }
         }
       });

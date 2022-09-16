@@ -10,6 +10,7 @@ declare module '@vue/runtime-core' {
     FeedItem: typeof import('./src/components/FeedItem.vue')['default']
     FeedItemContent: typeof import('./src/components/FeedItemContent.vue')['default']
     FeedItemList: typeof import('./src/components/FeedItemList.vue')['default']
+    GalleryModal: typeof import('./src/components/GalleryModal.vue')['default']
     IonApp: typeof import('@ionic/vue')['IonApp']
     IonBackButton: typeof import('@ionic/vue')['IonBackButton']
     IonBadge: typeof import('@ionic/vue')['IonBadge']

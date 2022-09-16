@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 import { VNode } from 'vue';
 
+import { useGallery } from '@/composables/gallery';
 import { time } from '@/utils/log';
 
 import LazyFeedContent from '../components/LazyFeedContent.vue';
@@ -109,20 +110,26 @@ const buildVNode = (e: HTMLElement, scope: any) => {
     console.log('un body', scope.imageCount);
 
     component = LazyFeedContent;
-    props.imgEls = scope.imgEls;
+    props.imgs = scope.imgs;
+    props.offset = 2;
   } else if (e.tagName === 'IMG') {
     if (scope.imageCount < 2) {
       component = LazyImage;
       props['loading'] = 'eager';
       props['minHeight'] = '180px';
+      const index = scope.imageCount;
+      props['onClick'] = () => {
+        const { openGalleryModal } = useGallery();
+        openGalleryModal(scope.imgs, index);
+      };
     } else {
       component = 'div';
       props.class = 'img-placeholder';
-      if (!scope.imgEls) {
-        scope.imgEls = [];
-      }
-      scope.imgEls.push(e);
     }
+    if (!scope.imgs) {
+      scope.imgs = [];
+    }
+    scope.imgs.push((e as HTMLImageElement).src);
 
     scope.imageCount += 1;
   } else if (e.tagName === 'TABLE') {
