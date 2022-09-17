@@ -37,6 +37,7 @@
   "devDependencies": {
     "@capacitor/cli": "^3.5.1",
     "@intlify/vite-plugin-vue-i18n": "^6.0.0",
+    "@tailwindcss/line-clamp": "^0.4.2",
     "@types/dompurify": "^2.3.3",
     "@types/node": "^16.3.1",
     "@typescript-eslint/eslint-plugin": "^5.23.0",

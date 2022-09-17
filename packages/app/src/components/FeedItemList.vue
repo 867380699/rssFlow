@@ -2,7 +2,7 @@
   <RecycleScroller
     class="h-full"
     :items="items"
-    :item-size="76"
+    :item-size="96"
     key-field="id"
     :buffer="20"
   >
