@@ -94,3 +94,9 @@ h('strong', 'Foo')
 createVNode('strong', null, 'Foo')
 ```
 
+
+```js
+export interface Events {
+  onContextmenu: MouseEvent
+}
+```
