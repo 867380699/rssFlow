@@ -6,9 +6,17 @@
   </ion-header>
   <ion-content>
     <ion-fab slot="fixed" vertical="top" horizontal="end" edge>
-      <ion-fab-button @click="showModal">
+      <ion-fab-button size="small">
         <ion-icon :icon="add" />
       </ion-fab-button>
+      <ion-fab-list side="start">
+        <ion-fab-button @click="showModal">
+          <ion-icon :icon="logoRss" />
+        </ion-fab-button>
+        <ion-fab-button>
+          <ion-icon :icon="folder" />
+        </ion-fab-button>
+      </ion-fab-list>
       <ion-modal :is-open="modalIsOpen" @did-dismiss="closeModal()">
         <add-feed-modal @close="closeModal" />
       </ion-modal>
@@ -16,45 +24,33 @@
     <ion-list>
       <ion-item :key="0" @click="selectItem()"> All </ion-item>
       <template v-for="feed in feeds" :key="feed.id">
-        <ion-item :id="`aside-item-${feed.id}`" @click="selectItem(feed.id)">
+        <ion-item
+          :id="`aside-item-${feed.id}`"
+          @click="selectItem(feed.id)"
+          @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
+        >
           {{ feed.title }}
           <ion-badge slot="end">
             {{ itemCounts && itemCounts[feed.id || 0] }}
           </ion-badge>
         </ion-item>
-        <ion-popover
-          :trigger="`aside-item-${feed.id}`"
-          :arrow="false"
-          trigger-action="context-menu"
-          :dismiss-on-select="true"
-        >
-          <ion-content>
-            <ion-list v-for="action in actions" :key="action.key">
-              <ion-item @click="handleFeedAction(action, feed)">
-                {{ action.label }}
-              </ion-item>
-            </ion-list>
-          </ion-content>
-        </ion-popover>
       </template>
     </ion-list>
   </ion-content>
 </template>
 <script lang="ts" setup>
-import { alertController } from '@ionic/vue';
-import { add } from 'ionicons/icons';
+import { popoverController } from '@ionic/vue';
+import { add, folder, logoRss } from 'ionicons/icons';
 import { ref } from 'vue';
 
 import { useAllFeeds, useFeedItemCounts } from '@/composables';
 import router from '@/router';
-import { deleteFeed, updateFeed } from '@/service/dbService';
 import { useFeedStore } from '@/store';
 import { Feed } from '@/types';
-import { useAlertConfirm } from '@/utils/alert';
+
+import AsideItemModal from './modals/AsideItemModal.vue';
 
 const emit = defineEmits(['itemSelected']);
-
-const { t } = useI18n();
 
 const modalIsOpen = ref(false);
 
@@ -81,75 +77,13 @@ const selectItem = (id?: number) => {
   });
 };
 
-type Action = {
-  key: 'edit' | 'delete';
-  label: string;
-};
-
-const actions: Action[] = [
-  {
-    key: 'edit',
-    label: t('edit'),
-  },
-  {
-    key: 'delete',
-    label: t('delete'),
-  },
-];
-
-const handleFeedAction = (action: Action, feed: Feed) => {
-  console.log(action, feed);
-  switch (action.key) {
-    case 'edit':
-      alertEditFeed(feed);
-      break;
-    case 'delete':
-      alertDeleteFeed(feed);
-      break;
-  }
-};
-
-const { alertConfirm } = useAlertConfirm();
-
-const alertDeleteFeed = async (feed: Feed) => {
-  await alertConfirm({
-    message: t('confirmDeleteFeed', { name: feed.title }),
-    onConfirm: async () => {
-      await deleteFeed(Number(feed.id));
-    },
+const showContextMenu = async (event: any, feed: Feed) => {
+  console.log('context-menu', feed);
+  const popover = await popoverController.create({
+    component: AsideItemModal,
+    componentProps: { feed },
+    event,
   });
-};
-
-const alertEditFeed = async (feed: Feed) => {
-  const alert = await alertController.create({
-    header: t('edit'),
-    inputs: [
-      {
-        name: 'title',
-        value: feed.title,
-      },
-      {
-        value: feed.source,
-        disabled: true,
-      },
-    ],
-    buttons: [
-      {
-        text: t('cancel'),
-        role: 'cancel',
-      },
-      {
-        text: t('confirm'),
-        role: 'confirm',
-        handler: async (value) => {
-          if (feed.id && value.title) {
-            await updateFeed(feed.id, { title: value.title });
-          }
-          return true;
-        },
-      },
-    ],
-  });
-  await alert.present();
+  await popover.present();
 };
 </script>
