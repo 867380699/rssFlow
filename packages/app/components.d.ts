@@ -5,7 +5,7 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    AddFeedModal: typeof import('./src/components/AddFeedModal.vue')['default']
+    AddFeedModal: typeof import('./src/components/modals/AddFeedModal.vue')['default']
     Aside: typeof import('./src/components/Aside.vue')['default']
     AsideItemModal: typeof import('./src/components/modals/AsideItemModal.vue')['default']
     FeedItem: typeof import('./src/components/FeedItem.vue')['default']
@@ -40,6 +40,8 @@ declare module '@vue/runtime-core' {
     IonMenuButton: typeof import('@ionic/vue')['IonMenuButton']
     IonModal: typeof import('@ionic/vue')['IonModal']
     IonPage: typeof import('@ionic/vue')['IonPage']
+    IonReorder: typeof import('@ionic/vue')['IonReorder']
+    IonReorderGroup: typeof import('@ionic/vue')['IonReorderGroup']
     IonRouterOutlet: typeof import('@ionic/vue')['IonRouterOutlet']
     IonSegment: typeof import('@ionic/vue')['IonSegment']
     IonSegmentButton: typeof import('@ionic/vue')['IonSegmentButton']

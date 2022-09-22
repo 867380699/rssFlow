@@ -31,10 +31,10 @@
 import { toastController } from '@ionic/vue';
 import { closeOutline } from 'ionicons/icons';
 
-import { getFeeds } from '../service/apiService';
-import { storeFeed } from '../service/dbService';
-import { parseFeed } from '../service/feedService';
-import { Feed } from '../types';
+import { getFeeds } from '@/service/apiService';
+import { storeFeed } from '@/service/dbService';
+import { parseFeed } from '@/service/feedService';
+import { Feed } from '@/types';
 
 const emit = defineEmits(['close']);
 

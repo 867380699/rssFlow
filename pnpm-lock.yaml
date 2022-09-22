@@ -71,6 +71,7 @@ importers:
       vue-router: ^4.1.5
       vue-tsc: ^0.29.8
       vue-virtual-scroller: 2.0.0-alpha.1
+      vuedraggable: ^4.1.0
       workbox-core: ^6.5.4
       workbox-expiration: ^6.5.4
       workbox-precaching: ^6.5.4
@@ -99,6 +100,7 @@ importers:
       vue-i18n: 9.2.2_vue@3.2.39
       vue-router: 4.1.5_vue@3.2.39
       vue-virtual-scroller: 2.0.0-alpha.1_vue@3.2.39
+      vuedraggable: 4.1.0_vue@3.2.39
       workbox-expiration: 6.5.4
     devDependencies:
       '@capacitor/cli': 3.8.0
@@ -6166,6 +6168,10 @@ packages:
       astral-regex: 2.0.0
       is-fullwidth-code-point: 3.0.0
 
+  /sortablejs/1.14.0:
+    resolution: {integrity: sha512-pBXvQCs5/33fdN1/39pPL0NZF20LeRbLQ5jtnheIPN9JQAaufGjKdWduZn4U7wCtVuzKhmRkI0DFYHYRbB2H1w==}
+    dev: false
+
   /source-map-js/1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
     engines: {node: '>=0.10.0'}
@@ -7148,6 +7154,15 @@ packages:
       '@vue/runtime-dom': 3.2.39
       '@vue/server-renderer': 3.2.39_vue@3.2.39
       '@vue/shared': 3.2.39
+
+  /vuedraggable/4.1.0_vue@3.2.39:
+    resolution: {integrity: sha512-FU5HCWBmsf20GpP3eudURW3WdWTKIbEIQxh9/8GE806hydR9qZqRRxRE3RjqX7PkuLuMQG/A7n3cfj9rCEchww==}
+    peerDependencies:
+      vue: ^3.0.1
+    dependencies:
+      sortablejs: 1.14.0
+      vue: 3.2.39
+    dev: false
 
   /wcwidth/1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
