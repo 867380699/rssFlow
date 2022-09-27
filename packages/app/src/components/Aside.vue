@@ -26,7 +26,7 @@
         </ion-fab-button>
       </ion-fab-list>
     </ion-fab>
-    <ion-list>
+    <ion-list ref="listRef">
       <ion-item :key="0" @click="selectItem()"> All </ion-item>
 
       <ion-item
@@ -37,6 +37,7 @@
         @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
       >
         {{ feed.title }}
+        <ion-icon slot="start" :icon="reorderThree" class="reorder-icon cursor-move" />
         <ion-badge slot="end">
           {{ itemCounts && itemCounts[feed.id || 0] }}
         </ion-badge>
@@ -52,7 +53,10 @@ import {
   folder,
   logoRss,
   reorderFour,
+  reorderThree
 } from 'ionicons/icons';
+import Sortable from 'sortablejs';
+import { ComponentPublicInstance } from 'vue';
 
 import { useAllFeeds, useFeedItemCounts } from '@/composables';
 import router from '@/router';
@@ -67,6 +71,17 @@ const emit = defineEmits(['itemSelected']);
 const { feeds } = useAllFeeds();
 
 const { counts: itemCounts } = useFeedItemCounts();
+
+const listRef = ref<ComponentPublicInstance | null>(null);
+
+onMounted(() => {
+  console.log(listRef.value?.$el);
+  if (listRef.value?.$el) {
+    Sortable.create(listRef.value?.$el, {
+      handle: '.reorder-icon'
+    });
+  }
+});
 
 const { setFeedId } = useFeedStore();
 
