@@ -12,9 +12,11 @@
       @zoom-change="onZoomChanged"
     >
       <swiper-slide v-for="(img, idx) in imgs" :key="idx" :virtual-index="idx">
-        <div class="swiper-zoom-container">
-          <img :src="img" alt="" />
-        </div>
+        <drag-down-container @drag-end="onDragEnd">
+          <div class="swiper-zoom-container">
+            <img :src="img" alt="" />
+          </div>
+        </drag-down-container>
       </swiper-slide>
     </swiper>
   </div>
@@ -24,9 +26,11 @@
 import 'swiper/css/zoom';
 import 'swiper/css/pagination';
 
-import { modalController } from '@ionic/vue';
+import { GestureDetail, modalController } from '@ionic/vue';
 import { Pagination, Virtual, Zoom } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+
+import DragDownContainer from './DragDownContainer.vue';
 
 defineProps<{ imgs: string[]; index: number }>();
 
@@ -42,22 +46,28 @@ const close = () => {
   if (enableClose) {
     closeTimeout = setTimeout(() => {
       enableClose && modalController.dismiss(null, 'cancel');
-    }, 200);
+    }, 300);
   }
 };
 
-const onZoomChanged = () => {
-  console.log('onZoomChanged');
+const onZoomChanged = ($event: any) => {
+  console.log('onZoomChanged', $event.zoom);
   clearTimeout(closeTimeout);
   enableClose = false;
   setTimeout(() => {
     enableClose = true;
-  }, 200);
+  }, 300);
 };
 
 const cancelClose = () => {
   clearTimeout(closeTimeout);
   closeTimeout = undefined;
+};
+
+const onDragEnd = (ev: GestureDetail) => {
+  if (Math.abs(ev.deltaY) > 200) {
+    modalController.dismiss(null, 'cancel');
+  }
 };
 </script>
 

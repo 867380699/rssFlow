@@ -8,6 +8,8 @@ declare module '@vue/runtime-core' {
     AddFeedModal: typeof import('./src/components/modals/AddFeedModal.vue')['default']
     Aside: typeof import('./src/components/Aside.vue')['default']
     AsideItemModal: typeof import('./src/components/modals/AsideItemModal.vue')['default']
+    DragDownContainer: typeof import('./src/components/DragDownContainer.vue')['default']
+    DragDownContaniner: typeof import('./src/components/DragDownContaniner.vue')['default']
     FeedItem: typeof import('./src/components/FeedItem.vue')['default']
     FeedItemContent: typeof import('./src/components/FeedItemContent.vue')['default']
     FeedItemList: typeof import('./src/components/FeedItemList.vue')['default']
