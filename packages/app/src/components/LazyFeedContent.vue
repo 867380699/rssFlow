@@ -9,6 +9,7 @@ import { map, Observable, Subscription } from 'rxjs';
 import { render } from 'vue';
 
 import { useGallery } from '@/composables/gallery';
+import { useMinHeight } from '@/composables/image';
 
 import LazyImageVue from './LazyImage.vue';
 
@@ -19,6 +20,8 @@ const props = defineProps<{
 
 const { openGalleryModal } = useGallery();
 
+const { minHeight } = useMinHeight();
+
 const container = ref<HTMLElement | null>(null);
 
 let imagePlaceholders: Element[] | NodeListOf<Element>;
@@ -27,7 +30,7 @@ let subscription: Subscription;
 
 onMounted(() => {
   subscription = new Observable<IntersectionObserverEntry[]>((subscriber) => {
-    const rootMargin = '360px 0px';
+    const rootMargin = `${minHeight.value * 2}px 0px`;
     const intersectionObserver = new IntersectionObserver(
       (entries) => {
         subscriber.next(entries);
@@ -61,13 +64,14 @@ onMounted(() => {
           if (!target.childElementCount) {
             const lazyImage = h(LazyImageVue, {
               src: props.imgs[index + (props.offset || 0)],
-              minHeight: '180px',
+              minHeight: `${minHeight.value}px`,
               loading: 'eager',
               onclick: () => {
                 openGalleryModal(props.imgs, index + (props.offset || 0));
               },
             });
-            target.classList.remove('img-placeholder');
+            target.removeAttribute('class');
+            target.removeAttribute('style');
             render(lazyImage, target);
           }
         }
@@ -79,10 +83,3 @@ onBeforeUnmount(() => {
   subscription.unsubscribe();
 });
 </script>
-
-<style scoped lang="less">
-:deep(.img-placeholder) {
-  min-height: 180px;
-  @apply bg-slate-400 rounded-sm mb-2;
-}
-</style>

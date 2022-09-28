@@ -2,6 +2,7 @@ import DOMPurify from 'dompurify';
 import { VNode } from 'vue';
 
 import { useGallery } from '@/composables/gallery';
+import { useMinHeight } from '@/composables/image';
 import { time } from '@/utils/log';
 
 import LazyFeedContent from '../components/LazyFeedContent.vue';
@@ -113,10 +114,11 @@ const buildVNode = (e: HTMLElement, scope: any) => {
     props.imgs = scope.imgs;
     props.offset = 2;
   } else if (e.tagName === 'IMG') {
+    const { minHeight } = useMinHeight();
     if (scope.imageCount < 2) {
       component = LazyImage;
       props['loading'] = 'eager';
-      props['minHeight'] = '180px';
+      props['minHeight'] = `${minHeight.value}px`;
       const index = scope.imageCount;
       props['onClick'] = () => {
         const { openGalleryModal } = useGallery();
@@ -124,7 +126,8 @@ const buildVNode = (e: HTMLElement, scope: any) => {
       };
     } else {
       component = 'div';
-      props.class = 'img-placeholder';
+      props.class = 'img-placeholder bg-slate-400 rounded-sm mb-2';
+      props.style = `min-height: ${minHeight.value}px`;
     }
     if (!scope.imgs) {
       scope.imgs = [];
