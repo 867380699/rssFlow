@@ -1,6 +1,6 @@
 <template>
   <ion-app>
-    <ion-split-pane content-id="main">
+    <ion-split-pane content-id="main" when="lg">
       <!-- side menu -->
       <ion-menu menu-id="menu" side="start" content-id="main">
         <Aside @item-selected="onItemSelected" />

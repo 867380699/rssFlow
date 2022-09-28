@@ -1,7 +1,7 @@
 <template>
   <div
     ref="dragDownContainer"
-    class="w-full h-full flex items-center content-center"
+    class="w-full h-full flex items-center justify-center"
     :style="{
       transform: `translate3d(${deltaX}px, ${deltaY}px, 0)`,
       transition,
