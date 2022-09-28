@@ -37,7 +37,12 @@
         @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
       >
         {{ feed.title }}
-        <ion-icon slot="start" :icon="reorderThree" class="reorder-icon cursor-move" />
+        <ion-icon
+          v-if="reorderToggle"
+          slot="start"
+          :icon="reorderThree"
+          class="reorder-icon cursor-move"
+        />
         <ion-badge slot="end">
           {{ itemCounts && itemCounts[feed.id || 0] }}
         </ion-badge>
@@ -53,7 +58,7 @@ import {
   folder,
   logoRss,
   reorderFour,
-  reorderThree
+  reorderThree,
 } from 'ionicons/icons';
 import Sortable from 'sortablejs';
 import { ComponentPublicInstance } from 'vue';
@@ -72,13 +77,15 @@ const { feeds } = useAllFeeds();
 
 const { counts: itemCounts } = useFeedItemCounts();
 
+const reorderToggle = ref(false);
+
 const listRef = ref<ComponentPublicInstance | null>(null);
 
 onMounted(() => {
   console.log(listRef.value?.$el);
   if (listRef.value?.$el) {
     Sortable.create(listRef.value?.$el, {
-      handle: '.reorder-icon'
+      handle: '.reorder-icon',
     });
   }
 });
@@ -118,6 +125,6 @@ const showAddGroupModal = async () => {
 };
 
 const toggleReorder = () => {
-  //
+  reorderToggle.value = !reorderToggle.value;
 };
 </script>
