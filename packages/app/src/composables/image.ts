@@ -6,11 +6,10 @@ export const useMinHeight = () => {
   const minHeight = computed(() => {
     const height =
       Math.max(
-        windowHeight.value / 3,
-        Math.min(windowWidth.value, 800) / 2,
+        windowHeight.value / 4,
+        Math.min(windowWidth.value, 800) / 3,
         200
       ) || 200;
-    console.log(height, 'wh');
     return height;
   });
   return {

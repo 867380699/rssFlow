@@ -66,8 +66,12 @@ onMounted(() => {
               src: props.imgs[index + (props.offset || 0)],
               minHeight: `${minHeight.value}px`,
               loading: 'eager',
-              onclick: () => {
-                openGalleryModal(props.imgs, index + (props.offset || 0));
+              onclick: (ev) => {
+                openGalleryModal(
+                  props.imgs,
+                  index + (props.offset || 0),
+                  ev.target
+                );
               },
             });
             target.removeAttribute('class');

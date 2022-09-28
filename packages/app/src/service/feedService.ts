@@ -120,9 +120,9 @@ const buildVNode = (e: HTMLElement, scope: any) => {
       props['loading'] = 'eager';
       props['minHeight'] = `${minHeight.value}px`;
       const index = scope.imageCount;
-      props['onClick'] = () => {
+      props['onClick'] = (ev: Event) => {
         const { openGalleryModal } = useGallery();
-        openGalleryModal(scope.imgs, index);
+        openGalleryModal(scope.imgs, index, ev.target as HTMLElement);
       };
     } else {
       component = 'div';
