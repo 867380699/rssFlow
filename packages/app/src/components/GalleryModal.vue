@@ -75,7 +75,9 @@ const onDragEnd = (ev: GestureDetail) => {
 .gallery-modal {
   --width: 100vw;
   --height: 100vh;
-  --background: #000;
+  --background: transparent;
+  --ion-backdrop-color: #000;
+  --backdrop-opacity: 1;
 
   .swiper-pagination-fraction {
     @apply opacity-50 text-white text-sm;

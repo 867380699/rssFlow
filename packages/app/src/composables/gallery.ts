@@ -6,7 +6,7 @@ export const useGallery = () => {
   const openGalleryModal = async (
     imgs: string[],
     index: number,
-    element?: HTMLImageElement
+    element: HTMLImageElement
   ) => {
     const enterAnimation = (baseEl: HTMLElement) => {
       const root = baseEl.shadowRoot!;
@@ -14,20 +14,33 @@ export const useGallery = () => {
       let translate = '';
       let scale = 'scale(0)';
       if (element) {
-        const { top, bottom, left, right } = element.getBoundingClientRect();
-        const translateX = (-window.innerWidth + left + right) / 2;
-        const translateY = (window.innerHeight - top - bottom) / 2;
-        const scaleX = (right - left) / window.innerWidth;
-        const scaleY = (bottom - top) / window.innerHeight;
-        translate = `translate(${translateX}px, ${-translateY}px)`;
-        scale = `scale(${scaleX}, ${scaleY})`;
+        console.log(element);
+        const { naturalWidth, naturalHeight, clientWidth, clientHeight } =
+          element;
+        const { innerWidth, innerHeight } = window;
+        const imageMaxWidth = Math.min(innerWidth, naturalWidth);
+        const imageMaxHeight = Math.min(innerHeight, naturalHeight);
+
+        const imageScaleX = imageMaxWidth / naturalWidth;
+        const imageScaleY = imageMaxHeight / naturalHeight;
+
+        const scaleXY =
+          imageScaleX > imageScaleY
+            ? clientHeight / imageMaxHeight
+            : clientWidth / imageMaxWidth;
+
+        const { left, top, width, height } = element.getBoundingClientRect();
+        const translateX = innerWidth / 2 - (left + width / 2);
+        const translateY = innerHeight / 2 - (top + height / 2);
+        translate = `translate(${-translateX}px, ${-translateY}px)`;
+        scale = `scale(${scaleXY}, ${scaleXY})`;
         console.log(translate, scale);
       }
 
       const backdropAnimation = createAnimation()
         .addElement(root.querySelector('ion-backdrop')!)
         .keyframes([
-          { offset: 0, opacity: '0.01', transform: `${translate} ${scale}` },
+          { offset: 0, opacity: '0.01', transform: `` },
           {
             offset: 1,
             opacity: 'var(--backdrop-opacity)',
@@ -37,16 +50,25 @@ export const useGallery = () => {
 
       const wrapperAnimation = createAnimation()
         .addElement(root.querySelector('.modal-wrapper')!)
+        .beforeStyles({ transform: 'none' })
         .keyframes([
-          { offset: 0, opacity: '0', transform: `${translate}` },
-          { offset: 1, opacity: '1', transform: 'translate(0,0) scale(1)' },
+          { offset: 0, opacity: '1', transform: ` ${translate} ${scale}` },
+          { offset: 1, opacity: '1', transform: `translate(0,0) scale(1)` },
+        ]);
+
+      const imageAnimation = createAnimation()
+        .addElement(element)
+        .beforeStyles({ visibility: 'hidden' })
+        .afterClearStyles(['visibility'])
+        .keyframes([
+          { offset: 0, opacity: '1' },
+          { offset: 1, opacity: '1' },
         ]);
 
       return createAnimation()
         .addElement(baseEl)
-        .easing('ease-out')
         .duration(200)
-        .addAnimation([backdropAnimation, wrapperAnimation]);
+        .addAnimation([backdropAnimation, wrapperAnimation, imageAnimation]);
     };
 
     const leaveAnimation = (baseEl: HTMLElement) => {

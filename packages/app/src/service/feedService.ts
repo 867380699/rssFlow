@@ -122,7 +122,7 @@ const buildVNode = (e: HTMLElement, scope: any) => {
       const index = scope.imageCount;
       props['onClick'] = (ev: Event) => {
         const { openGalleryModal } = useGallery();
-        openGalleryModal(scope.imgs, index, ev.target as HTMLElement);
+        openGalleryModal(scope.imgs, index, ev.target as HTMLImageElement);
       };
     } else {
       component = 'div';
