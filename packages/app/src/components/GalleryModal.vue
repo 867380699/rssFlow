@@ -10,11 +10,16 @@
       :zoom="true"
       :pagination="{ type: 'fraction' }"
       @zoom-change="onZoomChanged"
+      @after-init="afterInit"
     >
-      <swiper-slide v-for="(img, idx) in imgs" :key="idx" :virtual-index="idx">
+      <swiper-slide
+        v-for="(img, idx) in showImages"
+        :key="idx"
+        :virtual-index="idx"
+      >
         <drag-down-container @drag-end="onDragEnd">
           <div class="swiper-zoom-container">
-            <img :src="img" alt="" />
+            <img :key="img" :src="img" alt="" />
           </div>
         </drag-down-container>
       </swiper-slide>
@@ -27,12 +32,14 @@ import 'swiper/css/zoom';
 import 'swiper/css/pagination';
 
 import { GestureDetail, modalController } from '@ionic/vue';
-import { Pagination, Virtual, Zoom } from 'swiper';
+import { Pagination, Swiper as SwiperClass, Virtual, Zoom } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
 import DragDownContainer from './DragDownContainer.vue';
 
-defineProps<{ imgs: string[]; index: number }>();
+const props = defineProps<{ imgs: string[]; index: number }>();
+
+const showImages = ref(Array(props.imgs.length).fill(props.imgs[props.index]));
 
 let closeTimeout: any;
 
@@ -68,6 +75,12 @@ const onDragEnd = (ev: GestureDetail) => {
   if (Math.abs(ev.deltaY) > 200) {
     modalController.dismiss(null, 'cancel');
   }
+};
+
+const afterInit = () => {
+  setTimeout(() => {
+    showImages.value = props.imgs;
+  });
 };
 </script>
 
