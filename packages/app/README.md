@@ -86,6 +86,30 @@ await cache.put(request, resp);
 const cacheResponse = await cache.match(url);
 ```
 
+# Animation
+
+```js
+document.getElementById("alice").animate(
+  [
+    { transform: 'rotate(0) translate3D(-50%, -50%, 0)', color: '#000' },
+    { color: '#431236', offset: 0.3 },
+    { transform: 'rotate(360deg) translate3D(-50%, -50%, 0)', color: '#000' }
+  ], {
+    duration: 3000,
+    iterations: Infinity
+  }
+);
+
+```
+
+# CSS
+
+## clip-path
+
+```css
+clip-path: inset(1rem 3rem 3rem calc(10vw - 5px));
+```
+
 # vue
 
 ```js

@@ -15,7 +15,7 @@
       class="feed-item flex h-[96px]"
       :class="{ 'opacity-50': item.isRead }"
       :style="{ '--inner-padding-end': '0' }"
-      @click="toDetail(item.id!)"
+      @click="($event)=>toDetail(item.id!, $event)"
     >
       <ion-thumbnail v-if="item.image" slot="end" class="m-1 w-[64px] h-[64px]">
         <LazyImage
@@ -45,6 +45,18 @@
 </template>
 
 <script setup lang="ts">
+import type { Animation } from '@ionic/vue';
+import {
+  createAnimation,
+  IonIcon,
+  IonItem,
+  IonItemOption,
+  IonItemOptions,
+  IonItemSliding,
+  IonLabel,
+  IonThumbnail,
+  useIonRouter,
+} from '@ionic/vue';
 import { formatRelative } from 'date-fns';
 import { trashOutline } from 'ionicons/icons';
 
@@ -52,7 +64,7 @@ import { deleteFeedItem, updateFeedItem } from '@/service/dbService';
 import { FeedItem } from '@/types';
 import { useAlertConfirm } from '@/utils/alert';
 
-const router = useRouter();
+const router = useIonRouter();
 const { t } = useI18n();
 const { alertConfirm } = useAlertConfirm();
 
@@ -64,9 +76,45 @@ const pubDate = computed(() =>
   props.item.pubDate ? formatRelative(props.item.pubDate, new Date()) : ''
 );
 
-const toDetail = (id: number) => {
+const toDetail = (id: number, $event: Event) => {
+  const itemEl = ($event.target as HTMLElement).closest('ion-item');
+  const { top, bottom } = itemEl!.getBoundingClientRect();
+  console.log($event.target, top, bottom);
+
   updateFeedItem(id, { isRead: 1, readTime: new Date().getTime() }).then(() => {
-    router.push(`/detail/${id}`);
+    router.push(`/detail/${id}`, (baseEl, opts) => {
+      const isForward = opts.direction === 'forward';
+      const enteringAnimation: Animation = createAnimation()
+        .addElement(isForward ? opts.enteringEl : opts.leavingEl)
+        .keyframes([
+          {
+            offset: 0,
+            opacity: 0,
+            clipPath: `inset(${top}px 0px calc(100vh - ${bottom}px) 0px)`,
+          },
+          {
+            offset: 1,
+            opacity: 1,
+            clipPath: 'inset(0px 0px 0px 0px)',
+          },
+        ])
+        .direction(isForward ? 'normal' : 'reverse');
+      const leavingAnimation = createAnimation()
+        .addElement(isForward ? opts.leavingEl : opts.enteringEl)
+        .keyframes([
+          {
+            offset: 0,
+            opacity: 1,
+          },
+          {
+            offset: 1,
+            opacity: 1,
+          },
+        ]);
+      return createAnimation()
+        .addAnimation([enteringAnimation, leavingAnimation])
+        .duration(200);
+    });
   });
 };
 
