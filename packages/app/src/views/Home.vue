@@ -7,7 +7,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content id="main-content" class="ion-padding">
-      <FeedItemList :items="feedItems" />
+      <FeedItemList :feed-id="feedId" :items="feedItems" />
     </ion-content>
     <ion-segment :value="feedItemFilter" @ion-change="segmentChanged($event)">
       <ion-segment-button v-for="tab in tabs" :key="tab.key" :value="tab.key">
