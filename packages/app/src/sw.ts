@@ -116,7 +116,7 @@ const imageRoute = new Route(
           const proxyRequest = new Request(
             `${import.meta.env.VITE_PROXY_HOST || '/img/'}${encodeURIComponent(
               url.hostname === 'localhost'
-                ? url.pathname.replace('/img/', '')
+                ? url.toString().replace(/^.*?\/img\//, '')
                 : url.toString()
             )}`,
             { mode: 'cors' }
