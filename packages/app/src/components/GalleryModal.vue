@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-full" @click="close">
+  <div class="h-full w-full" @click="() => close()">
     <swiper
       class="h-full overflow-auto"
       :modules="[Virtual, Zoom, Pagination]"
@@ -9,6 +9,7 @@
       :virtual="{ enabled: true }"
       :zoom="true"
       :pagination="{ type: 'fraction' }"
+      @slide-change="onSlideChange"
       @zoom-change="onZoomChanged"
       @after-init="afterInit"
     >
@@ -31,7 +32,7 @@
 import 'swiper/css/zoom';
 import 'swiper/css/pagination';
 
-import { GestureDetail, modalController } from '@ionic/vue';
+import { createAnimation, GestureDetail, modalController } from '@ionic/vue';
 import { Pagination, Swiper as SwiperClass, Virtual, Zoom } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
@@ -39,26 +40,68 @@ import DragDownContainer from './DragDownContainer.vue';
 
 const props = defineProps<{ imgs: string[]; index: number }>();
 
+const activeIndex = ref(props.index);
+
 const showImages = ref(Array(props.imgs.length).fill(props.imgs[props.index]));
 
 let closeTimeout: any;
 
 let enableClose = true;
 
-const close = () => {
+const close = (delay = 300) => {
   console.log('close');
   if (closeTimeout) {
     cancelClose();
   }
   if (enableClose) {
     closeTimeout = setTimeout(() => {
-      enableClose && modalController.dismiss(null, 'cancel');
-    }, 300);
+      if (enableClose) {
+        if (activeIndex.value !== props.index) {
+          const translateY = activeIndex.value > props.index ? '30vh' : '-30vh';
+          modalController.getTop().then((modalTop) => {
+            modalTop.leaveAnimation = (baseEl) => {
+              const backdropAnimation = createAnimation()
+                .addElement(baseEl.shadowRoot.querySelector('ion-backdrop')!)
+                .keyframes([
+                  { offset: 0, opacity: '0.01', transform: `` },
+                  {
+                    offset: 1,
+                    opacity: 'var(--backdrop-opacity)',
+                    transform: 'translate(0,0) scale(1)',
+                  },
+                ])
+                .direction('reverse');
+              const wrapperAnimation = createAnimation()
+                .addElement(baseEl.shadowRoot.querySelector('.modal-wrapper')!)
+                .keyframes([
+                  { offset: 0, opacity: '1', transform: 'translate(0,0)' },
+                  {
+                    offset: 1,
+                    opacity: '0',
+                    transform: `translate(0,${translateY})`,
+                  },
+                ]);
+              return createAnimation()
+                .addAnimation([backdropAnimation, wrapperAnimation])
+                .addElement(baseEl)
+                .duration(300);
+            };
+            modalController.dismiss(null, 'cancel');
+          });
+        } else {
+          modalController.dismiss(null, 'cancel');
+        }
+      }
+    }, delay);
   }
 };
 
-const onZoomChanged = ($event: any) => {
-  console.log('onZoomChanged', $event.zoom);
+const onSlideChange = (swiper: SwiperClass) => {
+  activeIndex.value = swiper.activeIndex;
+};
+
+const onZoomChanged = (swiper: SwiperClass) => {
+  console.log('onZoomChanged', swiper.zoom);
   clearTimeout(closeTimeout);
   enableClose = false;
   setTimeout(() => {
@@ -73,7 +116,7 @@ const cancelClose = () => {
 
 const onDragEnd = (ev: GestureDetail) => {
   if (Math.abs(ev.deltaY) > 200) {
-    modalController.dismiss(null, 'cancel');
+    close(0);
   }
 };
 
