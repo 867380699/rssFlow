@@ -23,8 +23,8 @@ export const useGallery = () => {
 
       const paginationAnimation = createAnimation()
         .addElement(baseEl.querySelector('.swiper-pagination')!)
-        .beforeStyles({ opacity: '0' })
-        .afterStyles({ opacity: '1' })
+        .beforeStyles({ opacity: '0', visibility: 'hidden' })
+        .afterClearStyles(['opacity', 'visibility'])
         .keyframes([{ offset: 0 }, { offset: 1 }]);
 
       const animations = [backdropAnimation, paginationAnimation];

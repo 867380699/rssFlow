@@ -134,6 +134,7 @@ const afterInit = () => {
   --background: transparent;
   --ion-backdrop-color: #000;
   --backdrop-opacity: 1;
+  --box-shadow: none;
 
   .swiper-pagination-fraction {
     @apply opacity-50 text-white text-sm;
