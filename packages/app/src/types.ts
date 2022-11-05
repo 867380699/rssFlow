@@ -7,6 +7,9 @@ export type Feed = {
   imageUrl?: string;
   items?: Array<FeedItem>;
   lastUpdateTime?: number;
+  type: 'feed' | 'group';
+  parentId: number;
+  rank?: string;
 };
 
 export type FeedItem = {

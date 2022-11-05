@@ -6,16 +6,17 @@ import '@vue/runtime-core'
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AddFeedModal: typeof import('./src/components/modals/AddFeedModal.vue')['default']
+    AddGroupModal: typeof import('./src/components/modals/AddGroupModal.vue')['default']
     Aside: typeof import('./src/components/Aside.vue')['default']
     AsideItemModal: typeof import('./src/components/modals/AsideItemModal.vue')['default']
     DragDownContainer: typeof import('./src/components/DragDownContainer.vue')['default']
     FeedItem: typeof import('./src/components/FeedItem.vue')['default']
     FeedItemContent: typeof import('./src/components/FeedItemContent.vue')['default']
     FeedItemList: typeof import('./src/components/FeedItemList.vue')['default']
+    FeedList: typeof import('./src/components/FeedList.vue')['default']
     GalleryModal: typeof import('./src/components/GalleryModal.vue')['default']
     IonApp: typeof import('@ionic/vue')['IonApp']
     IonBackButton: typeof import('@ionic/vue')['IonBackButton']
-    IonBadge: typeof import('@ionic/vue')['IonBadge']
     IonButton: typeof import('@ionic/vue')['IonButton']
     IonButtons: typeof import('@ionic/vue')['IonButtons']
     IonCard: typeof import('@ionic/vue')['IonCard']

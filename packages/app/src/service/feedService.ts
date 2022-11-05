@@ -51,6 +51,7 @@ export const parseFeed = (feed: string, source: string): Feed => {
       ?.textContent?.replace(/^https?/, 'https') || '';
   const items = parseFeedItems(nodeTree);
   return {
+    type: 'feed',
     source,
     title,
     description,
@@ -164,7 +165,7 @@ export const destroySync = () => {
 };
 
 export const syncAllFeeds = async () => {
-  const feeds = await feedDB.feeds.toArray();
+  const feeds = await feedDB.feeds.where('type').equals('feed').toArray();
   feeds.forEach(async (feed) => {
     const now = new Date().getTime();
     const syncInterval = 1000 * 60 * 60 * 2;

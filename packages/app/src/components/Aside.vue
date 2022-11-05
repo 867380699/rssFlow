@@ -26,69 +26,34 @@
         </ion-fab-button>
       </ion-fab-list>
     </ion-fab>
-    <ion-list ref="listRef">
-      <ion-item :key="0" @click="selectItem()"> All </ion-item>
-
-      <ion-item
-        v-for="feed in feeds"
-        :id="`aside-item-${feed.id}`"
-        :key="feed.id"
-        @click="selectItem(feed.id)"
-        @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
-      >
-        {{ feed.title }}
-        <ion-icon
-          v-if="reorderToggle"
-          slot="start"
-          :icon="reorderThree"
-          class="reorder-icon cursor-move"
-        />
-        <ion-badge slot="end">
-          {{ itemCounts && itemCounts[feed.id || 0] }}
-        </ion-badge>
-      </ion-item>
-    </ion-list>
+    <div ref="listRef">
+      <div :key="0" class="flex items-center p-2 h-12" @click="selectItem()">
+        All
+      </div>
+      <feed-list :parent-id="0" :reorder-toggle="reorderToggle" />
+    </div>
   </ion-content>
 </template>
 <script lang="ts" setup>
-import { modalController, popoverController } from '@ionic/vue';
+import { modalController } from '@ionic/vue';
 import {
   add,
   ellipsisHorizontal,
   folder,
   logoRss,
   reorderFour,
-  reorderThree,
 } from 'ionicons/icons';
-import Sortable from 'sortablejs';
-import { ComponentPublicInstance } from 'vue';
 
-import { useAllFeeds, useFeedItemCounts } from '@/composables';
+import FeedList from '@/components/FeedList.vue';
 import router from '@/router';
 import { useFeedStore } from '@/store';
-import { Feed } from '@/types';
 
 import AddFeedModal from './modals/AddFeedModal.vue';
-import AsideItemModal from './modals/AsideItemModal.vue';
+import AddGroupModal from './modals/AddGroupModal.vue';
 
 const emit = defineEmits(['itemSelected']);
 
-const { feeds } = useAllFeeds();
-
-const { counts: itemCounts } = useFeedItemCounts();
-
 const reorderToggle = ref(false);
-
-const listRef = ref<ComponentPublicInstance | null>(null);
-
-onMounted(() => {
-  console.log(listRef.value?.$el);
-  if (listRef.value?.$el) {
-    Sortable.create(listRef.value?.$el, {
-      handle: '.reorder-icon',
-    });
-  }
-});
 
 const { setFeedId } = useFeedStore();
 
@@ -99,15 +64,6 @@ const selectItem = (id?: number) => {
     name: 'home',
     query: { ...router.currentRoute.value.query, id },
   });
-};
-
-const showContextMenu = async (event: any, feed: Feed) => {
-  const popover = await popoverController.create({
-    component: AsideItemModal,
-    componentProps: { feed },
-    event,
-  });
-  await popover.present();
 };
 
 const showAddFeedModal = async () => {
@@ -121,10 +77,27 @@ const showAddFeedModal = async () => {
 };
 
 const showAddGroupModal = async () => {
-  //
+  const modal = await modalController.create({
+    component: AddGroupModal,
+    componentProps: {
+      onClose: () => modal.dismiss(),
+    },
+  });
+  modal.present();
 };
 
 const toggleReorder = () => {
   reorderToggle.value = !reorderToggle.value;
 };
 </script>
+<style lang="less">
+.sortable-ghost {
+  opacity: 0;
+}
+.sortable-chosen {
+  font-weight: bold;
+}
+.sortable-drag {
+  opacity: 1 !important;
+}
+</style>

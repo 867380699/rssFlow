@@ -28,6 +28,15 @@ export const useAllFeeds = () => {
   };
 };
 
+export const useChildFeeds = (parentId: number) => {
+  const feeds = useObservable<Feed[], Feed[]>(
+    liveQuery(() => feedDB.feeds.where({ parentId }).sortBy('rank')) as any
+  );
+  return {
+    feeds,
+  };
+};
+
 export const useAllFeedItems = () => {
   const feedItems = useObservable<FeedItem[], FeedItem[]>(
     liveQuery(() => feedDB.feedItems.toArray()) as any
