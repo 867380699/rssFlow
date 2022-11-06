@@ -5,6 +5,7 @@ import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    Accordion: typeof import('./src/components/Accordion.vue')['default']
     AddFeedModal: typeof import('./src/components/modals/AddFeedModal.vue')['default']
     AddGroupModal: typeof import('./src/components/modals/AddGroupModal.vue')['default']
     Aside: typeof import('./src/components/Aside.vue')['default']

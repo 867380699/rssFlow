@@ -5,14 +5,15 @@
         v-if="feed.type === 'feed'"
         :key="feed.id"
         :data-id="feed.id"
-        class="flex items-center p-2 h-12"
+        class="flex items-center py-2 pr-2 h-12"
+        :class="{ 'pl-2': !reorderToggle }"
         @click="selectItem(feed.id)"
         @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
       >
         <ion-icon
           v-if="reorderToggle"
           :icon="reorderThree"
-          class="pr-2 py-2 ml-1 text-lg reorder-icon cursor-move"
+          class="p-2 text-lg reorder-icon cursor-move"
         />
         <div class="flex-1 whitespace-nowrap overflow-hidden text-ellipsis">
           {{ feed.title }}
@@ -23,25 +24,32 @@
         </ion-badge>
       </div>
       <div v-if="feed.type === 'group'" :id="`aside-item-${feed.id}`">
-        <div class="flex items-center p-2 h-12">
-          <ion-icon
-            v-if="reorderToggle"
-            :icon="reorderThree"
-            class="pr-2 py-2 ml-1 text-lg reorder-icon cursor-move"
-          />
-          <ion-icon
-            v-else
-            :icon="chevronDownOutline"
-            class="pr-2 py-2 ml-1 text-lg"
-          />
-          {{ feed.title }}
-        </div>
-        <div class="pl-6">
-          <feed-list
-            :parent-id="feed.id || 0"
-            :reorder-toggle="reorderToggle"
-          />
-        </div>
+        <accordion>
+          <template #header="{ isExpand }">
+            <div class="flex items-center py-2 h-12">
+              <ion-icon
+                v-if="reorderToggle"
+                :icon="reorderThree"
+                class="p-2 text-lg reorder-icon cursor-move"
+              />
+              <ion-icon
+                v-else
+                :icon="chevronDownOutline"
+                class="p-2 text-lg transition"
+                :class="{ '-rotate-90': !isExpand }"
+              />
+              {{ feed.title }}
+            </div>
+          </template>
+          <template #content>
+            <div class="pl-6">
+              <feed-list
+                :parent-id="feed.id || 0"
+                :reorder-toggle="reorderToggle"
+              />
+            </div>
+          </template>
+        </accordion>
       </div>
     </template>
   </div>
@@ -58,6 +66,7 @@ import { moveFeed } from '@/service/dbService';
 import { useFeedStore } from '@/store';
 import { Feed } from '@/types';
 
+import Accordion from './Accordion.vue';
 import FeedList from './FeedList.vue';
 import AsideItemModal from './modals/AsideItemModal.vue';
 
