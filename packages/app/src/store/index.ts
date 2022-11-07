@@ -4,6 +4,7 @@ import {
   useAllFeedItems,
   useFeed,
   useFeedItem,
+  useFeedItemCounts,
   useFeedItems,
 } from '@/composables';
 import { FeedItemFilter } from '@/enums';
@@ -40,6 +41,8 @@ export const useFeedStore = defineStore('feed', () => {
   };
   const { feedItem } = toRefs(useFeedItem(feedItemId));
 
+  const { counts: feedItemCounts } = useFeedItemCounts();
+
   return {
     feedId,
     feed,
@@ -50,5 +53,6 @@ export const useFeedStore = defineStore('feed', () => {
     feedItem,
     feedItemId,
     setFeedItemId,
+    feedItemCounts,
   };
 });

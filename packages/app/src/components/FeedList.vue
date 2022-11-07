@@ -15,18 +15,20 @@
           :icon="reorderThree"
           class="p-2 text-lg reorder-icon cursor-move"
         />
-        <div class="flex-1 whitespace-nowrap overflow-hidden text-ellipsis">
+        <div
+          class="flex-1 whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer"
+        >
           {{ feed.title }}
         </div>
 
-        <ion-badge slot="end">
+        <ion-badge>
           {{ itemCounts && itemCounts[feed.id || 0] }}
         </ion-badge>
       </div>
       <div v-if="feed.type === 'group'" :id="`aside-item-${feed.id}`">
         <accordion>
           <template #header="{ isExpand }">
-            <div class="flex items-center py-2 h-12">
+            <div class="flex items-center py-2 pr-2 h-12">
               <ion-icon
                 v-if="reorderToggle"
                 :icon="reorderThree"
@@ -38,7 +40,12 @@
                 class="p-2 text-lg transition"
                 :class="{ '-rotate-90': !isExpand }"
               />
-              {{ feed.title }}
+              <div class="flex-1 cursor-pointer">
+                {{ feed.title }}
+              </div>
+              <ion-badge>
+                {{ itemCounts && itemCounts[feed.id || 0] }}
+              </ion-badge>
             </div>
           </template>
           <template #content>
@@ -58,9 +65,10 @@
 <script lang="ts" setup>
 import { IonBadge, IonIcon, popoverController } from '@ionic/vue';
 import { chevronDownOutline, reorderThree } from 'ionicons/icons';
+import { storeToRefs } from 'pinia';
 import Sortable from 'sortablejs';
 
-import { useChildFeeds, useFeedItemCounts } from '@/composables';
+import { useChildFeeds } from '@/composables';
 import router from '@/router';
 import { moveFeed } from '@/service/dbService';
 import { useFeedStore } from '@/store';
@@ -75,7 +83,8 @@ const emit = defineEmits(['itemSelected']);
 
 const { feeds } = useChildFeeds(props.parentId);
 
-const { counts: itemCounts } = useFeedItemCounts();
+const feedStore = useFeedStore();
+const { feedItemCounts: itemCounts } = storeToRefs(feedStore);
 
 const listRef = ref<HTMLElement | null>(null);
 

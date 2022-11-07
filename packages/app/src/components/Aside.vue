@@ -27,8 +27,15 @@
       </ion-fab-list>
     </ion-fab>
     <div ref="listRef">
-      <div :key="0" class="flex items-center p-2 h-12" @click="selectItem()">
-        All
+      <div
+        :key="0"
+        class="flex items-center p-2 h-12 cursor-pointer"
+        @click="selectItem()"
+      >
+        <div class="flex-1 cursor-pointer">All</div>
+        <ion-badge>
+          {{ itemCounts && itemCounts[0] }}
+        </ion-badge>
       </div>
       <feed-list :parent-id="0" :reorder-toggle="reorderToggle" />
     </div>
@@ -43,6 +50,7 @@ import {
   logoRss,
   reorderFour,
 } from 'ionicons/icons';
+import { storeToRefs } from 'pinia';
 
 import FeedList from '@/components/FeedList.vue';
 import router from '@/router';
@@ -55,10 +63,11 @@ const emit = defineEmits(['itemSelected']);
 
 const reorderToggle = ref(false);
 
-const { setFeedId } = useFeedStore();
+const feedStore = useFeedStore();
+const { feedItemCounts: itemCounts } = storeToRefs(feedStore);
 
 const selectItem = (id?: number) => {
-  setFeedId(id || 0);
+  feedStore.setFeedId(id || 0);
   emit('itemSelected', id);
   router.replace({
     name: 'home',
