@@ -26,7 +26,7 @@
         </ion-fab-button>
       </ion-fab-list>
     </ion-fab>
-    <div ref="listRef">
+    <div>
       <div
         :key="0"
         class="flex items-center p-2 h-12 cursor-pointer"

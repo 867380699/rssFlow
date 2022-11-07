@@ -52,6 +52,7 @@ export const parseFeed = (feed: string, source: string): Feed => {
   const items = parseFeedItems(nodeTree);
   return {
     type: 'feed',
+    parentId: 0,
     source,
     title,
     description,
@@ -77,7 +78,7 @@ export const parseFeedContent = time((content: string) => {
       node.remove();
     }
   });
-  const result = DOMPurify.sanitize(content);
+  const result = DOMPurify.sanitize(content, { ADD_TAGS: ['iframe'] });
   const domObj = parser.parseFromString(result, 'text/html');
   const buildScope = { imageCount: 0 };
   const vNode = buildVNode(domObj.body, buildScope);

@@ -25,7 +25,11 @@
           {{ itemCounts && itemCounts[feed.id || 0] }}
         </ion-badge>
       </div>
-      <div v-if="feed.type === 'group'" :id="`aside-item-${feed.id}`">
+      <div
+        v-if="feed.type === 'group'"
+        :id="`aside-item-${feed.id}`"
+        :data-id="feed.id"
+      >
         <accordion>
           <template #header="{ isExpand }">
             <div class="flex items-center py-2 pr-2 h-12">
@@ -40,7 +44,10 @@
                 class="p-2 text-lg transition"
                 :class="{ '-rotate-90': !isExpand }"
               />
-              <div class="flex-1 cursor-pointer">
+              <div
+                class="flex-1 cursor-pointer"
+                @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
+              >
                 {{ feed.title }}
               </div>
               <ion-badge>

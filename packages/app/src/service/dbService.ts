@@ -16,7 +16,7 @@ export class FeedDB extends Dexie {
       feeds: '++id, title, &link',
       feedItems: '++id, feedId, title, link, isRead, isFavorite',
     });
-    this.version(2)
+    this.version(12)
       .stores({
         feeds: '++id, title, &link, parentId',
         feedItems: '++id, feedId, title, link, [feedId+isRead]',
@@ -34,7 +34,7 @@ export class FeedDB extends Dexie {
             rank = getNextRank(rank);
           });
       });
-    this.version(3).stores({
+    this.version(13).stores({
       feeds: '++id, title, &link, parentId, rank, type',
     });
   }
@@ -138,8 +138,15 @@ export const loadFeed = async (id: number) => {
 };
 
 export const deleteFeed = async (id: number) => {
-  await feedDB.feeds.delete(id);
-  await feedDB.feedItems.where('feedId').equals(id).delete();
+  await feedDB.transaction('rw', feedDB.feeds, feedDB.feedItems, async () => {
+    const feed = await feedDB.feeds.get(id);
+    if (feed?.type === 'group') {
+      await feedDB.feeds.where({ parentId: id }).modify({ parentId: 0 });
+    } else {
+      await feedDB.feedItems.where('feedId').equals(id).delete();
+    }
+    await feedDB.feeds.delete(id);
+  });
 };
 
 export const updateFeed = async (id: number, changes: Partial<Feed>) => {

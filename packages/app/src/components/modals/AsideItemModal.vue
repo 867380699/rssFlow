@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { alertController, popoverController } from '@ionic/vue';
+import { alertController, AlertInput, popoverController } from '@ionic/vue';
 
 import { deleteFeed, updateFeed } from '@/service/dbService';
 import { Feed } from '@/types';
@@ -60,18 +60,21 @@ const alertDeleteFeed = async (feed: Feed) => {
 };
 
 const alertEditFeed = async (feed: Feed) => {
+  const inputs: AlertInput[] = [
+    {
+      name: 'title',
+      value: feed.title,
+    },
+  ];
+  if (feed.type === 'feed') {
+    inputs.push({
+      value: feed.source,
+      disabled: true,
+    });
+  }
   const alert = await alertController.create({
     header: t('edit'),
-    inputs: [
-      {
-        name: 'title',
-        value: feed.title,
-      },
-      {
-        value: feed.source,
-        disabled: true,
-      },
-    ],
+    inputs,
     buttons: [
       {
         text: t('cancel'),
