@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useObservable } from '@vueuse/rxjs';
-import { liveQuery } from 'dexie';
+import { liveQuery, Subscription } from 'dexie';
 import { Ref } from 'vue';
 
 import { FeedItemFilter } from '@/enums';
@@ -9,14 +9,22 @@ import { feedDB } from '../service/dbService';
 import { Feed, FeedItem } from '../types';
 
 export const useFeed = (id: Ref<number>) => {
-  const feedStore = reactive<{ feed?: any }>({});
-
-  watchEffect(() => {
-    feedStore.feed = useObservable<Feed>(
-      liveQuery(() => feedDB.feeds.get(id.value)) as any
-    );
-  });
-  return feedStore;
+  const feed = ref<Feed>();
+  let subscription: Subscription;
+  watch(
+    id,
+    () => {
+      console.log('effect', id.value);
+      subscription?.unsubscribe();
+      subscription = liveQuery(() => feedDB.feeds.get(id.value)).subscribe(
+        (newFeed) => {
+          feed.value = newFeed;
+        }
+      );
+    },
+    { immediate: true }
+  );
+  return { feed };
 };
 
 export const useAllFeeds = () => {
@@ -103,12 +111,21 @@ export const useFeedItems = (
 };
 
 export const useFeedItem = (id: Ref<number>) => {
-  const itemStore = reactive<{ feedItem?: any }>({});
-
-  watchEffect(() => {
-    itemStore.feedItem = useObservable<FeedItem>(
-      liveQuery(() => feedDB.feedItems.get(id.value)) as any
-    );
-  });
-  return itemStore;
+  const feedItem = ref<FeedItem>();
+  let subscription: Subscription;
+  watch(
+    id,
+    () => {
+      subscription?.unsubscribe();
+      subscription = liveQuery(() => feedDB.feedItems.get(id.value)).subscribe(
+        (item) => {
+          feedItem.value = item;
+        }
+      );
+    },
+    { immediate: true }
+  );
+  return {
+    feedItem,
+  };
 };

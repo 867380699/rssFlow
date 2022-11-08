@@ -109,7 +109,7 @@ const { feedId, feedItem, feedItemFilter } = storeToRefs(feedStore);
 
 const currentFeedId = computed(() => feedItem.value?.feedId || 0);
 
-const { feed } = toRefs(useFeed(currentFeedId));
+const { feed } = useFeed(currentFeedId);
 
 const allFeedItems = await loadFeedItems(feedId.value);
 
@@ -164,16 +164,15 @@ const bottomToolbarStyle = computed(() => ({
   bottom: `${showToolbar.value ? 0 : -toolbarHeight.value}px`,
 }));
 
-const onSlideChange = (swiper: SwiperClass) => {
+const onSlideChange = async (swiper: SwiperClass) => {
   const newFeedItem = feedItems.value[swiper.activeIndex];
   if (newFeedItem && newFeedItem.id) {
     const newId = newFeedItem.id;
-    updateFeedItem(newId, {
+    await updateFeedItem(newId, {
       isRead: 1,
       readTime: new Date().getTime(),
-    }).then(() => {
-      feedStore.setFeedItemId(newId);
     });
+    feedStore.setFeedItemId(newId);
   }
 };
 
@@ -259,6 +258,9 @@ const openLink = (feedItem?: FeedItem) => {
     }
     hr {
       @apply opacity-70 mr-4;
+    }
+    code[lang] {
+      @apply block rounded p-1 overflow-auto whitespace-pre;
     }
   }
 }

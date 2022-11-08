@@ -39,7 +39,7 @@ export const useFeedStore = defineStore('feed', () => {
   const setFeedItemId = (id: number) => {
     feedItemId.value = id;
   };
-  const { feedItem } = toRefs(useFeedItem(feedItemId));
+  const { feedItem } = useFeedItem(feedItemId);
 
   const { counts: feedItemCounts } = useFeedItemCounts();
 
