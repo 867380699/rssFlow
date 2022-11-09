@@ -67,8 +67,10 @@ const calcContentStyle = () => {
 
 const { stop } = useIntersectionObserver(contentRef, ([{ isIntersecting }]) => {
   if (isIntersecting) {
-    calcContentStyle();
-    stop();
+    setTimeout(() => {
+      calcContentStyle();
+      stop();
+    });
   }
 });
 
