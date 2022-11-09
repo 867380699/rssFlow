@@ -6,8 +6,15 @@
         <ion-title>{{ feed?.title || 'All' }}</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content id="main-content" class="ion-padding">
-      <FeedItemList :feed-id="feedId" :items="feedItems" />
+    <ion-content id="main-content" class="ion-padding" :scroll-y="false">
+      <ion-refresher slot="fixed" @ion-refresh="handleRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
+      <FeedItemList
+        :feed-id="feedId"
+        :items="feedItems"
+        class="ion-content-scroll-host"
+      />
     </ion-content>
     <ion-segment :value="feedItemFilter" @ion-change="segmentChanged($event)">
       <ion-segment-button v-for="tab in tabs" :key="tab.key" :value="tab.key">
@@ -19,14 +26,14 @@
 </template>
 
 <script lang="ts" setup>
+import { RefresherCustomEvent } from '@ionic/vue';
 import { eyeOffOutline, listOutline, starOutline } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 
 import FeedItemList from '@/components/FeedItemList.vue';
+import { useFeed } from '@/composables';
 import { FeedItemFilter } from '@/enums';
-import { feedDB } from '@/service/dbService';
 import { useFeedStore } from '@/store';
-import { Feed } from '@/types';
 
 const { t } = useI18n();
 
@@ -47,13 +54,15 @@ const segmentChanged = async ($event: CustomEvent) => {
   ionRouter.replace(`/home?type=${$event.detail.value}&id=${feedId.value}`);
 };
 
-const feed = ref<Feed>();
-
-watchEffect(async () => {
-  feed.value = await feedDB.feeds.get(feedId.value);
-});
+const { feed } = useFeed(feedId);
 
 onBeforeUnmount(() => {
   console.log('unmount');
 });
+
+const handleRefresh = (event: RefresherCustomEvent) => {
+  setTimeout(() => {
+    event.target?.complete();
+  }, 1500);
+};
 </script>
