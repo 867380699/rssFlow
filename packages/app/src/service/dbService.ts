@@ -34,7 +34,7 @@ export class FeedDB extends Dexie {
             rank = getNextRank(rank);
           });
       });
-    this.version(13).stores({
+    this.version(15).stores({
       feeds: '++id, title, &link, parentId, rank, type',
     });
   }
@@ -159,13 +159,13 @@ export const loadFeedItem = async (id: number | string) => {
 };
 
 export const loadFeedItems = async (feedId: number | string) => {
-  let feedItem;
+  let feedItems;
   if (feedId) {
-    feedItem = await feedDB.feedItems.where({ feedId }).toArray();
+    feedItems = await feedDB.feedItems.where({ feedId }).toArray();
   } else {
-    feedItem = await feedDB.feedItems.toArray();
+    feedItems = await feedDB.feedItems.toArray();
   }
-  return ref(feedItem);
+  return feedItems;
 };
 
 export const updateFeedItem = async (

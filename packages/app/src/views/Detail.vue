@@ -31,20 +31,19 @@
       <swiper
         class="h-full overflow-auto"
         :modules="[Virtual]"
-        :initial-slide="index"
         :slides-per-view="1"
         :space-between="24"
         :virtual="{ enabled: true }"
         @slide-change="onSlideChange"
+        @after-init="afterSlideInit"
       >
         <swiper-slide
-          v-for="feedItem in feedItems"
-          :key="feedItem.id"
-          :virtual-index="feedItem.id"
+          v-for="item in feedItems"
+          :key="item.id"
+          :virtual-index="item.id"
         >
           <FeedItemContent
-            :ref="`feedItemContent-${feedItem.id}`"
-            :feed-item="feedItem"
+            :feed-item="item"
             class="content-container overflow-auto h-full"
             :style="{
               'padding-top': `${toolbarHeight}px`,
@@ -97,7 +96,11 @@ import { scrollState } from '@/composables/scroll';
 import { useFeedStore } from '@/store';
 import { FeedItem } from '@/types';
 
-import { loadFeedItems, updateFeedItem } from '../service/dbService';
+import {
+  loadFeedItem,
+  loadFeedItems,
+  updateFeedItem,
+} from '../service/dbService';
 
 const props = defineProps<{ id: number }>();
 
@@ -111,15 +114,9 @@ const currentFeedId = computed(() => feedItem.value?.feedId || 0);
 
 const { feed } = useFeed(currentFeedId);
 
-const allFeedItems = await loadFeedItems(feedId.value);
+const currentFeedItem = await loadFeedItem(props.id);
 
-const feedItems = computed(() =>
-  useFeedItems(allFeedItems, feedId, feedItemFilter)
-);
-
-const index = computed(() =>
-  feedItems.value.findIndex((feed) => feed.id === props.id)
-);
+const feedItems = ref<FeedItem[]>([currentFeedItem!]);
 
 const currentScrollState = computed(
   () => scrollState[`detail-${feedItem.value?.id}`] || {}
@@ -137,6 +134,20 @@ onMounted(() => {
     console.log('toolbar height:', toolbarHeight.value);
   });
 });
+
+const afterSlideInit = (swiper: SwiperClass) => {
+  setTimeout(async () => {
+    const allFeedItems = await loadFeedItems(feedId.value);
+    feedItems.value = useFeedItems(ref(allFeedItems), feedId, feedItemFilter);
+    const index = feedItems.value.findIndex((feed) => feed.id === props.id);
+    feedItems.value.unshift(currentFeedItem!);
+    setTimeout(() => {
+      feedItems.value.shift();
+      swiper.slideTo(index, 0);
+      swiper.update();
+    });
+  }, 200);
+};
 
 from(currentScrollState, { deep: true })
   .pipe(
