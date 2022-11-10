@@ -79,42 +79,39 @@ const pubDate = computed(() =>
 const toDetail = (id: number, $event: Event) => {
   const itemEl = ($event.target as HTMLElement).closest('ion-item');
   const { top, bottom } = itemEl!.getBoundingClientRect();
-  console.log($event.target, top, bottom);
-
-  updateFeedItem(id, { isRead: 1, readTime: new Date().getTime() }).then(() => {
-    router.push(`/detail/${id}`, (baseEl, opts) => {
-      const isForward = opts.direction === 'forward';
-      const enteringAnimation: Animation = createAnimation()
-        .addElement(isForward ? opts.enteringEl : opts.leavingEl)
-        .keyframes([
-          {
-            offset: 0,
-            opacity: 0,
-            clipPath: `inset(${top}px 0px calc(100vh - ${bottom}px) 0px)`,
-          },
-          {
-            offset: 1,
-            opacity: 1,
-            clipPath: 'inset(0px 0px 0px 0px)',
-          },
-        ])
-        .direction(isForward ? 'normal' : 'reverse');
-      const leavingAnimation = createAnimation()
-        .addElement(isForward ? opts.leavingEl : opts.enteringEl)
-        .keyframes([
-          {
-            offset: 0,
-            opacity: 1,
-          },
-          {
-            offset: 1,
-            opacity: 1,
-          },
-        ]);
-      return createAnimation()
-        .addAnimation([enteringAnimation, leavingAnimation])
-        .duration(200);
-    });
+  updateFeedItem(id, { isRead: 1, readTime: new Date().getTime() });
+  router.push(`/detail/${id}`, (baseEl, opts) => {
+    const isForward = opts.direction === 'forward';
+    const enteringAnimation: Animation = createAnimation()
+      .addElement(isForward ? opts.enteringEl : opts.leavingEl)
+      .keyframes([
+        {
+          offset: 0,
+          opacity: 0,
+          clipPath: `inset(${top}px 0px calc(100vh - ${bottom}px) 0px)`,
+        },
+        {
+          offset: 1,
+          opacity: 1,
+          clipPath: 'inset(0px 0px 0px 0px)',
+        },
+      ])
+      .direction(isForward ? 'normal' : 'reverse');
+    const leavingAnimation = createAnimation()
+      .addElement(isForward ? opts.leavingEl : opts.enteringEl)
+      .keyframes([
+        {
+          offset: 0,
+          opacity: 1,
+        },
+        {
+          offset: 1,
+          opacity: 1,
+        },
+      ]);
+    return createAnimation()
+      .addAnimation([enteringAnimation, leavingAnimation])
+      .duration(200);
   });
 };
 
