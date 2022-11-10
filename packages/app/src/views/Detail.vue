@@ -91,14 +91,16 @@ import { ComponentPublicInstance } from 'vue';
 
 import FeedItemContent from '@/components/FeedItemContent.vue';
 import LazyImage from '@/components/LazyImage.vue';
-import { useFeed, useFeedItems } from '@/composables';
+import { useFeed } from '@/composables';
 import { scrollState } from '@/composables/scroll';
+import { FeedItemFilter } from '@/enums';
 import { useFeedStore } from '@/store';
 import { FeedItem } from '@/types';
 
 import {
   loadFeedItem,
-  loadFeedItems,
+  loadFeedItemsByIndex,
+  loadRecentFeedItems,
   updateFeedItem,
 } from '../service/dbService';
 
@@ -137,8 +139,24 @@ onMounted(() => {
 
 const afterSlideInit = (swiper: SwiperClass) => {
   setTimeout(async () => {
-    const allFeedItems = await loadFeedItems(feedId.value);
-    feedItems.value = useFeedItems(ref(allFeedItems), feedId, feedItemFilter);
+    const feedIds = feedId.value ? [feedId.value] : [];
+
+    const isReadRange =
+      feedItemFilter.value === FeedItemFilter.UNREAD ? [0] : [0, 1];
+
+    const isFavoriteRange =
+      feedItemFilter.value === FeedItemFilter.FAVORITE ? [1] : [0, 1];
+    const allFeedItems = await loadFeedItemsByIndex({
+      feedIds,
+      isReadRange,
+      isFavoriteRange,
+    });
+    const recentFeedItems = await loadRecentFeedItems(feedId.value);
+
+    feedItems.value = (allFeedItems || [])
+      .concat(recentFeedItems)
+      .sort((a: any, b: any) => a.id - b.id);
+
     const index = feedItems.value.findIndex((feed) => feed.id === props.id);
     feedItems.value.unshift(currentFeedItem!);
     setTimeout(() => {

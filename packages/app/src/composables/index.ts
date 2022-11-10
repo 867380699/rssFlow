@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useObservable } from '@vueuse/rxjs';
-import { liveQuery, Subscription } from 'dexie';
+import Dexie, { liveQuery, Subscription } from 'dexie';
 import { Ref } from 'vue';
 
 import { FeedItemFilter } from '@/enums';
 
-import { feedDB } from '../service/dbService';
+import { feedDB, loadFeedItemsByIndex } from '../service/dbService';
 import { Feed, FeedItem } from '../types';
-
-console.log(_.zip([1, 2], [3, 4]));
 
 export const useFeed = (id: Ref<number>) => {
   const feed = ref<Feed>();
@@ -62,7 +60,10 @@ export const useFeedItemCounts = () => {
 
       const counts = await Promise.all(
         feeds.map(({ id: feedId }) =>
-          feedDB.feedItems.where({ feedId, isRead: 0 }).count()
+          feedDB.feedItems
+            .where('[feedId+isRead+isFavorite]')
+            .between([feedId, 0, 0], [feedId, 0, 1])
+            .count()
         )
       );
 
@@ -91,7 +92,7 @@ export const useFeedItems = (
   feedItems: Ref<FeedItem[]>,
   feedId: Ref<number> = ref(0),
   feedItemFilter: Ref<FeedItemFilter> = ref(FeedItemFilter.UNREAD)
-) => {
+): FeedItem[] => {
   const now = new Date().getTime();
   return feedItems.value
     .filter((item) => {
@@ -109,6 +110,74 @@ export const useFeedItems = (
       ...item,
       image: item.image && `/img/${item.image}`,
     }));
+};
+
+export const useLiveFeedItems = (
+  feedId: Ref<number> = ref(0),
+  feedItemFilter: Ref<FeedItemFilter> = ref(FeedItemFilter.UNREAD)
+) => {
+  const feedItems = ref<FeedItem[]>();
+
+  let subscription: Subscription;
+
+  watch(
+    [feedId, feedItemFilter],
+    async () => {
+      subscription?.unsubscribe();
+
+      const feedIds = feedId.value ? [feedId.value] : [];
+
+      const isReadRange =
+        feedItemFilter.value === FeedItemFilter.UNREAD ? [0] : [0, 1];
+
+      const isFavoriteRange =
+        feedItemFilter.value === FeedItemFilter.FAVORITE ? [1] : [0, 1];
+
+      subscription = liveQuery(() => {
+        return loadFeedItemsByIndex({ feedIds, isReadRange, isFavoriteRange });
+      }).subscribe((items) => {
+        feedItems.value = items;
+      });
+    },
+    { immediate: true }
+  );
+
+  return { feedItems };
+};
+
+export const useRecentFeeds = (feedId: Ref<number> = ref(0)) => {
+  const feedItems = ref<FeedItem[]>();
+  let subscription: Subscription;
+  watch(
+    feedId,
+    () => {
+      subscription?.unsubscribe();
+      let now = new Date().getTime();
+
+      subscription = liveQuery(() => {
+        return (
+          feedId.value
+            ? feedDB.feedItems.where({ feedId: feedId.value })
+            : feedDB.feedItems
+        )
+          .filter(
+            (item) =>
+              item.isRead === 1 && (item.readTime || 0) + 1000 * 60 * 2 > now
+          )
+          .reverse()
+          .toArray();
+      }).subscribe((items) => {
+        feedItems.value = items
+          .sort((a, b) => (b.readTime || 0) - (a.readTime || 0))
+          .slice(0, 5);
+        now = new Date().getTime();
+      });
+    },
+    { immediate: true }
+  );
+  return {
+    feedItems,
+  };
 };
 
 export const useFeedItem = (id: Ref<number>) => {

@@ -1,13 +1,14 @@
 import { defineStore } from 'pinia';
 
 import {
-  useAllFeedItems,
   useFeed,
   useFeedItem,
   useFeedItemCounts,
-  useFeedItems,
+  useLiveFeedItems,
+  useRecentFeeds,
 } from '@/composables';
 import { FeedItemFilter } from '@/enums';
+import { FeedItem } from '@/types';
 
 export const useFeedStore = defineStore('feed', () => {
   /** current selected feed's id */
@@ -25,14 +26,26 @@ export const useFeedStore = defineStore('feed', () => {
     feedItemFilter.value = filter;
   };
 
-  const { feedItems: allFeedItems } = useAllFeedItems();
+  const { feedItems: allFeedItems } = useLiveFeedItems(feedId, feedItemFilter);
+
+  const { feedItems: recentFeedItems } = useRecentFeeds(feedId);
 
   const feedItems = computed(() => {
-    if (allFeedItems.value) {
-      return useFeedItems(allFeedItems, feedId, feedItemFilter);
-    } else {
-      return [];
-    }
+    const extraFeeds =
+      feedItemFilter.value === FeedItemFilter.UNREAD
+        ? recentFeedItems.value || []
+        : [];
+    const result = (allFeedItems.value || [])
+      .concat(extraFeeds)
+      .sort((a: any, b: any) => a.id - b.id);
+
+    result.forEach((item: FeedItem) => {
+      if (item.image && !/\/img/.test(item.image)) {
+        item.image = `/img/${item.image}`;
+      }
+    });
+
+    return result;
   });
 
   const feedItemId = ref(0);
@@ -54,5 +67,6 @@ export const useFeedStore = defineStore('feed', () => {
     feedItemId,
     setFeedItemId,
     feedItemCounts,
+    recentFeedItems,
   };
 });

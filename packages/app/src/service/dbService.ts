@@ -37,10 +37,20 @@ export class FeedDB extends Dexie {
     this.version(15).stores({
       feeds: '++id, title, &link, parentId, rank, type',
     });
+    this.version(16).stores({
+      feedItems:
+        '++id, feedId, title, link, [feedId+isRead], [feedId+isRead+isFavorite]',
+    });
+    this.version(18).stores({
+      feedItems: '++id, feedId, [feedId+isRead], [feedId+isRead+isFavorite]',
+    });
   }
 }
 
 export const feedDB = new FeedDB();
+
+(window as any).feedDB = feedDB;
+(window as any).Dexie = Dexie;
 
 export const getNextFeedRank = async () => {
   const lastFeed = await feedDB.feeds.orderBy('rank').last();
@@ -166,6 +176,49 @@ export const loadFeedItems = async (feedId: number | string) => {
     feedItems = await feedDB.feedItems.toArray();
   }
   return feedItems;
+};
+
+export const loadRecentFeedItems = async (feedId: number | string) => {
+  const now = new Date().getTime();
+  let query;
+  if (feedId) {
+    query = feedDB.feedItems.where({ feedId });
+  } else {
+    query = feedDB.feedItems;
+  }
+  const feedItems = await query
+    .filter(
+      (item) => item.isRead === 1 && (item.readTime || 0) + 1000 * 60 * 2 > now
+    )
+    .reverse()
+    .toArray();
+  return feedItems
+    .sort((a, b) => (b.readTime || 0) - (a.readTime || 0))
+    .slice(0, 5);
+};
+
+export const loadFeedItemsByIndex = async ({
+  feedIds,
+  isReadRange,
+  isFavoriteRange,
+}: {
+  feedIds: (number | string)[];
+  isReadRange: number[];
+  isFavoriteRange: number[];
+}) => {
+  const feedIdRange = feedIds.length
+    ? feedIds
+    : await feedDB.feeds.toCollection().keys();
+
+  const ranges = feedIdRange.flatMap((id) =>
+    isReadRange.flatMap((isRead) =>
+      isFavoriteRange.map((isFavorite) => [id, isRead, isFavorite])
+    )
+  );
+  return feedDB.feedItems
+    .where('[feedId+isRead+isFavorite]')
+    .anyOf(ranges)
+    .toArray();
 };
 
 export const updateFeedItem = async (
