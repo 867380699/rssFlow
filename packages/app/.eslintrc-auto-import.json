@@ -1,9 +1,11 @@
 {
   "globals": {
     "EffectScope": true,
+    "_": true,
     "computed": true,
     "createApp": true,
     "customRef": true,
+    "default": true,
     "defineAsyncComponent": true,
     "defineComponent": true,
     "effectScope": true,

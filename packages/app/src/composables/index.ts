@@ -8,13 +8,14 @@ import { FeedItemFilter } from '@/enums';
 import { feedDB } from '../service/dbService';
 import { Feed, FeedItem } from '../types';
 
+console.log(_.zip([1, 2], [3, 4]));
+
 export const useFeed = (id: Ref<number>) => {
   const feed = ref<Feed>();
   let subscription: Subscription;
   watch(
     id,
     () => {
-      console.log('effect', id.value);
       subscription?.unsubscribe();
       subscription = liveQuery(() => feedDB.feeds.get(id.value)).subscribe(
         (newFeed) => {

@@ -8,6 +8,17 @@
 
 > <https://github.com/capacitor-community/http>
 
+# Dexie
+
+## Schema
+
+|         |                               |
+|---------|-------------------------------|
+| `++`    | Auto-incremented primary key  |
+| `&`     | Unique index                  |
+| `*`     | Multi-entry index             |
+| `[A+B]` | Compound index or primary key |
+
 # Decorator
 
 ```json
@@ -123,4 +134,21 @@ createVNode('strong', null, 'Foo')
 export interface Events {
   onContextmenu: MouseEvent
 }
+```
+
+
+# Lodash
+
+```yml
+bundle size:    3.29 MB
+original size:  5.155 MB
+code reduction: 36.17 %
+module count:   402
+
+--- export * as _ from 'lodash-es'
+
+bundle size:    3.309 MB
+original size:  5.176 MB
+code reduction: 36.06 %
+module count:   435
 ```

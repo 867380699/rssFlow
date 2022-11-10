@@ -43,6 +43,9 @@ export default defineConfig({
         {
           '@vueuse/core': ['useVModel'],
         },
+        {
+          '@/utils/lodash': ['default', '_'],
+        },
       ],
       eslintrc: {
         enabled: true,
