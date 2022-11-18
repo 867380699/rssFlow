@@ -63,11 +63,10 @@ const close = (delay = 300) => {
               const backdropAnimation = createAnimation()
                 .addElement(baseEl.shadowRoot.querySelector('ion-backdrop')!)
                 .keyframes([
-                  { offset: 0, opacity: '0.01', transform: `` },
+                  { offset: 0, opacity: '0.01' },
                   {
                     offset: 1,
-                    opacity: 'var(--backdrop-opacity)',
-                    transform: 'translate(0,0) scale(1)',
+                    opacity: 'var(--backdrop-opacity)'
                   },
                 ])
                 .direction('reverse');
