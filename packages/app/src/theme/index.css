@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* .ion-page.ios {
+  bottom: calc(env(safe-area-inset-bottom) - 16px);
+} */

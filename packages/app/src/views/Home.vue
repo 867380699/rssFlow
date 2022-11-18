@@ -16,12 +16,17 @@
         class="ion-content-scroll-host"
       />
     </ion-content>
-    <ion-segment :value="feedItemFilter" @ion-change="segmentChanged($event)">
-      <ion-segment-button v-for="tab in tabs" :key="tab.key" :value="tab.key">
-        <ion-label>{{ tab.label }}</ion-label>
-        <ion-icon :icon="tab.icon"></ion-icon>
-      </ion-segment-button>
-    </ion-segment>
+    <ion-footer>
+      <ion-toolbar>
+        <ion-segment class="flex-1" :value="feedItemFilter" @ion-change="segmentChanged($event)">
+          <ion-segment-button v-for="tab in tabs" :key="tab.key" :value="tab.key">
+            <ion-label>{{ tab.label }}</ion-label>
+            <ion-icon :icon="tab.icon"></ion-icon>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-toolbar>
+    </ion-footer>
+
   </ion-page>
 </template>
 
