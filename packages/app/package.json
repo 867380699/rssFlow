@@ -8,6 +8,7 @@
     "lint": "eslint --ext .ts,.vue --fix src",
     "sync": "$npm_execpath build;cap sync",
     "ios": "cap open ios",
+    "android": "cap open android",
     "electron": "cap open @capacitor-community/electron"
   },
   "dependencies": {
