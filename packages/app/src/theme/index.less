@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* .ion-page.ios {
+  bottom: calc(env(safe-area-inset-bottom) - 16px);
+} */
+
+.fab-enter-active,
+.fab-leave-active {
+  transition: all 0.1s ease;
+}
+
+.fab-enter-from,
+.fab-leave-to {
+  opacity: 0;
+  transform: translate(0, 30px) scale(0,0);
+}

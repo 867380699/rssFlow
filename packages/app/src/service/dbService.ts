@@ -231,3 +231,15 @@ export const updateFeedItem = async (
 export const deleteFeedItem = async (id: number) => {
   await feedDB.feedItems.delete(id);
 };
+
+export const readFeedItems = async (ids: number[]) => {
+  await feedDB.feedItems.where('id').anyOf(ids).modify({
+    isRead: 1,
+  });
+  const undo = async () => {
+    await feedDB.feedItems.where('id').anyOf(ids).modify({
+      isRead: 0,
+    });
+  };
+  return undo;
+};
