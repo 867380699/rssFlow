@@ -16,6 +16,7 @@
         :items="feedItems"
         class="ion-content-scroll-host"
       />
+      <!-- Read All Fab -->
       <Transition name="fab">
         <ion-fab
           v-show="isFabShow"

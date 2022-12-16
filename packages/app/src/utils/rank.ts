@@ -1,12 +1,12 @@
 import BigInt from 'big-integer';
 
 export const getNextRank = (rank = '0x888') => {
-  const nextRank = '0x' + (BigInt(rank).add(BigInt(1))).toString(16);
+  const nextRank = '0x' + BigInt(rank).add(BigInt(1)).toString(16);
   return nextRank;
 };
 
 export const getPrevRank = (rank = '0x888') => {
-  const nextRank = '0x' + (BigInt(rank).minus(BigInt(1))).toString(16);
+  const nextRank = '0x' + BigInt(rank).minus(BigInt(1)).toString(16);
   return nextRank;
 };
 
