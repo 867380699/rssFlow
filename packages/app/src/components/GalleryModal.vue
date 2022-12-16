@@ -48,6 +48,8 @@ let closeTimeout: any;
 
 let enableClose = true;
 
+let swiperInstance = ref<SwiperClass>();
+
 const close = (delay = 300) => {
   console.log('close');
   if (closeTimeout) {
@@ -56,6 +58,9 @@ const close = (delay = 300) => {
   if (enableClose) {
     closeTimeout = setTimeout(() => {
       if (enableClose) {
+        if (swiperInstance.value) {
+          swiperInstance.value.zoom.out();
+        }
         if (activeIndex.value !== props.index) {
           const translateY = activeIndex.value > props.index ? '30vh' : '-30vh';
           modalController.getTop().then((modalTop) => {
@@ -63,11 +68,10 @@ const close = (delay = 300) => {
               const backdropAnimation = createAnimation()
                 .addElement(baseEl.shadowRoot.querySelector('ion-backdrop')!)
                 .keyframes([
-                  { offset: 0, opacity: '0.01', transform: `` },
+                  { offset: 0, opacity: '0.01' },
                   {
                     offset: 1,
                     opacity: 'var(--backdrop-opacity)',
-                    transform: 'translate(0,0) scale(1)',
                   },
                 ])
                 .direction('reverse');
@@ -120,7 +124,8 @@ const onDragEnd = (ev: GestureDetail) => {
   }
 };
 
-const afterInit = () => {
+const afterInit = (swiper: SwiperClass) => {
+  swiperInstance.value = swiper;
   setTimeout(() => {
     showImages.value = props.imgs;
   });

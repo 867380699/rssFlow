@@ -59,7 +59,7 @@ export const useGallery = () => {
             {
               offset: 1,
               opacity: '1',
-              transform: `translate3d(0,0,0) scale(1,1,1)`,
+              transform: `translate3d(0,0,0) scale3d(1,1,1)`,
             },
           ]);
 
