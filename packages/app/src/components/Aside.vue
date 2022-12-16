@@ -37,7 +37,11 @@
           {{ itemCounts && itemCounts[0] }}
         </ion-badge>
       </div>
-      <feed-list :parent-id="0" :reorder-toggle="reorderToggle" />
+      <feed-list
+        :parent-id="0"
+        :reorder-toggle="reorderToggle"
+        @item-selected="(id) => emit('itemSelected', id)"
+      />
     </div>
   </ion-content>
 </template>
