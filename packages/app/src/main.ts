@@ -78,7 +78,11 @@ useRegisterSW({
               Http.get({ url, responseType: 'arraybuffer' })
                 .then((data) => {
                   console.log(data);
-                  event.ports[0].postMessage(data);
+                  if (data.status === 200) {
+                    event.ports[0].postMessage(data);
+                  } else {
+                    event.ports[0].postMessage({});
+                  }
                 })
                 .catch((e) => {
                   console.log(e);
