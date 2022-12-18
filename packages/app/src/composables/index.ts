@@ -5,7 +5,11 @@ import { Ref } from 'vue';
 
 import { FeedItemFilter } from '@/enums';
 
-import { feedDB, loadFeedItemsByIndex } from '../service/dbService';
+import {
+  feedDB,
+  loadFeedItemIdByIndex,
+  loadFeedItemsByIndex,
+} from '../service/dbService';
 import { Feed, FeedItem } from '../types';
 
 export const useFeed = (id: Ref<number>) => {
@@ -143,6 +147,72 @@ export const useLiveFeedItems = (
   );
 
   return { feedItems };
+};
+
+export const useHomeFeedItemIds = (
+  feedId: Ref<number> = ref(0),
+  feedItemFilter: Ref<FeedItemFilter> = ref(FeedItemFilter.UNREAD)
+) => {
+  const feedItemIds = ref<number[]>([]);
+  let subscription: Subscription;
+  watch(
+    [feedId, feedItemFilter],
+    async () => {
+      subscription?.unsubscribe();
+
+      subscription = liveQuery(async () => {
+        const feedIds = feedId.value ? [feedId.value] : [];
+
+        const isReadRange =
+          feedItemFilter.value === FeedItemFilter.UNREAD ? [0] : [0, 1];
+
+        const isFavoriteRange =
+          feedItemFilter.value === FeedItemFilter.FAVORITE ? [1] : [0, 1];
+
+        const allItemIds = await loadFeedItemIdByIndex({
+          feedIds,
+          isReadRange,
+          isFavoriteRange,
+        });
+
+        const recentItemIds = await loadFeedItemIdByIndex({
+          feedIds,
+          isReadRange: [1],
+          isFavoriteRange,
+          readTimeRange: [new Date().getTime() - 1000 * 60 * 2, Dexie.maxKey],
+        });
+
+        return { allItemIds, recentItemIds };
+      }).subscribe(({ allItemIds, recentItemIds }) => {
+        feedItemIds.value = allItemIds
+          .concat(recentItemIds.slice(-5))
+          .sort((a, b) => a - b);
+      });
+    },
+    { immediate: true }
+  );
+  return { feedItemIds };
+};
+
+export const useLiveFeedItemsById = (ids: Ref<number[]> = ref([])) => {
+  const feedItems = ref<FeedItem[]>();
+  let subscription: Subscription;
+  watch(
+    ids,
+    () => {
+      subscription?.unsubscribe();
+
+      subscription = liveQuery(() => {
+        return feedDB.feedItems.where('id').anyOf(ids.value).toArray();
+      }).subscribe((items) => {
+        feedItems.value = items;
+      });
+    },
+    { immediate: true }
+  );
+  return {
+    feedItems,
+  };
 };
 
 export const useRecentFeeds = (feedId: Ref<number> = ref(0)) => {

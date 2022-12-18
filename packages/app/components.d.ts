@@ -33,6 +33,8 @@ declare module '@vue/runtime-core' {
     IonFooter: typeof import('@ionic/vue')['IonFooter']
     IonHeader: typeof import('@ionic/vue')['IonHeader']
     IonIcon: typeof import('@ionic/vue')['IonIcon']
+    IonInfiniteScroll: typeof import('@ionic/vue')['IonInfiniteScroll']
+    IonInfiniteScrollContent: typeof import('@ionic/vue')['IonInfiniteScrollContent']
     IonInput: typeof import('@ionic/vue')['IonInput']
     IonItem: typeof import('@ionic/vue')['IonItem']
     IonLabel: typeof import('@ionic/vue')['IonLabel']

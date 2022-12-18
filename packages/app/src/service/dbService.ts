@@ -1,4 +1,4 @@
-import Dexie, { Table } from 'dexie';
+import Dexie, { IndexableType, Table } from 'dexie';
 
 import { getNextRank, getRankBetween, getSeed } from '@/utils/rank';
 
@@ -34,21 +34,26 @@ export class FeedDB extends Dexie {
             rank = getNextRank(rank);
           });
       });
-    this.version(15).stores({
-      feeds: '++id, title, &link, parentId, rank, type',
-    });
-    this.version(16).stores({
-      feedItems:
-        '++id, feedId, title, link, [feedId+isRead], [feedId+isRead+isFavorite]',
-    });
-    this.version(18).stores({
-      feedItems: '++id, feedId, [feedId+isRead], [feedId+isRead+isFavorite]',
-    });
+    this.version(27)
+      .stores({
+        feeds: '++id, title, &link, parentId, rank, type',
+        feedItems:
+          '++id, feedId, [feedId+isRead], [feedId+isRead+isFavorite+readTime]',
+      })
+      .upgrade(async (tx) => {
+        return tx
+          .table<FeedItem, number>('feedItems')
+          .toCollection()
+          .modify((feed) => {
+            feed.readTime = 0;
+          });
+      });
   }
 }
 
 export const feedDB = new FeedDB();
 
+// TODO: remove debug
 (window as any).feedDB = feedDB;
 (window as any).Dexie = Dexie;
 
@@ -197,28 +202,49 @@ export const loadRecentFeedItems = async (feedId: number | string) => {
     .slice(0, 5);
 };
 
-export const loadFeedItemsByIndex = async ({
-  feedIds,
-  isReadRange,
-  isFavoriteRange,
-}: {
+export type FeedItemQuery = {
   feedIds: (number | string)[];
   isReadRange: number[];
   isFavoriteRange: number[];
-}) => {
+  readTimeRange?: IndexableType[];
+};
+
+export const loadFeedItemCollectionByIndex = async ({
+  feedIds,
+  isReadRange,
+  isFavoriteRange,
+  readTimeRange = [Dexie.minKey, Dexie.maxKey],
+}: FeedItemQuery) => {
   const feedIdRange = feedIds.length
     ? feedIds
     : await feedDB.feeds.toCollection().keys();
 
-  const ranges = feedIdRange.flatMap((id) =>
+  const ranges: any[] = feedIdRange.flatMap((id) =>
     isReadRange.flatMap((isRead) =>
-      isFavoriteRange.map((isFavorite) => [id, isRead, isFavorite])
+      isFavoriteRange.map((isFavorite) => [
+        [id, isRead, isFavorite, readTimeRange[0]],
+        [id, isRead, isFavorite, readTimeRange[1]],
+      ])
     )
   );
+
   return feedDB.feedItems
-    .where('[feedId+isRead+isFavorite]')
-    .anyOf(ranges)
-    .toArray();
+    .where('[feedId+isRead+isFavorite+readTime]')
+    .inAnyRange(ranges, { includeLowers: true, includeUppers: true });
+};
+
+export const loadFeedItemsByIndex = async (query: FeedItemQuery) => {
+  const collection = await loadFeedItemCollectionByIndex(query);
+  return collection.toArray();
+};
+
+export const loadFeedItemIdByIndex = async (query: FeedItemQuery) => {
+  const start = performance.now();
+  const collection = await loadFeedItemCollectionByIndex(query);
+  const result = (await collection.primaryKeys()) as unknown as number[];
+  console.log('loadFeedItemIdByIndex', performance.now() - start);
+
+  return result;
 };
 
 export const updateFeedItem = async (

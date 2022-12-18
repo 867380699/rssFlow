@@ -56,6 +56,7 @@
 
 <script lang="ts" setup>
 import {
+  InfiniteScrollCustomEvent,
   IonContent,
   IonFab,
   IonFabButton,
@@ -81,11 +82,11 @@ import {
   starOutline,
 } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
-import { fromEvent, map, pairwise, throttleTime } from 'rxjs';
+import { fromEvent, map, pairwise, share, throttleTime } from 'rxjs';
 import { ComponentPublicInstance } from 'vue';
 
 import FeedItemList from '@/components/FeedItemList.vue';
-import { useFeed } from '@/composables';
+import { useFeed, useLiveFeedItemsById } from '@/composables';
 import { FeedItemFilter } from '@/enums';
 import { readFeedItems } from '@/service/dbService';
 import { useFeedStore } from '@/store';
@@ -96,7 +97,19 @@ const ionRouter = useRouter();
 
 const feedStore = useFeedStore();
 
-const { feedId, feedItemFilter, feedItems } = storeToRefs(feedStore);
+const { feedId, feedItemFilter, feedItemIds } = storeToRefs(feedStore);
+
+const feedItemsCount = ref(20);
+
+watch(feedId, () => {
+  feedItemsCount.value = 20;
+});
+
+const shownFeedItemsIds = computed(() => {
+  return feedItemIds.value.slice(0, feedItemsCount.value);
+});
+
+const { feedItems } = useLiveFeedItemsById(shownFeedItemsIds);
 
 const tabs = [
   { key: FeedItemFilter.UNREAD, label: t('unread'), icon: eyeOffOutline },
@@ -128,7 +141,7 @@ let undoReadAllFn: () => void;
 let undoReadAllTimeout: ReturnType<typeof setTimeout>;
 
 const readAll = async () => {
-  const ids: number[] = feedItems.value.map((f) => f.id) as number[];
+  const ids: number[] = feedItems.value?.map((f) => f.id) as number[];
   if (ids.length) {
     undoReadAllFn = await readFeedItems(ids);
     canUndoReadAll.value = true;
@@ -151,7 +164,9 @@ const isFabShow = ref(true);
 const content = ref<ComponentPublicInstance<HTMLElement> | null>(null);
 
 onMounted(() => {
-  fromEvent<Event>(content.value?.$el, 'scroll')
+  const scroll$ = fromEvent<Event>(content.value?.$el, 'scroll').pipe(share());
+
+  scroll$
     .pipe(
       throttleTime(60),
       map((e) => (e.target as HTMLElement).scrollTop),
@@ -165,6 +180,24 @@ onMounted(() => {
       } else if (deltaScrollTop < -60) {
         // scroll up
         isFabShow.value = true;
+      }
+    });
+
+  scroll$
+    .pipe(
+      throttleTime(30),
+      map((e) => {
+        const { scrollTop, scrollHeight, clientHeight } =
+          e.target as HTMLElement;
+        return { scrollTop, scrollHeight, clientHeight };
+      })
+    )
+    .subscribe(({ scrollTop, scrollHeight, clientHeight }) => {
+      if (scrollTop + clientHeight > scrollHeight - 96 * 3) {
+        feedItemsCount.value = Math.min(
+          feedItemsCount.value + 20,
+          feedItemIds.value.length
+        );
       }
     });
 });
