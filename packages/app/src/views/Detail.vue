@@ -34,12 +34,12 @@
         :slides-per-view="1"
         :space-between="24"
         :virtual="{ enabled: true }"
-        @slide-change="onSlideChange"
+        @transition-end="transitionEnd"
         @after-init="afterSlideInit"
       >
         <swiper-slide
           v-for="item in feedItems"
-          :key="item.id"
+          :key="item && item.id"
           :virtual-index="item.id"
         >
           <FeedItemContent
@@ -83,7 +83,6 @@ import {
   star,
   starOutline,
 } from 'ionicons/icons';
-import { storeToRefs } from 'pinia';
 import { bufferCount, map, throttleTime } from 'rxjs';
 import { Swiper as SwiperClass, Virtual } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -91,38 +90,72 @@ import { ComponentPublicInstance } from 'vue';
 
 import FeedItemContent from '@/components/FeedItemContent.vue';
 import LazyImage from '@/components/LazyImage.vue';
-import { useFeed } from '@/composables';
+import { useFeed, useFeedItem } from '@/composables';
 import { scrollState } from '@/composables/scroll';
-import { FeedItemFilter } from '@/enums';
 import { useFeedStore } from '@/store';
 import { FeedItem } from '@/types';
 
-import {
-  loadFeedItem,
-  loadFeedItemsByIndex,
-  loadRecentFeedItems,
-  updateFeedItem,
-} from '../service/dbService';
+import { feedDB, loadFeedItem, updateFeedItem } from '../service/dbService';
 
 const props = defineProps<{ id: number }>();
 
-const feedStore = useFeedStore();
+const feedId = ref(props.id);
 
-feedStore.setFeedItemId(props.id);
+let { feedItem } = useFeedItem(feedId);
 
-const { feedId, feedItem, feedItemFilter } = storeToRefs(feedStore);
+feedItem.value = await loadFeedItem(props.id);
 
 const currentFeedId = computed(() => feedItem.value?.feedId || 0);
 
 const { feed } = useFeed(currentFeedId);
 
-const currentFeedItem = await loadFeedItem(props.id);
+const feedStore = useFeedStore();
 
-const feedItems = ref<FeedItem[]>([currentFeedItem!]);
+const feedItemIds = [...feedStore.feedItemIds];
 
-const currentScrollState = computed(
-  () => scrollState[`detail-${feedItem.value?.id}`] || {}
-);
+const feedItems = ref<FeedItem[]>([feedItem.value!]);
+
+const afterSlideInit = (swiper: SwiperClass) => {
+  updateSlide(props.id, swiper);
+};
+
+const updateSlide = async (itemId: number, swiper: SwiperClass) => {
+  const index = feedItemIds.indexOf(itemId);
+  const slideItemIds = feedItemIds.slice(Math.max(0, index - 1), index + 2);
+
+  console.log('slide:updateSlide', index, slideItemIds);
+
+  const newFeedItems = await feedDB.feedItems
+    .where('id')
+    .anyOf(slideItemIds)
+    .toArray();
+
+  const newIndex = slideItemIds.findIndex((id) => id === itemId);
+
+  feedItems.value = newFeedItems;
+
+  nextTick(() => {
+    swiper.slideTo(newIndex, 0);
+    swiper.update();
+  });
+};
+
+const transitionEnd = async (swiper: SwiperClass) => {
+  const newFeedItem = feedItems.value[swiper.activeIndex];
+  if (newFeedItem && newFeedItem.id) {
+    const newId = newFeedItem.id;
+    console.log('slide:transitionEnd', newId, feedItem.value?.id);
+
+    if (newId !== feedItem.value?.id) {
+      await updateFeedItem(newId, {
+        isRead: 1,
+        readTime: new Date().getTime(),
+      });
+      feedId.value = newId;
+      updateSlide(newId, swiper);
+    }
+  }
+};
 
 const showToolbar = ref(true);
 
@@ -133,39 +166,12 @@ const toolbar = ref<ComponentPublicInstance | null>(null);
 onMounted(() => {
   setTimeout(() => {
     toolbarHeight.value = toolbar.value?.$el.clientHeight;
-    console.log('toolbar height:', toolbarHeight.value);
   });
 });
 
-const afterSlideInit = (swiper: SwiperClass) => {
-  setTimeout(async () => {
-    const feedIds = feedId.value ? [feedId.value] : [];
-
-    const isReadRange =
-      feedItemFilter.value === FeedItemFilter.UNREAD ? [0] : [0, 1];
-
-    const isFavoriteRange =
-      feedItemFilter.value === FeedItemFilter.FAVORITE ? [1] : [0, 1];
-    const allFeedItems = await loadFeedItemsByIndex({
-      feedIds,
-      isReadRange,
-      isFavoriteRange,
-    });
-    const recentFeedItems = await loadRecentFeedItems(feedId.value);
-
-    feedItems.value = (allFeedItems || [])
-      .concat(recentFeedItems)
-      .sort((a: any, b: any) => a.id - b.id);
-
-    const index = feedItems.value.findIndex((feed) => feed.id === props.id);
-    feedItems.value.unshift(currentFeedItem!);
-    setTimeout(() => {
-      feedItems.value.shift();
-      swiper.slideTo(index, 0);
-      swiper.update();
-    });
-  }, 200);
-};
+const currentScrollState = computed(
+  () => scrollState[`detail-${feedItem.value?.id}`] || {}
+);
 
 from(currentScrollState, { deep: true })
   .pipe(
@@ -192,18 +198,6 @@ const bottomToolbarStyle = computed(() => ({
   opacity: `${showToolbar.value ? 1 : 0}`,
   bottom: `${showToolbar.value ? 0 : -toolbarHeight.value}px`,
 }));
-
-const onSlideChange = async (swiper: SwiperClass) => {
-  const newFeedItem = feedItems.value[swiper.activeIndex];
-  if (newFeedItem && newFeedItem.id) {
-    const newId = newFeedItem.id;
-    await updateFeedItem(newId, {
-      isRead: 1,
-      readTime: new Date().getTime(),
-    });
-    feedStore.setFeedItemId(newId);
-  }
-};
 
 const toggleRead = () => {
   if (feedItem.value && feedItem.value.id) {

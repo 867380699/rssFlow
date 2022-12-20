@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useObservable } from '@vueuse/rxjs';
 import Dexie, { liveQuery, Subscription } from 'dexie';
+import { combineLatest } from 'rxjs';
 import { Ref } from 'vue';
 
 import { FeedItemFilter } from '@/enums';
@@ -160,34 +161,49 @@ export const useHomeFeedItemIds = (
     async () => {
       subscription?.unsubscribe();
 
-      subscription = liveQuery(async () => {
-        const feedIds = feedId.value ? [feedId.value] : [];
+      const feedIds = feedId.value ? [feedId.value] : [];
 
-        const isReadRange =
-          feedItemFilter.value === FeedItemFilter.UNREAD ? [0] : [0, 1];
+      const isReadRange =
+        feedItemFilter.value === FeedItemFilter.UNREAD ? [0] : [0, 1];
 
-        const isFavoriteRange =
-          feedItemFilter.value === FeedItemFilter.FAVORITE ? [1] : [0, 1];
+      const isFavoriteRange =
+        feedItemFilter.value === FeedItemFilter.FAVORITE ? [1] : [0, 1];
 
+      const allItemsIds$ = liveQuery(async () => {
         const allItemIds = await loadFeedItemIdByIndex({
           feedIds,
           isReadRange,
           isFavoriteRange,
         });
+        console.log('load all');
 
+        return allItemIds;
+      });
+
+      const recentItemIds$ = liveQuery(async () => {
         const recentItemIds = await loadFeedItemIdByIndex({
           feedIds,
           isReadRange: [1],
           isFavoriteRange,
           readTimeRange: [new Date().getTime() - 1000 * 60 * 2, Dexie.maxKey],
         });
+        console.log('load recent');
 
-        return { allItemIds, recentItemIds };
-      }).subscribe(({ allItemIds, recentItemIds }) => {
-        feedItemIds.value = allItemIds
-          .concat(recentItemIds.slice(-5))
-          .sort((a, b) => a - b);
+        return recentItemIds;
       });
+
+      const source =
+        feedItemFilter.value === FeedItemFilter.UNREAD
+          ? [allItemsIds$, recentItemIds$]
+          : [allItemsIds$];
+
+      subscription = combineLatest<number[][]>(source).subscribe(
+        ([allItemIds, recentItemIds = []]) => {
+          feedItemIds.value = [
+            ...new Set(allItemIds.concat(recentItemIds.slice(-5))),
+          ].sort((a, b) => a - b);
+        }
+      );
     },
     { immediate: true }
   );
