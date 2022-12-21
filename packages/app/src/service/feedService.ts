@@ -88,6 +88,7 @@ const parseRSSFeedItems = (nodeTree: Document): Array<FeedItem> => {
         node.querySelector('link')?.textContent?.replace(/^https?/, 'https') ||
         '',
       pubDate: (pubDate ? new Date(pubDate) : new Date()).getTime(),
+      readTime: 0,
     });
   });
   return items;
@@ -227,11 +228,15 @@ export const syncAllFeeds = async () => {
     const syncInterval = 1000 * 60 * 60 * 2;
     if (!feed.lastUpdateTime || now - feed.lastUpdateTime > syncInterval) {
       console.log('sync feed:', feed.source);
-      const feedText = await getFeeds(feed.source);
-      const newItems = parseFeed(feedText, feed.source).items;
-      if (newItems) {
-        await storeFeedItems(newItems, Number(feed.id));
-        feedDB.feeds.update(Number(feed.id), { lastUpdateTime: now });
+      try {
+        const feedText = await getFeeds(feed.source);
+        const newItems = parseFeed(feedText, feed.source).items;
+        if (newItems) {
+          await storeFeedItems(newItems, Number(feed.id));
+          feedDB.feeds.update(Number(feed.id), { lastUpdateTime: now });
+        }
+      } catch (e) {
+        console.log(e);
       }
     }
   });

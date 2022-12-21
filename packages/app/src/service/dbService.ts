@@ -34,7 +34,7 @@ export class FeedDB extends Dexie {
             rank = getNextRank(rank);
           });
       });
-    this.version(27)
+    this.version(29)
       .stores({
         feeds: '++id, title, &link, parentId, rank, type',
         feedItems:
@@ -45,7 +45,9 @@ export class FeedDB extends Dexie {
           .table<FeedItem, number>('feedItems')
           .toCollection()
           .modify((feed) => {
-            feed.readTime = 0;
+            if (!feed.readTime) {
+              feed.readTime = 0;
+            }
           });
       });
   }
@@ -137,6 +139,7 @@ export const storeFeedItems = async (feedItems: FeedItem[], feedId: number) => {
           link,
           pubDate,
           isRead: 0,
+          readTime: 0,
           isFavorite: 0,
         })
       )
