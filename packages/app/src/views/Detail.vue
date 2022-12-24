@@ -30,18 +30,12 @@
     >
       <swiper
         class="h-full overflow-auto"
-        :modules="[Virtual]"
         :slides-per-view="1"
         :space-between="24"
-        :virtual="{ enabled: true }"
         @transition-end="transitionEnd"
         @after-init="afterSlideInit"
       >
-        <swiper-slide
-          v-for="item in feedItems"
-          :key="item && item.id"
-          :virtual-index="item.id"
-        >
+        <swiper-slide v-for="item in feedItems" :key="item && item.id">
           <FeedItemContent
             :feed-item="item"
             class="content-container overflow-auto h-full"
@@ -84,7 +78,7 @@ import {
   starOutline,
 } from 'ionicons/icons';
 import { bufferCount, map, throttleTime } from 'rxjs';
-import { Swiper as SwiperClass, Virtual } from 'swiper';
+import { Swiper as SwiperClass } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import { ComponentPublicInstance } from 'vue';
 
