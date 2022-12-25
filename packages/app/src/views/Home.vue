@@ -56,7 +56,6 @@
 
 <script lang="ts" setup>
 import {
-  InfiniteScrollCustomEvent,
   IonContent,
   IonFab,
   IonFabButton,

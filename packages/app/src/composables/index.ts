@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useObservable } from '@vueuse/rxjs';
 import Dexie, { liveQuery, Subscription } from 'dexie';
-import { combineLatest } from 'rxjs';
+import { combineLatest, map, switchMap } from 'rxjs';
 import { Ref } from 'vue';
 
 import { FeedItemFilter } from '@/enums';
 
 import {
+  buildFeedItemKeysObservable,
+  buildRangesObservable,
   feedDB,
-  loadFeedItemIdByIndex,
+  FeedItemQuery,
   loadFeedItemsByIndex,
 } from '../service/dbService';
 import { Feed, FeedItem } from '../types';
@@ -159,51 +161,67 @@ export const useHomeFeedItemIds = (
   watch(
     [feedId, feedItemFilter],
     async () => {
+      let start = performance.now();
+
       subscription?.unsubscribe();
+
+      const isUnread = feedItemFilter.value === FeedItemFilter.UNREAD;
+      const isFavorite = feedItemFilter.value === FeedItemFilter.FAVORITE;
 
       const feedIds = feedId.value ? [feedId.value] : [];
 
-      const isReadRange =
-        feedItemFilter.value === FeedItemFilter.UNREAD ? [0] : [0, 1];
+      const isReadRange = isUnread ? [0] : [0, 1];
 
-      const isFavoriteRange =
-        feedItemFilter.value === FeedItemFilter.FAVORITE ? [1] : [0, 1];
+      const isFavoriteRange = isFavorite ? [1] : [0, 1];
 
-      const allItemsIds$ = liveQuery(async () => {
-        const allItemIds = await loadFeedItemIdByIndex({
-          feedIds,
-          isReadRange,
-          isFavoriteRange,
+      const allRanges: FeedItemQuery = {
+        feedIds,
+        isReadRange,
+        isFavoriteRange,
+      };
+
+      const recentRanges: FeedItemQuery = {
+        feedIds,
+        isReadRange: [1],
+        isFavoriteRange,
+        readTimeRange: [new Date().getTime() - 1000 * 60 * 2, Dexie.maxKey],
+      };
+
+      const sources = [buildRangesObservable(allRanges)];
+      if (isUnread) {
+        sources.push(buildRangesObservable(recentRanges));
+      }
+
+      subscription = combineLatest(sources)
+        .pipe(
+          map((ranges) => {
+            return ranges.flatMap((x) => x);
+          }),
+          switchMap((ranges) => {
+            return buildFeedItemKeysObservable(ranges);
+          })
+        )
+        .subscribe((keys) => {
+          const end = performance.now();
+          console.log('load Home', end - start);
+          start = end;
+          if (isUnread) {
+            const allItemIds: number[] = [];
+            const recentItemIds: number[] = [];
+            keys.forEach((key) => {
+              if (key[1]) {
+                recentItemIds.push(key[4]);
+              } else {
+                allItemIds.push(key[4]);
+              }
+            });
+            feedItemIds.value = [
+              ...new Set(allItemIds.concat(recentItemIds.slice(-5))),
+            ].sort((a, b) => a - b);
+          } else {
+            feedItemIds.value = keys.map((k) => k[4]).sort((a, b) => a - b);
+          }
         });
-        console.log('load all');
-
-        return allItemIds;
-      });
-
-      const recentItemIds$ = liveQuery(async () => {
-        const recentItemIds = await loadFeedItemIdByIndex({
-          feedIds,
-          isReadRange: [1],
-          isFavoriteRange,
-          readTimeRange: [new Date().getTime() - 1000 * 60 * 2, Dexie.maxKey],
-        });
-        console.log('load recent');
-
-        return recentItemIds;
-      });
-
-      const source =
-        feedItemFilter.value === FeedItemFilter.UNREAD
-          ? [allItemsIds$, recentItemIds$]
-          : [allItemsIds$];
-
-      subscription = combineLatest<number[][]>(source).subscribe(
-        ([allItemIds, recentItemIds = []]) => {
-          feedItemIds.value = [
-            ...new Set(allItemIds.concat(recentItemIds.slice(-5))),
-          ].sort((a, b) => a - b);
-        }
-      );
     },
     { immediate: true }
   );
