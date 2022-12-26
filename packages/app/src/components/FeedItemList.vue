@@ -5,7 +5,7 @@
     :items="items"
     :item-size="96"
     key-field="id"
-    :buffer="20"
+    :buffer="300"
   >
     <template #default="{ item }">
       <FeedItem :item="item" />
