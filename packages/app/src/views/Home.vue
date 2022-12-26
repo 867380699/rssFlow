@@ -100,7 +100,7 @@ const { feedId, feedItemFilter, feedItemIds } = storeToRefs(feedStore);
 
 const feedItemsCount = ref(20);
 
-watch(feedId, () => {
+watch([feedId, feedItemFilter], () => {
   feedItemsCount.value = 20;
 });
 
