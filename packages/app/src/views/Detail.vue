@@ -298,6 +298,10 @@ const openLink = (feedItem?: FeedItem) => {
     code[lang] {
       @apply block rounded p-1 overflow-auto whitespace-pre;
     }
+    iframe {
+      height: 56vw;
+      @apply w-full mb-2;
+    }
   }
 }
 </style>
