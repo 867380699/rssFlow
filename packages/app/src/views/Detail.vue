@@ -18,6 +18,14 @@
           </ion-thumbnail>
           {{ feed?.title }}
         </div>
+        <ion-buttons slot="end">
+          <ion-button
+            v-bind="{color: isShowIframeMap[feedItem?.id!] ? 'primary':''}"
+            @click="toggleIframe"
+          >
+            <ion-icon slot="icon-only" :icon="swapHorizontalOutline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content
@@ -38,6 +46,7 @@
         <swiper-slide v-for="item in feedItems" :key="item && item.id">
           <FeedItemContent
             :feed-item="item"
+            :show-iframe="isShowIframeMap[item.id!]"
             class="content-container overflow-auto h-full"
             :style="{
               'padding-top': `${toolbarHeight}px`,
@@ -76,6 +85,7 @@ import {
   openOutline,
   star,
   starOutline,
+  swapHorizontalOutline,
 } from 'ionicons/icons';
 import { bufferCount, map, throttleTime } from 'rxjs';
 import { Swiper as SwiperClass } from 'swiper';
@@ -148,6 +158,15 @@ const transitionEnd = async (swiper: SwiperClass) => {
       feedId.value = newId;
       updateSlide(newId, swiper);
     }
+  }
+};
+
+const isShowIframeMap = ref<Record<number, boolean>>({});
+
+const toggleIframe = () => {
+  if (feedItem.value && feedItem.value.id) {
+    isShowIframeMap.value[feedItem.value.id] =
+      !isShowIframeMap.value[feedItem.value.id];
   }
 };
 
