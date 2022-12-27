@@ -11,6 +11,9 @@
 	"plugins": {
 		"CapacitorHttp": {
 			"enabled": true
+		},
+		"SplashScreen": {
+			"launchAutoHide": false
 		}
 	}
 }

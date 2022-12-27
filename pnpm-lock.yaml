@@ -24,6 +24,7 @@ importers:
       '@capacitor/cli': ^4.0.0
       '@capacitor/core': ^4.0.0
       '@capacitor/ios': ^4.6.1
+      '@capacitor/splash-screen': ^4.1.2
       '@intlify/vite-plugin-vue-i18n': ^6.0.2
       '@ionic/vue': ^6.2.8
       '@ionic/vue-router': ^6.2.8
@@ -88,6 +89,7 @@ importers:
       '@capacitor/app': 4.1.1_@capacitor+core@4.6.1
       '@capacitor/core': 4.6.1
       '@capacitor/ios': 4.6.1_@capacitor+core@4.6.1
+      '@capacitor/splash-screen': 4.1.2_@capacitor+core@4.6.1
       '@ionic/vue': 6.2.8
       '@ionic/vue-router': 6.2.8
       '@vueuse/core': 9.3.0_vue@3.2.39
@@ -1460,6 +1462,14 @@ packages:
     resolution: {integrity: sha512-kH1nPG2jCk7w6ASf2VX+tIxHoc2Z/c5+7d89yvtiKmEZXoPLuVyAv/Yx4PhJP2r7KSyl5S2gZZkzQrMdAjDVKg==}
     peerDependencies:
       '@capacitor/core': ^4.6.0
+    dependencies:
+      '@capacitor/core': 4.6.1
+    dev: false
+
+  /@capacitor/splash-screen/4.1.2_@capacitor+core@4.6.1:
+    resolution: {integrity: sha512-uw37mfFtpXH6lBG0Lz6/ZRvbnn1XZ0lVOL7UHylvW4C/BUJRKHqPloCXNMeSBGuBkf5WdW7sdmKdGdp4J5fU9g==}
+    peerDependencies:
+      '@capacitor/core': ^4.0.0
     dependencies:
       '@capacitor/core': 4.6.1
     dev: false

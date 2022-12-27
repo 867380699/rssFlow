@@ -26,7 +26,7 @@ const onItemSelected = () => {
   menuController.close('menu');
 };
 
-initSync();
+onMounted(initSync);
 
 onBeforeUnmount(destroySync);
 </script>

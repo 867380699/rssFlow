@@ -12,6 +12,7 @@ import './theme/variables.css';
 import 'swiper/css';
 
 import { Capacitor, CapacitorHttp } from '@capacitor/core';
+import { SplashScreen } from '@capacitor/splash-screen';
 import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
 import { useRegisterSW } from 'virtual:pwa-register/vue';
@@ -24,6 +25,10 @@ import messageEn from './locales/en.json';
 import messageCn from './locales/zh.json';
 import router from './router';
 import Logger from './utils/log';
+
+setTimeout(() => {
+  SplashScreen.hide();
+}, 300);
 
 const i18n = createI18n({
   locale: 'zh',

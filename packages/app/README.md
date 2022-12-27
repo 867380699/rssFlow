@@ -8,6 +8,10 @@
 
 > <https://capacitorjs.com/docs/apis/http>
 
+## Splash
+
+> <https://forum.ionicframework.com/t/white-screen-after-splash-and-before-my-home-screen-capacitor-ionic/202724>
+
 # Dexie
 
 ## Schema
