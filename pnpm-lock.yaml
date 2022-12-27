@@ -19,11 +19,11 @@ importers:
   packages/app:
     specifiers:
       '@capacitor-community/electron': ^4.1.2
-      '@capacitor-community/http': ^1.4.1
       '@capacitor/android': ^4.0.0
       '@capacitor/app': ^4.0.0
       '@capacitor/cli': ^4.0.0
       '@capacitor/core': ^4.0.0
+      '@capacitor/ios': ^4.6.1
       '@intlify/vite-plugin-vue-i18n': ^6.0.2
       '@ionic/vue': ^6.2.8
       '@ionic/vue-router': ^6.2.8
@@ -84,10 +84,10 @@ importers:
       workbox-window: ^6.5.4
     dependencies:
       '@capacitor-community/electron': 4.1.2
-      '@capacitor-community/http': 1.4.1
       '@capacitor/android': 4.6.1_@capacitor+core@4.6.1
       '@capacitor/app': 4.1.1_@capacitor+core@4.6.1
       '@capacitor/core': 4.6.1
+      '@capacitor/ios': 4.6.1_@capacitor+core@4.6.1
       '@ionic/vue': 6.2.8
       '@ionic/vue-router': 6.2.8
       '@vueuse/core': 9.3.0_vue@3.2.39
@@ -1377,23 +1377,6 @@ packages:
       - supports-color
     dev: false
 
-  /@capacitor-community/http/1.4.1:
-    resolution: {integrity: sha512-+pCkBXrwfm97UfjOgjV950H/qZ8SE36Mrcb46BlL1ps3VIsGuIO+AulL8GqTC6LewheRVtGJpRspNtneXQotNA==}
-    dependencies:
-      '@capacitor/android': 3.8.0_@capacitor+core@3.8.0
-      '@capacitor/core': 3.8.0
-      '@capacitor/filesystem': 1.1.0_@capacitor+core@3.8.0
-      '@capacitor/ios': 3.8.0_@capacitor+core@3.8.0
-    dev: false
-
-  /@capacitor/android/3.8.0_@capacitor+core@3.8.0:
-    resolution: {integrity: sha512-FwHCiWOkPmqI/K4rnIBSyRUy39zqDmgK62yR3DSfEMVgXVvUkzRgYQfDxCn+lq8vPiT/CbnI/iEoudBorJFQkw==}
-    peerDependencies:
-      '@capacitor/core': ^3.8.0
-    dependencies:
-      '@capacitor/core': 3.8.0
-    dev: false
-
   /@capacitor/android/4.6.1_@capacitor+core@4.6.1:
     resolution: {integrity: sha512-Hnh1tmUr1SP67U6D6ry5I5BEBSN/1nkBAIjQIqf5tF82WNxKbpbC6GfkHE4hMJZinRTrCf36LkrdP8srh7SxoA==}
     peerDependencies:
@@ -1473,20 +1456,12 @@ packages:
       tslib: 2.4.0
     dev: false
 
-  /@capacitor/filesystem/1.1.0_@capacitor+core@3.8.0:
-    resolution: {integrity: sha512-8O3UuvL8HNUEJvZnmn8yUmvgB1evtXfcF0oxIo3YbSlylqywJwS3JTiuhKmsvSxCdpbTy8IaTsutVh3gZgWbKg==}
+  /@capacitor/ios/4.6.1_@capacitor+core@4.6.1:
+    resolution: {integrity: sha512-kH1nPG2jCk7w6ASf2VX+tIxHoc2Z/c5+7d89yvtiKmEZXoPLuVyAv/Yx4PhJP2r7KSyl5S2gZZkzQrMdAjDVKg==}
     peerDependencies:
-      '@capacitor/core': ^3.0.0
+      '@capacitor/core': ^4.6.0
     dependencies:
-      '@capacitor/core': 3.8.0
-    dev: false
-
-  /@capacitor/ios/3.8.0_@capacitor+core@3.8.0:
-    resolution: {integrity: sha512-a2/inoVG+4L1diOxTK8oXOMliT5tXwJSg5KelJh8YuouYjH8duVRx560qoKQPE9rUbo9VG3pqOK0w3gROSk2yQ==}
-    peerDependencies:
-      '@capacitor/core': ^3.8.0
-    dependencies:
-      '@capacitor/core': 3.8.0
+      '@capacitor/core': 4.6.1
     dev: false
 
   /@cspotcode/source-map-support/0.8.1:
