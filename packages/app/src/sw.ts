@@ -1,4 +1,4 @@
-import { HttpResponse } from '@capacitor-community/http';
+import { HttpResponse } from '@capacitor/core';
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import {

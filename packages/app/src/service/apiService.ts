@@ -1,5 +1,4 @@
-import { Capacitor } from '@capacitor/core';
-import { Http } from '@capacitor-community/http';
+import { Capacitor, CapacitorHttp } from '@capacitor/core';
 
 const platform = Capacitor.getPlatform();
 
@@ -17,7 +16,9 @@ export const getFeeds = async (url: string) => {
       const feedText = await resp.text();
       return feedText;
     } else {
-      const resp = await Http.get({ url: (protocol || 'http://') + rest });
+      const resp = await CapacitorHttp.get({
+        url: (protocol || 'http://') + rest,
+      });
       return resp.data;
     }
   } else {

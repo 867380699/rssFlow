@@ -11,8 +11,7 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 import './theme/variables.css';
 import 'swiper/css';
 
-import { Capacitor } from '@capacitor/core';
-import { Http } from '@capacitor-community/http';
+import { Capacitor, CapacitorHttp } from '@capacitor/core';
 import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
 import { useRegisterSW } from 'virtual:pwa-register/vue';
@@ -75,7 +74,7 @@ useRegisterSW({
           if (event.data.type === 'HTTP') {
             const url = event.data.url;
             if (url) {
-              Http.get({ url, responseType: 'arraybuffer' })
+              CapacitorHttp.get({ url, responseType: 'arraybuffer' })
                 .then((data) => {
                   console.log(data);
                   if (data.status === 200) {

@@ -6,7 +6,7 @@
 
 ## Native HTTP
 
-> <https://github.com/capacitor-community/http>
+> <https://capacitorjs.com/docs/apis/http>
 
 # Dexie
 

@@ -10,7 +10,6 @@ def capacitor_pods
   pod 'Capacitor', :path => '../../../../node_modules/.pnpm/@capacitor+ios@3.8.0_@capacitor+core@3.8.0/node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../../../node_modules/.pnpm/@capacitor+ios@3.8.0_@capacitor+core@3.8.0/node_modules/@capacitor/ios'
   pod 'CapacitorApp', :path => '../../../../node_modules/.pnpm/@capacitor+app@4.1.1_@capacitor+core@4.6.1/node_modules/@capacitor/app'
-  pod 'CapacitorCommunityHttp', :path => '../../../../node_modules/.pnpm/@capacitor-community+http@1.4.1/node_modules/@capacitor-community/http'
 end
 
 target 'App' do

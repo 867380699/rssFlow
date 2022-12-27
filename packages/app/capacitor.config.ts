@@ -11,7 +11,11 @@ const config: CapacitorConfig = {
     // url: 'https://rss-flow.vercel.app',
     cleartext: true,
   },
-  includePlugins: ['@capacitor/app', '@capacitor-community/http'],
+  plugins: {
+    CapacitorHttp: {
+      enabled: true,
+    },
+  },
 };
 
 export default config;

@@ -8,8 +8,9 @@
 		"hostname": "localhost",
 		"cleartext": true
 	},
-	"includePlugins": [
-		"@capacitor/app",
-		"@capacitor-community/http"
-	]
+	"plugins": {
+		"CapacitorHttp": {
+			"enabled": true
+		}
+	}
 }
