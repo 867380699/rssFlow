@@ -20,10 +20,10 @@ importers:
     specifiers:
       '@capacitor-community/electron': ^4.1.2
       '@capacitor-community/http': ^1.4.1
-      '@capacitor/android': ^3.8.0
-      '@capacitor/app': ^1.1.1
-      '@capacitor/cli': ^3.8.0
-      '@capacitor/core': ^3.8.0
+      '@capacitor/android': ^4.0.0
+      '@capacitor/app': ^4.0.0
+      '@capacitor/cli': ^4.0.0
+      '@capacitor/core': ^4.0.0
       '@intlify/vite-plugin-vue-i18n': ^6.0.2
       '@ionic/vue': ^6.2.8
       '@ionic/vue-router': ^6.2.8
@@ -85,9 +85,9 @@ importers:
     dependencies:
       '@capacitor-community/electron': 4.1.2
       '@capacitor-community/http': 1.4.1
-      '@capacitor/android': 3.8.0_@capacitor+core@3.8.0
-      '@capacitor/app': 1.1.1_@capacitor+core@3.8.0
-      '@capacitor/core': 3.8.0
+      '@capacitor/android': 4.6.1_@capacitor+core@4.6.1
+      '@capacitor/app': 4.1.1_@capacitor+core@4.6.1
+      '@capacitor/core': 4.6.1
       '@ionic/vue': 6.2.8
       '@ionic/vue-router': 6.2.8
       '@vueuse/core': 9.3.0_vue@3.2.39
@@ -109,7 +109,7 @@ importers:
       vue-virtual-scroller: 2.0.0-alpha.1_vue@3.2.39
       workbox-expiration: 6.5.4
     devDependencies:
-      '@capacitor/cli': 3.8.0
+      '@capacitor/cli': 4.6.1
       '@intlify/vite-plugin-vue-i18n': 6.0.2_vite@3.1.8+vue-i18n@9.2.2
       '@tailwindcss/line-clamp': 0.4.2_tailwindcss@3.1.8
       '@types/dompurify': 2.3.4
@@ -1394,12 +1394,20 @@ packages:
       '@capacitor/core': 3.8.0
     dev: false
 
-  /@capacitor/app/1.1.1_@capacitor+core@3.8.0:
-    resolution: {integrity: sha512-8ADkldHnoE1xkWvPUsGlERVGm6/Zvcxy6hCI80AxydIKyaCG7kbDAvUclebbnw/eFRxj2zBoVatGLjmJNvTbYw==}
+  /@capacitor/android/4.6.1_@capacitor+core@4.6.1:
+    resolution: {integrity: sha512-Hnh1tmUr1SP67U6D6ry5I5BEBSN/1nkBAIjQIqf5tF82WNxKbpbC6GfkHE4hMJZinRTrCf36LkrdP8srh7SxoA==}
     peerDependencies:
-      '@capacitor/core': ^3.0.0
+      '@capacitor/core': ^4.6.0
     dependencies:
-      '@capacitor/core': 3.8.0
+      '@capacitor/core': 4.6.1
+    dev: false
+
+  /@capacitor/app/4.1.1_@capacitor+core@4.6.1:
+    resolution: {integrity: sha512-SJcJA1rhFQyeH6eLfUEbdKkHzAwzahJNVPNXmU88fdmXpMgM2dJGzZj1vrm6e21aQq+Z4aBVLJ2RCdj92zD7wg==}
+    peerDependencies:
+      '@capacitor/core': ^4.0.0
+    dependencies:
+      '@capacitor/core': 4.6.1
     dev: false
 
   /@capacitor/cli/3.8.0:
@@ -1425,9 +1433,42 @@ packages:
       xml2js: 0.4.23
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /@capacitor/cli/4.6.1:
+    resolution: {integrity: sha512-iFMK83B67RXEQyWi1kOzQmRdCFc/pPD924mjAXG7yFLVyMvVRGAwwf8LzWFzHyQDoKK+auPMHycVfzm9T6Iyyg==}
+    engines: {node: '>=12.4.0'}
+    hasBin: true
+    dependencies:
+      '@ionic/cli-framework-output': 2.2.5
+      '@ionic/utils-fs': 3.1.6
+      '@ionic/utils-subprocess': 2.1.11
+      '@ionic/utils-terminal': 2.3.3
+      commander: 9.4.1
+      debug: 4.3.4
+      env-paths: 2.2.1
+      kleur: 4.1.5
+      native-run: 1.7.1
+      open: 8.4.0
+      plist: 3.0.6
+      prompts: 2.4.2
+      rimraf: 3.0.2
+      semver: 7.3.7
+      tar: 6.1.11
+      tslib: 2.4.0
+      xml2js: 0.4.23
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
 
   /@capacitor/core/3.8.0:
     resolution: {integrity: sha512-Z7iHM+1CBbuIK+74bS4ZjpPUOdcKb7Gf7j8xK9WegcrUeHZQl4O6hAAn6nT60kDoeAyutsr3PP25542Ur0wLBg==}
+    dependencies:
+      tslib: 2.4.0
+    dev: false
+
+  /@capacitor/core/4.6.1:
+    resolution: {integrity: sha512-7A2IV9E8umgu9u0fChUTjQJq+Jp25GJZMmWxoQN/nVx/1rcpFJ4m1xo3NPBoIRs+aV7FR+BM17mPrnkKlA8N2g==}
     dependencies:
       tslib: 2.4.0
     dev: false
@@ -1584,8 +1625,8 @@ packages:
       vue-i18n:
         optional: true
     dependencies:
-      '@intlify/message-compiler': 9.3.0-beta.7
-      '@intlify/shared': 9.3.0-beta.7
+      '@intlify/message-compiler': 9.3.0-beta.11
+      '@intlify/shared': 9.3.0-beta.11
       jsonc-eslint-parser: 1.4.1
       source-map: 0.6.1
       vue-i18n: 9.2.2_vue@3.2.39
@@ -1614,11 +1655,11 @@ packages:
       '@intlify/shared': 9.2.2
       source-map: 0.6.1
 
-  /@intlify/message-compiler/9.3.0-beta.7:
-    resolution: {integrity: sha512-70r2UNp6DyKtIM4FgYCwdSuBK7xqCx2rVSXLMFiDRQi8pwooBklmOuzA0j7Q8ffbwKlFUJEEr2xPHZz2TJ6NAw==}
+  /@intlify/message-compiler/9.3.0-beta.11:
+    resolution: {integrity: sha512-gGGfBGzM7JBXp1Q9gbDAy5jELz9ho3ILqnpxp2yp64+gkqohrqc2YXIvCdwZoc6AtKIh/Zmv4sWVqxkvMsBWtQ==}
     engines: {node: '>= 14'}
     dependencies:
-      '@intlify/shared': 9.3.0-beta.7
+      '@intlify/shared': 9.3.0-beta.11
       source-map: 0.6.1
     dev: true
 
@@ -1626,8 +1667,8 @@ packages:
     resolution: {integrity: sha512-wRwTpsslgZS5HNyM7uDQYZtxnbI12aGiBZURX3BTR9RFIKKRWpllTsgzHWvj3HKm3Y2Sh5LPC1r0PDCKEhVn9Q==}
     engines: {node: '>= 14'}
 
-  /@intlify/shared/9.3.0-beta.7:
-    resolution: {integrity: sha512-weWqKXyv94rdPXbSFYvA4yIwLYDhzgIWfgrVQ6UYARobPFE3BN+woWmjlGmASTyXMzZtTsq21b0LCN9SHN8pxQ==}
+  /@intlify/shared/9.3.0-beta.11:
+    resolution: {integrity: sha512-CtbotesxTRiC3bRyXyv1NG39fkqJ790f8z8xFaeIXSZpOdiyxoh5BIyypCzSFQZDGLwz0Q9gyWbW1XpxQJm68Q==}
     engines: {node: '>= 14'}
     dev: true
 
@@ -1647,7 +1688,7 @@ packages:
         optional: true
     dependencies:
       '@intlify/bundle-utils': 3.4.0_vue-i18n@9.2.2
-      '@intlify/shared': 9.3.0-beta.7
+      '@intlify/shared': 9.3.0-beta.11
       '@rollup/pluginutils': 4.2.1
       debug: 4.3.4
       fast-glob: 3.2.12
@@ -3053,6 +3094,12 @@ packages:
   /commander/6.2.1:
     resolution: {integrity: sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==}
     engines: {node: '>= 6'}
+    dev: false
+
+  /commander/9.4.1:
+    resolution: {integrity: sha512-5EEkTNyHNGFPD2H+c/dXXfQZYa/scCKasxWcXJaWnNJ99pnQN9Vnmqow+p+PlFPE63Q6mThaZws1T+HxfpgtPw==}
+    engines: {node: ^12.20.0 || >=14}
+    dev: true
 
   /common-tags/1.8.2:
     resolution: {integrity: sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA==}
@@ -3211,6 +3258,11 @@ packages:
     dependencies:
       clone: 1.0.4
     dev: false
+
+  /define-lazy-prop/2.0.0:
+    resolution: {integrity: sha512-Ds09qNh8yw3khSjiJjiUInaGX9xlqZDY7JVryGxdxV7NPeuqQfplOpQ66yJFZut3jLa5zOwkXw1g9EI2uKh4Og==}
+    engines: {node: '>=8'}
+    dev: true
 
   /define-properties/1.1.4:
     resolution: {integrity: sha512-uckOqKcfaVvtBdsVkdPv3XjveQJsNQqmhXgRi8uhvWWuPYZCNlzT8qAyblUgNoXdHdjMTzAqeGjAoli8f+bzPA==}
@@ -5525,6 +5577,16 @@ packages:
     dependencies:
       is-docker: 2.2.1
       is-wsl: 2.2.0
+    dev: false
+
+  /open/8.4.0:
+    resolution: {integrity: sha512-XgFPPM+B28FtCCgSb9I+s9szOC1vZRSwgWsRUA5ylIxRTgKozqjOCrVOqGsYABPYK5qnfqClxZTFBa8PKt2v6Q==}
+    engines: {node: '>=12'}
+    dependencies:
+      define-lazy-prop: 2.0.0
+      is-docker: 2.2.1
+      is-wsl: 2.2.0
+    dev: true
 
   /optionator/0.9.1:
     resolution: {integrity: sha512-74RlY5FCnhq4jRxVUPKDaRwrVNXMqsGsiW6AJw4XK8hmtm10wC0ypZBLw5IIp85NZMr91+qd1RvvENwg7jjRFw==}

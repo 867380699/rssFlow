@@ -16,11 +16,10 @@ import com.getcapacitor.Plugin;
 public class MainActivity extends BridgeActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+        registerPlugin(ServiceWorkerPlugin.class);
         registerPlugin(com.capacitorjs.plugins.app.AppPlugin.class);
         registerPlugin(com.getcapacitor.plugin.http.Http.class);
-        registerPlugin(ServiceWorkerPlugin.class);
+        super.onCreate(savedInstanceState);
     }
 }
 
