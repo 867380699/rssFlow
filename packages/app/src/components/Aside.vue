@@ -2,7 +2,7 @@
   <ion-header>
     <ion-toolbar color="medium">
       <ion-buttons slot="primary">
-        <ion-button>
+        <ion-button @click="showMoreMenu">
           <ion-icon slot="icon-only" :icon="ellipsisHorizontal"></ion-icon>
         </ion-button>
       </ion-buttons>
@@ -46,7 +46,7 @@
   </ion-content>
 </template>
 <script lang="ts" setup>
-import { modalController } from '@ionic/vue';
+import { modalController, popoverController } from '@ionic/vue';
 import {
   add,
   ellipsisHorizontal,
@@ -62,6 +62,7 @@ import { useFeedStore } from '@/store';
 
 import AddFeedModal from './modals/AddFeedModal.vue';
 import AddGroupModal from './modals/AddGroupModal.vue';
+import MoreMenuModal from './modals/MoreMenuModal.vue';
 
 const emit = defineEmits(['itemSelected']);
 
@@ -97,6 +98,14 @@ const showAddGroupModal = async () => {
     },
   });
   modal.present();
+};
+
+const showMoreMenu = async (event: Event) => {
+  const popover = await popoverController.create({
+    component: MoreMenuModal,
+    event,
+  });
+  await popover.present();
 };
 
 const toggleReorder = () => {

@@ -156,3 +156,30 @@ original size:  5.176 MB
 code reduction: 36.06 %
 module count:   435
 ```
+
+# OPML
+
+Outline Processor Markup Language
+
+<http://opml.org/spec2.opml>
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>Title</title>
+    <dateCreated>Wed, 28 Dec 2022 07:27:33 GMT</dateCreated>
+  </head>
+  <body>
+    <outline type="rss" title="title" text="text" xmlUrl="url"/>
+
+    <outline title="group">
+      <outline type="rss" title="title" text="text" xmlUrl="url"/>
+    </outline>
+
+  </body>
+</opml>
+```
+
+- `<outline>` 
+  + `text` - required attribute

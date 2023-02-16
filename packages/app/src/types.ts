@@ -1,9 +1,10 @@
 export type Feed = {
   id?: number;
+  /** feed subscription source url */
   source: string;
   title: string;
   description?: string;
-  link: string;
+  link?: string;
   imageUrl?: string;
   items?: Array<FeedItem>;
   lastUpdateTime?: number;

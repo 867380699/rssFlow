@@ -58,7 +58,7 @@ const searchFeed = async () => {
 
 const subscribeFeed = async () => {
   if (feedRef.value) {
-    await storeFeed(feedRef.value, rssUrl.value);
+    await storeFeed(feedRef.value);
     emit('close');
   }
 };

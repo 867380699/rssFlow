@@ -69,9 +69,10 @@ export const getNextFeedRank = async () => {
   return getNextRank(lastFeed?.rank);
 };
 
-export const storeFeed = async (feed: Feed, source: string) => {
+export const storeFeed = async (feed: Feed) => {
   const rank = await getNextFeedRank();
-  const { title, description, link, imageUrl, items } = feed;
+  const { source, title, type, parentId, description, link, imageUrl, items } =
+    feed;
   const feedId = (await feedDB.feeds.add({
     source,
     title,
@@ -79,13 +80,14 @@ export const storeFeed = async (feed: Feed, source: string) => {
     link,
     imageUrl,
     lastUpdateTime: new Date().getTime(),
-    parentId: 0,
-    type: 'feed',
+    parentId,
+    type,
     rank,
   })) as number;
   if (items && items.length) {
     await storeFeedItems(items, feedId);
   }
+  return feedId;
 };
 
 export const moveFeed = async ({

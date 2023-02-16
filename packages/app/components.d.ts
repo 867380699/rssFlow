@@ -46,6 +46,7 @@ declare module '@vue/runtime-core' {
     IonToolbar: typeof import('@ionic/vue')['IonToolbar']
     LazyFeedContent: typeof import('./src/components/LazyFeedContent.vue')['default']
     LazyImage: typeof import('./src/components/LazyImage.vue')['default']
+    MoreMenuModal: typeof import('./src/components/modals/MoreMenuModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
