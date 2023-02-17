@@ -8,5 +8,6 @@
   "confirm": "确认",
   "cancel": "取消",
   "import": "导入",
-  "export": "导出"
+  "export": "导出",
+  "exportSuccess": "导出成功"
 }

@@ -14,6 +14,7 @@ import { IonContent, IonItem, IonList, popoverController } from '@ionic/vue';
 import { feedDB, storeFeed } from '@/service/dbService';
 import xmlService from '@/service/xmlService';
 import { downloadFile, readFileAsString } from '@/utils/flie';
+import { toast } from '@/utils/toast';
 
 type Action = {
   key: 'import' | 'export';
@@ -47,7 +48,9 @@ const handleFeedAction = (action: Action) => {
 
 const importOPML = async () => {
   console.log('importOPML');
-  const opmlString = await readFileAsString('.opml, .xml');
+  const opmlString = await readFileAsString(
+    '.opml, .xml, application/octet-stream' // compatible with opml on android
+  );
   if (opmlString) {
     const opml = xmlService.parse(opmlString);
 
@@ -118,7 +121,9 @@ const exportOPML = async () => {
 
   const opmlString = xmlService.serialize(xml);
 
-  downloadFile(opmlString, 'feed.opml');
+  const timeStamp = Math.round(new Date().getTime() / 1000);
+  const result = await downloadFile(opmlString, `rssflow_${timeStamp}.opml`);
+  await toast(`${t('exportSuccess')}: ${result?.uri.replace('file://', '')}`);
 };
 
 const buildOutline = async (parentId = 0) => {
