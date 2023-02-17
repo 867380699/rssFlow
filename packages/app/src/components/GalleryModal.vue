@@ -128,7 +128,7 @@ const afterInit = (swiper: SwiperClass) => {
   swiperInstance.value = swiper;
   setTimeout(() => {
     showImages.value = props.imgs;
-  });
+  }, 200);
 };
 </script>
 
