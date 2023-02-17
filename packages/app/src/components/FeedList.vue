@@ -60,6 +60,7 @@
               <feed-list
                 :parent-id="feed.id || 0"
                 :reorder-toggle="reorderToggle"
+                @item-selected="(id) => emit('itemSelected', id)"
               />
             </div>
           </template>
