@@ -20,6 +20,10 @@ export type FeedItem = {
   shortDescription?: string;
   description?: string;
   image?: string;
+  video?: {
+    src: string;
+    poster?: string;
+  };
   readTime?: number;
   pubDate?: number;
   link: string;

@@ -70,6 +70,7 @@ export const getNextFeedRank = async () => {
 };
 
 export const storeFeed = async (feed: Feed) => {
+  feed = toRaw(feed);
   const rank = await getNextFeedRank();
   const { source, title, type, parentId, description, link, imageUrl, items } =
     feed;
@@ -137,10 +138,19 @@ export const storeFeedItems = async (feedItems: FeedItem[], feedId: number) => {
     );
     await feedDB.feedItems.bulkAdd(
       deduplicateItems.map(
-        ({ title, description, shortDescription, link, image, pubDate }) => ({
+        ({
+          title,
+          description,
+          shortDescription,
+          link,
+          image,
+          video,
+          pubDate,
+        }) => ({
           feedId,
           title,
           image,
+          video,
           description,
           shortDescription,
           link,

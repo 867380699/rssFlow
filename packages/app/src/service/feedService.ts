@@ -76,12 +76,14 @@ const parseRSSFeedItems = (nodeTree: Document): Array<FeedItem> => {
     const description = node.querySelector('description')?.textContent || '';
 
     const contentDocument = parser.parseFromString(description, 'text/html');
-    const image = contentDocument.querySelector('img')?.src;
     const pubDate = node.querySelector('pubDate')?.textContent;
+
+    const { image, video } = parseFeedItemMedia(description);
 
     items.push({
       title: node.querySelector('title')?.textContent || '',
       image,
+      video,
       shortDescription: (contentDocument.body.textContent || '').trim(),
       description,
       link:
@@ -101,12 +103,14 @@ const parseAtomFeedItems = (nodeTree: Document): Array<FeedItem> => {
     const description = node.querySelector('content')?.textContent || '';
 
     const contentDocument = parser.parseFromString(description, 'text/html');
-    const image = contentDocument.querySelector('img')?.src;
     const pubDate = node.querySelector('updated')?.textContent;
+
+    const { image, video } = parseFeedItemMedia(description);
 
     items.push({
       title: node.querySelector('title')?.textContent || '',
       image,
+      video,
       shortDescription: (contentDocument.body.textContent || '').trim(),
       description,
       link:
@@ -118,6 +122,26 @@ const parseAtomFeedItems = (nodeTree: Document): Array<FeedItem> => {
     });
   });
   return items;
+};
+
+const parseFeedItemMedia = (description: string) => {
+  const contentDocument = parser.parseFromString(description, 'text/html');
+  const image = contentDocument.querySelector('img')?.src;
+  const videoEl = contentDocument.querySelector('video');
+  const src = videoEl?.src;
+  const poster = videoEl?.poster;
+
+  const video = src
+    ? {
+        src,
+        poster,
+      }
+    : undefined;
+
+  return {
+    image,
+    video,
+  };
 };
 
 export const parseFeedContent = time((content: string) => {

@@ -17,7 +17,19 @@
       :style="{ '--inner-padding-end': '0' }"
       @click="($event)=>toDetail(item.id!, $event)"
     >
-      <ion-thumbnail v-if="item.image" slot="end" class="m-1 w-[64px] h-[64px]">
+      <ion-thumbnail v-if="item.video" slot="end" class="m-1 w-[64px] h-[64px]">
+        <LazyImage
+          :key="item.id"
+          :src="item.video.poster"
+          class="rounded"
+          crossorigin="anonymous"
+        />
+      </ion-thumbnail>
+      <ion-thumbnail
+        v-else-if="item.image"
+        slot="end"
+        class="m-1 w-[64px] h-[64px]"
+      >
         <LazyImage
           :key="item.id"
           :src="item.image"
