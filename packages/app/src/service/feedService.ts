@@ -162,14 +162,17 @@ export const parseFeedContent = time((content: string) => {
   });
   const result = DOMPurify.sanitize(content, { ADD_TAGS: ['iframe'] });
   const domObj = parser.parseFromString(result, 'text/html');
-  const buildScope = { imageCount: 0 };
+  const buildScope = { imageIndex: 0 };
   const vNode = buildVNode(domObj.body, buildScope);
   console.log(buildScope);
 
   return () => vNode;
 }, 'parseFeedContent');
 
-const buildVNode = (e: HTMLElement, scope: any) => {
+const buildVNode = (
+  e: HTMLElement,
+  scope: { [key: string]: any; imageIndex: number }
+) => {
   const attrNames = e.getAttributeNames();
   const props: any = {};
   for (const attrName of attrNames) {
@@ -197,11 +200,11 @@ const buildVNode = (e: HTMLElement, scope: any) => {
     props.offset = 2;
   } else if (e.tagName === 'IMG') {
     const { minHeight } = useMinHeight();
-    if (scope.imageCount < 2) {
+    if (scope.imageIndex < 2) {
       component = LazyImage;
       props['loading'] = 'eager';
       props['minHeight'] = `${minHeight.value}px`;
-      const index = scope.imageCount;
+      const index = scope.imageIndex;
       props['onClick'] = (ev: Event) => {
         const { openGalleryModal } = useGallery();
         openGalleryModal(scope.imgs, index, ev.target as HTMLImageElement);
@@ -209,14 +212,14 @@ const buildVNode = (e: HTMLElement, scope: any) => {
     } else {
       component = 'div';
       props.class = 'img-placeholder bg-slate-400 rounded-sm mb-2';
-      props.style = `min-height: ${minHeight.value}px`;
+      props.style = { 'min-height': `${minHeight.value}px` };
     }
     if (!scope.imgs) {
       scope.imgs = [];
     }
     scope.imgs.push((e as HTMLImageElement).src);
 
-    scope.imageCount += 1;
+    scope.imageIndex += 1;
   } else if (e.tagName === 'TABLE') {
     return h(
       'div',
@@ -227,6 +230,7 @@ const buildVNode = (e: HTMLElement, scope: any) => {
       [h(component, props, children.length ? children : undefined)]
     );
   }
+
   return h(
     component,
     props,

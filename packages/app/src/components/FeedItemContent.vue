@@ -1,17 +1,17 @@
 <template>
-  <div ref="content">
+  <div ref="content" :class="{ 'p-2': !showIframe }">
     <iframe
       v-if="showIframe"
       ref="frame"
       :src="feedItem.link"
       class="w-full h-full"
     />
-    <div v-else class="p-2">
+    <template v-else>
       <h1 class="font-bold text-xl my-4 mx-auto max-w-[800px]">
         {{ feedItem?.title }}
       </h1>
       <FeedContentComponent />
-    </div>
+    </template>
   </div>
 </template>
 
