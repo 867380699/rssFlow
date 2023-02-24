@@ -29,10 +29,19 @@
           crossorigin="anonymous"
         />
         <div
-          v-if="item.video?.poster"
+          v-if="item.video?.poster || item.audio"
           class="media-badge px-1 py-0.5 absolute right-0 bottom-0 bg-black opacity-60 rounded-tl"
         >
-          <ion-icon :icon="videocamOutline" class="text-xs block"></ion-icon>
+          <ion-icon
+            v-if="item.video?.poster"
+            :icon="videocamOutline"
+            class="text-xs block"
+          ></ion-icon>
+          <ion-icon
+            v-else-if="item.audio"
+            :icon="musicalNotesOutline"
+            class="text-xs block"
+          ></ion-icon>
         </div>
       </ion-thumbnail>
       <ion-label class="m-0 py-1 h-[96px]">
@@ -70,7 +79,11 @@ import {
   useIonRouter,
 } from '@ionic/vue';
 import { formatRelative } from 'date-fns';
-import { trashOutline, videocamOutline } from 'ionicons/icons';
+import {
+  musicalNotesOutline,
+  trashOutline,
+  videocamOutline,
+} from 'ionicons/icons';
 
 import { deleteFeedItem, updateFeedItem } from '@/service/dbService';
 import { FeedItem } from '@/types';

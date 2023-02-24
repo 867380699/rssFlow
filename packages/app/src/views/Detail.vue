@@ -302,6 +302,9 @@ const openLink = (feedItem?: FeedItem) => {
       height: 56vw;
       @apply w-full mb-2;
     }
+    audio {
+      @apply m-auto mb-4 w-full;
+    }
   }
 }
 </style>

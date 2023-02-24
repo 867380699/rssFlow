@@ -73,17 +73,28 @@ const parseRSSFeedItems = (nodeTree: Document): Array<FeedItem> => {
   const itemNodes = nodeTree.querySelectorAll('rss > channel > item');
   const items: Array<FeedItem> = [];
   itemNodes.forEach((node) => {
-    const description = node.querySelector('description')?.textContent || '';
+    let description =
+      node.getElementsByTagNameNS(
+        'http://purl.org/rss/1.0/modules/content/',
+        'encoded'
+      )[0]?.textContent ||
+      node.querySelector('description')?.textContent ||
+      '';
 
+    const enclosure = node.querySelector('enclosure');
+    if (enclosure) {
+      description = parseEncolsure(enclosure) + description;
+    }
     const contentDocument = parser.parseFromString(description, 'text/html');
     const pubDate = node.querySelector('pubDate')?.textContent;
 
-    const { image, video } = parseFeedItemMedia(description);
+    const { image, video, audio } = parseFeedItemMedia(description);
 
     items.push({
       title: node.querySelector('title')?.textContent || '',
       image,
       video,
+      audio,
       shortDescription: (contentDocument.body.textContent || '').trim(),
       description,
       link:
@@ -100,17 +111,21 @@ const parseAtomFeedItems = (nodeTree: Document): Array<FeedItem> => {
   const itemNodes = nodeTree.querySelectorAll('feed > entry');
   const items: Array<FeedItem> = [];
   itemNodes.forEach((node) => {
-    const description = node.querySelector('content')?.textContent || '';
-
+    let description = node.querySelector('content')?.textContent || '';
+    const enclosure = node.querySelector('link[rel="enclosure"]');
+    if (enclosure) {
+      description = parseEncolsure(enclosure) + description;
+    }
     const contentDocument = parser.parseFromString(description, 'text/html');
     const pubDate = node.querySelector('updated')?.textContent;
 
-    const { image, video } = parseFeedItemMedia(description);
+    const { image, video, audio } = parseFeedItemMedia(description);
 
     items.push({
       title: node.querySelector('title')?.textContent || '',
       image,
       video,
+      audio,
       shortDescription: (contentDocument.body.textContent || '').trim(),
       description,
       link:
@@ -128,6 +143,8 @@ const parseFeedItemMedia = (description: string) => {
   const contentDocument = parser.parseFromString(description, 'text/html');
   const image = contentDocument.querySelector('img')?.src;
   const videoEl = contentDocument.querySelector('video');
+  const audio =
+    contentDocument.querySelector<HTMLSourceElement>('audio source')?.src;
   const src = videoEl?.src;
   const poster = videoEl?.poster;
 
@@ -141,7 +158,42 @@ const parseFeedItemMedia = (description: string) => {
   return {
     image,
     video,
+    audio,
   };
+};
+
+export const parseEncolsure = (enclosure: Element) => {
+  const mimeType = enclosure.getAttribute('type') || '';
+  // rss -> url, atom -> href
+  const url =
+    enclosure.getAttribute('url') || enclosure.getAttribute('href') || '';
+
+  if (isAudio(url, mimeType)) {
+    return `<audio controls> <source src="${url}"></audio>`;
+  } else if (isVideo(url, mimeType)) {
+    return `<video controls> <source src="${url}"></video>`;
+  }
+  return '';
+};
+
+const isAudio = (url = '', mimeType = '') => {
+  if (/audio/i.test(mimeType)) {
+    return true;
+  }
+  if (/(mp3|wav|ogg|aac|m4a|flac|alac)$/.test(url)) {
+    return true;
+  }
+  return false;
+};
+
+const isVideo = (url = '', mimeType = '') => {
+  if (/video/i.test(mimeType)) {
+    return true;
+  }
+  if (/(mp4|mov|avi|flv|wmv|mkv|webm)$/.test(url)) {
+    return true;
+  }
+  return false;
 };
 
 export const parseFeedContent = time((content: string) => {

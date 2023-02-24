@@ -24,6 +24,7 @@ export type FeedItem = {
     src: string;
     poster?: string;
   };
+  audio?: string;
   readTime?: number;
   pubDate?: number;
   link: string;
