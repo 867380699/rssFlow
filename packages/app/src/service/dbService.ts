@@ -55,6 +55,10 @@ export class FeedDB extends Dexie {
       feedItems:
         '++id, feedId, [feedId+isRead], [feedId+isRead+isFavorite+readTime+id]',
     });
+    // remove link index
+    this.version(31).stores({
+      feeds: '++id, title, parentId, rank, type',
+    });
   }
 }
 
