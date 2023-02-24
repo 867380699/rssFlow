@@ -17,25 +17,23 @@
       :style="{ '--inner-padding-end': '0' }"
       @click="($event)=>toDetail(item.id!, $event)"
     >
-      <ion-thumbnail v-if="item.video" slot="end" class="m-1 w-[64px] h-[64px]">
-        <LazyImage
-          :key="item.id"
-          :src="item.video.poster"
-          class="rounded"
-          crossorigin="anonymous"
-        />
-      </ion-thumbnail>
       <ion-thumbnail
-        v-else-if="item.image"
+        v-if="item.image || item.video"
         slot="end"
-        class="m-1 w-[64px] h-[64px]"
+        class="m-1 w-[64px] h-[64px] relative"
       >
         <LazyImage
           :key="item.id"
-          :src="item.image"
+          :src="item.video?.poster || item.image"
           class="rounded"
           crossorigin="anonymous"
         />
+        <div
+          v-if="item.video?.poster"
+          class="media-badge px-1 py-0.5 absolute right-0 bottom-0 bg-black opacity-60 rounded-tl"
+        >
+          <ion-icon :icon="videocamOutline" class="text-xs block"></ion-icon>
+        </div>
       </ion-thumbnail>
       <ion-label class="m-0 py-1 h-[96px]">
         <div
@@ -50,7 +48,9 @@
         <h2 class="!text-base line-clamp-2 whitespace-normal pl-6">
           {{ item.title }}
         </h2>
-        <p class="!text-sm pl-6">{{ item.shortDescription?.slice(0, 100) }}</p>
+        <p class="!text-sm pl-6 font-light">
+          {{ item.shortDescription?.slice(0, 100) }}
+        </p>
       </ion-label>
     </ion-item>
   </ion-item-sliding>
@@ -70,7 +70,7 @@ import {
   useIonRouter,
 } from '@ionic/vue';
 import { formatRelative } from 'date-fns';
-import { trashOutline } from 'ionicons/icons';
+import { trashOutline, videocamOutline } from 'ionicons/icons';
 
 import { deleteFeedItem, updateFeedItem } from '@/service/dbService';
 import { FeedItem } from '@/types';
