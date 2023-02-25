@@ -60,7 +60,8 @@ const importOPML = async () => {
       const sources = allFeeds.map((feed) => feed.source);
       const importFeeds = (outlines: NodeListOf<Element>, parentId = 0) => {
         Array.from(outlines).forEach(async (outline) => {
-          const source = outline.getAttribute('xmlUrl');
+          const source =
+            outline.getAttribute('xmlUrl') || outline.getAttribute('xmlurl');
           const title =
             outline.getAttribute('title') || outline.getAttribute('text');
           const childOutlines = outline.querySelectorAll(':scope > outline');
@@ -131,7 +132,11 @@ const buildOutline = async (parentId = 0) => {
 
   return Promise.all(
     feeds.map(async (feed) => {
-      const outline = document.createElement('outline');
+      const outline = document.createElementNS(
+        'http://opml.org/spec2',
+        'outline'
+      );
+
       let attrs: Record<string, string> = {};
       if (feed.type === 'group') {
         attrs = {
