@@ -7,6 +7,7 @@ import { time } from '@/utils/log';
 
 import LazyFeedContent from '../components/LazyFeedContent.vue';
 import LazyImage from '../components/LazyImage.vue';
+import VideoPlayer from '../components/VideoPlayer.vue';
 import { Feed, FeedItem } from '../types';
 import { getFeeds } from './apiService';
 import { feedDB, storeFeedItems } from './dbService';
@@ -272,6 +273,10 @@ const buildVNode = (
     scope.imgs.push((e as HTMLImageElement).src);
 
     scope.imageIndex += 1;
+  } else if (e.tagName === 'VIDEO') {
+    component = VideoPlayer;
+    props.src = e.getAttribute('src');
+    props.poster = e.getAttribute('poster');
   } else if (e.tagName === 'TABLE') {
     return h(
       'div',

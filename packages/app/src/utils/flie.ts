@@ -38,12 +38,16 @@ export const downloadFile = async (data: string, name: string) => {
 
     const blobUrl = window.URL.createObjectURL(blob);
 
-    const link = document.createElement('a');
-    link.setAttribute('target', '_blank');
-    link.setAttribute('href', blobUrl);
-    link.setAttribute('download', name);
-    link.click();
+    downloadLink(blobUrl, name);
 
     window.URL.revokeObjectURL(blobUrl);
   }
+};
+
+export const downloadLink = async (url: string, name: string) => {
+  const link = document.createElement('a');
+  link.setAttribute('target', '_blank');
+  link.setAttribute('href', url);
+  link.setAttribute('download', name);
+  link.click();
 };

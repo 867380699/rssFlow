@@ -39,6 +39,7 @@ declare module '@vue/runtime-core' {
     IonList: typeof import('@ionic/vue')['IonList']
     IonMenu: typeof import('@ionic/vue')['IonMenu']
     IonPage: typeof import('@ionic/vue')['IonPage']
+    IonPopover: typeof import('@ionic/vue')['IonPopover']
     IonRouterOutlet: typeof import('@ionic/vue')['IonRouterOutlet']
     IonSplitPane: typeof import('@ionic/vue')['IonSplitPane']
     IonThumbnail: typeof import('@ionic/vue')['IonThumbnail']
@@ -49,6 +50,7 @@ declare module '@vue/runtime-core' {
     MoreMenuModal: typeof import('./src/components/modals/MoreMenuModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
   }
 }
 
