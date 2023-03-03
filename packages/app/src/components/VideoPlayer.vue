@@ -1,7 +1,7 @@
 <template>
   <div
     ref="container"
-    class="relative flex justify-center pb-1 mb-1"
+    class="relative flex justify-center pb-0.5 mb-1"
     @fullscreenchange="onFullScreenChange"
   >
     <video
@@ -26,64 +26,86 @@
       class="text-white text-6xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
       @click="play"
     />
-    <!-- control -->
-    <div v-if="!useNativeControls" class="absolute bottom-0 w-full text-white">
+    <Transition>
       <div
+        v-if="!useNativeControls"
         v-show="isControlShown"
-        class="flex justify-between bg-gradient-to-t from-slate-900 to-transparent"
+        class="absolute left-0 right-0 top-0 flex justify-end bg-gradient-to-b from-slate-900 to-transparent"
         style="--tw-gradient-from: rgba(0, 0, 0, 0.6)"
       >
-        <div class="p-2 text-xs">
-          {{ durationLabel }}
-        </div>
-        <div v-on-click-outside="closeRatePopup" class="flex">
-          <!-- playback speed -->
-          <div class="relative">
-            <div
-              v-show="ratePopupShown"
-              class="absolute -translate-y-full top-0 py-1 rounded-sm"
-              style="background-color: rgba(0, 0, 0, 0.5)"
-            >
+        <!-- download -->
+        <ion-icon
+          class="p-2 drop-shadow"
+          :icon="downloadOutline"
+          @click="download"
+        />
+      </div>
+    </Transition>
+
+    <!-- control -->
+    <div v-if="!useNativeControls" class="absolute bottom-0 w-full text-white">
+      <Transition>
+        <div
+          v-show="isControlShown"
+          class="flex justify-between bg-gradient-to-t from-slate-900 to-transparent"
+          style="--tw-gradient-from: rgba(0, 0, 0, 0.6)"
+        >
+          <div class="p-2 text-xs">
+            {{ durationLabel }}
+          </div>
+          <div v-on-click-outside="closeRatePopup" class="flex">
+            <!-- playback speed -->
+            <div class="relative">
               <div
-                v-for="rate in playbackRateList"
-                :key="rate"
-                class="py-0.5 px-2 text-xs cursor-pointer"
-                :class="{ 'text-blue-400': rate === playbackRate }"
-                @click="() => setPlaybackRate(rate)"
+                v-show="ratePopupShown"
+                class="absolute -translate-y-full top-0 py-1 rounded-sm"
+                style="background-color: rgba(0, 0, 0, 0.5)"
               >
-                {{ rate.toFixed(2) }}x
+                <div
+                  v-for="rate in playbackRateList"
+                  :key="rate"
+                  class="py-0.5 px-2 text-xs cursor-pointer"
+                  :class="{ 'text-blue-400': rate === playbackRate }"
+                  @click="() => setPlaybackRate(rate)"
+                >
+                  {{ rate.toFixed(2) }}x
+                </div>
+              </div>
+              <div class="p-2 text-xs cursor-pointer" @click="toggleRatePopup">
+                {{ playbackRate.toFixed(2) }}x
               </div>
             </div>
-            <div class="p-2 text-xs cursor-pointer" @click="toggleRatePopup">
-              {{ playbackRate.toFixed(2) }}x
-            </div>
+            <!-- volume -->
+            <ion-icon
+              class="p-2"
+              :icon="isMuted ? volumeMute : volumeHigh"
+              @click="toogleMute"
+            />
+            <!-- fullscreen -->
+            <ion-icon
+              class="p-2"
+              :icon="isFullscreen ? contractOutline : expandOutline"
+              @click="toggleFullscreen"
+            />
           </div>
-          <!-- volume -->
-          <ion-icon
-            class="p-2"
-            :icon="isMuted ? volumeMute : volumeHigh"
-            @click="toogleMute"
-          />
-          <!-- fullscreen -->
-          <ion-icon
-            class="p-2"
-            :icon="isFullscreen ? contractOutline : expandOutline"
-            @click="toggleFullscreen"
-          />
-          <!-- download -->
-          <ion-icon class="p-2" :icon="downloadOutline" @click="download" />
+          <!-- rotate -->
         </div>
-        <!-- rotate -->
-      </div>
+      </Transition>
       <!-- prgoress -->
       <div
-        class="relative"
+        class="relative -mt-0.5"
         @touchmove.stop="() => {}"
         @pointermove.stop="() => {}"
         @mousemove.stop="() => {}"
       >
         <progress
-          class="w-full h-1 block"
+          class="w-full block transition-all"
+          :class="{
+            'h-1': isControlShown,
+            'h-0.5': !isControlShown,
+            'mt-0.5': !isControlShown,
+            'opacity-50': !isControlShown,
+          }"
           :max="duration"
           :value="currentTime"
         />
@@ -328,5 +350,15 @@ input[type='range'] {
   &::-webkit-slider-thumb {
     @apply appearance-none w-3 h-3 rounded-lg bg-blue-500;
   }
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 500ms ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
