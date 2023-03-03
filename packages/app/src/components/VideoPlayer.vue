@@ -1,7 +1,7 @@
 <template>
   <div
     ref="container"
-    class="relative flex justify-center"
+    class="relative flex justify-center pb-1 mb-1"
     @fullscreenchange="onFullScreenChange"
   >
     <video
@@ -9,6 +9,7 @@
       :controls="useNativeControls"
       :poster="poster"
       :src="src"
+      @click="onVideoClick"
       @dblclick="togglePlay"
       @play="onVideoPlay"
       @pause="onVideoPause"
@@ -103,6 +104,7 @@
 
 <script setup lang="ts">
 import { vOnClickOutside } from '@vueuse/components';
+import { useEventListener } from '@vueuse/core';
 import {
   contractOutline,
   downloadOutline,
@@ -153,6 +155,14 @@ watch(isPlaying, () => {
     isControlShown.value = true;
   }
 });
+
+const onVideoClick = () => {
+  if (isPlaying.value) {
+    isControlShown.value = !isControlShown.value;
+  } else {
+    play();
+  }
+};
 
 const play = () => {
   video.value?.play();
@@ -257,6 +267,48 @@ const onVideoSeek = (event: Event) => {
 const onSeekMove = (event: Event) => {
   // console.log('move', e);
 };
+
+let prevRate = 1;
+let isBoosting = false;
+let boostTimeout: ReturnType<typeof setTimeout> | null = null;
+
+const startboost = () => {
+  boostTimeout = setTimeout(() => {
+    if (video.value) {
+      prevRate = video.value.playbackRate;
+      video.value.playbackRate = 2;
+      isBoosting = true;
+    }
+  }, 500);
+};
+
+const stopBoost = () => {
+  console.log('touchup');
+
+  if (boostTimeout) {
+    clearTimeout(boostTimeout);
+    boostTimeout = null;
+  }
+  if (isBoosting) {
+    if (video.value) {
+      video.value.playbackRate = prevRate;
+    }
+    isBoosting = false;
+  }
+};
+
+const onTouchDown = () => {
+  startboost();
+};
+
+const onTouchUp = () => {
+  stopBoost();
+};
+
+useEventListener(video, 'pointerdown', onTouchDown);
+useEventListener(video, 'pointerup', onTouchUp);
+useEventListener(video, 'pointerleave', onTouchUp);
+useEventListener(video, 'pointerout', onTouchUp);
 </script>
 
 <style lang="less" scoped>
