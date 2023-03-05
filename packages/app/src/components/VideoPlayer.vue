@@ -256,6 +256,16 @@ const onFullScreenChange = () => {
   isFullscreen.value = !!document.fullscreenElement;
 };
 
+useEventListener(
+  container,
+  ['mousemove', 'pointermove', 'touchmove'],
+  (event) => {
+    if (isFullscreen.value) {
+      event.stopPropagation();
+    }
+  }
+);
+
 useBackButton(10, (processNextHandler) => {
   if (isFullscreen.value) {
     toggleFullscreen();
