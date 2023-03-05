@@ -26,6 +26,7 @@
     "@vueuse/rxjs": "^8.9.4",
     "axios": "^0.26.1",
     "big-integer": "^1.6.51",
+    "cordova-plugin-screen-orientation": "^3.0.3",
     "date-fns": "^2.29.3",
     "dexie": "^3.2.3",
     "dompurify": "^2.4.5",

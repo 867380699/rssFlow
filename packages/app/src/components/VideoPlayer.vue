@@ -30,9 +30,19 @@
       <div
         v-if="!useNativeControls"
         v-show="isControlShown"
-        class="absolute left-0 right-0 top-0 flex justify-end bg-gradient-to-b from-slate-900 to-transparent"
+        class="absolute left-0 right-0 top-0 flex justify-between bg-gradient-to-b from-slate-900 to-transparent"
         style="--tw-gradient-from: rgba(0, 0, 0, 0.6)"
       >
+        <div>
+          <!-- rotate -->
+          <ion-icon
+            v-show="isFullscreen"
+            class="p-2"
+            :icon="isLandscape ? tabletLandscapeOutline : tabletPortraitOutline"
+            @click="rotateScreen"
+          />
+        </div>
+
         <!-- download -->
         <ion-icon
           class="p-2 drop-shadow"
@@ -81,6 +91,7 @@
               :icon="isMuted ? volumeMute : volumeHigh"
               @click="toogleMute"
             />
+
             <!-- fullscreen -->
             <ion-icon
               class="p-2"
@@ -88,7 +99,6 @@
               @click="toggleFullscreen"
             />
           </div>
-          <!-- rotate -->
         </div>
       </Transition>
       <!-- prgoress -->
@@ -125,6 +135,7 @@
 </template>
 
 <script setup lang="ts">
+import { useBackButton } from '@ionic/vue';
 import { vOnClickOutside } from '@vueuse/components';
 import { useEventListener } from '@vueuse/core';
 import {
@@ -132,6 +143,8 @@ import {
   downloadOutline,
   expandOutline,
   playCircle,
+  tabletLandscapeOutline,
+  tabletPortraitOutline,
   volumeHigh,
   volumeMute,
 } from 'ionicons/icons';
@@ -237,6 +250,14 @@ const onFullScreenChange = () => {
   isFullscreen.value = !!document.fullscreenElement;
 };
 
+useBackButton(10, (processNextHandler) => {
+  if (isFullscreen.value) {
+    toggleFullscreen();
+  } else {
+    processNextHandler();
+  }
+});
+
 const isMuted = ref(false);
 
 const onVolumeChange = () => {
@@ -331,6 +352,29 @@ useEventListener(video, 'pointerdown', onTouchDown);
 useEventListener(video, 'pointerup', onTouchUp);
 useEventListener(video, 'pointerleave', onTouchUp);
 useEventListener(video, 'pointerout', onTouchUp);
+
+const isLandscape = ref(false);
+
+const syncOriention = () => {
+  console.log('orientation', window.screen.orientation.type);
+  isLandscape.value = /landscape/.test(window.screen.orientation.type);
+};
+
+useEventListener(container, 'fullscreenchange', () => {
+  if (isFullscreen.value) {
+    syncOriention();
+  } else {
+    window.screen.orientation.unlock();
+  }
+});
+
+useEventListener(screen.orientation, 'change', syncOriention);
+
+const rotateScreen = () => {
+  const rotation = isLandscape.value ? 'portrait' : 'landscape';
+  window.screen.orientation.unlock();
+  window.screen.orientation.lock(rotation);
+};
 </script>
 
 <style lang="less" scoped>

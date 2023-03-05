@@ -45,6 +45,7 @@ importers:
       autoprefixer: ^10.4.13
       axios: ^0.26.1
       big-integer: ^1.6.51
+      cordova-plugin-screen-orientation: ^3.0.3
       date-fns: ^2.29.3
       dexie: ^3.2.3
       dompurify: ^2.4.5
@@ -100,6 +101,7 @@ importers:
       '@vueuse/rxjs': 8.9.4_rxjs@7.8.0+vue@3.2.47
       axios: 0.26.1
       big-integer: 1.6.51
+      cordova-plugin-screen-orientation: 3.0.3
       date-fns: 2.29.3
       dexie: 3.2.3
       dompurify: 2.4.5
@@ -3265,6 +3267,11 @@ packages:
     dependencies:
       is-what: 3.14.1
     dev: true
+
+  /cordova-plugin-screen-orientation/3.0.3:
+    resolution: {integrity: sha512-Dt8lO8BECZfE/pKbYQZ72Wr811fYMScxw7c9v/gJ3etOPCBrgl8xIHOOZu4nY2ehRyxFPtZi3VeGvIG+3DZoZQ==}
+    engines: {cordovaDependencies: {4.0.0: {cordova: '>100'}}}
+    dev: false
 
   /core-js-compat/3.29.0:
     resolution: {integrity: sha512-ScMn3uZNAFhK2DGoEfErguoiAHhV2Ju+oJo/jK08p7B3f3UhocUrCCkTvnZaiS+edl5nlIoiBXKcwMc6elv4KQ==}
