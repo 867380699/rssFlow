@@ -53,13 +53,13 @@
     </Transition>
 
     <!-- control -->
-    <div v-if="!useNativeControls" class="absolute bottom-0 w-full text-white">
+    <div
+      v-if="!useNativeControls"
+      class="absolute bottom-0 w-full text-white transition-all bg-gradient-to-t from-transparent to-transparent"
+      :style="isControlShown ? '--tw-gradient-from: rgba(0, 0, 0, 0.8)' : ''"
+    >
       <Transition>
-        <div
-          v-show="isControlShown"
-          class="flex justify-between bg-gradient-to-t from-slate-900 to-transparent"
-          style="--tw-gradient-from: rgba(0, 0, 0, 0.6)"
-        >
+        <div v-show="isControlShown" class="flex justify-between">
           <div class="p-2 text-xs">
             {{ durationLabel }}
           </div>
@@ -103,7 +103,12 @@
       </Transition>
       <!-- prgoress -->
       <div
-        class="relative -mt-0.5"
+        class="relative mt-1 transition-all"
+        :class="{
+          'px-2': isControlShown,
+          'mb-3': isFullscreen && isControlShown,
+          'mb-1': isFullscreen && !isControlShown && !isLandscape,
+        }"
         @touchmove.stop="() => {}"
         @pointermove.stop="() => {}"
         @mousemove.stop="() => {}"
@@ -112,6 +117,7 @@
           class="w-full block transition-all"
           :class="{
             'h-1': isControlShown,
+            'mb-2': isControlShown,
             'h-0.5': !isControlShown,
             'mt-0.5': !isControlShown,
             'opacity-50': !isControlShown,
@@ -122,7 +128,7 @@
         <input
           v-show="isControlShown"
           type="range"
-          class="absolute top-0 appearance-none bg-transparent"
+          class="absolute top-0 appearance-none bg-transparent left-2 right-2"
           step="0.001"
           :max="duration"
           :value="currentTime"
@@ -387,9 +393,10 @@ progress::-webkit-progress-value {
 progress {
   @apply bg-blue-300;
 }
+
 input[type='range'] {
   height: 4px;
-  width: calc(100% + 12px);
+  width: calc(100% - 4px);
   margin-left: -6px;
   &::-webkit-slider-thumb {
     @apply appearance-none w-3 h-3 rounded-lg bg-blue-500;
