@@ -3,14 +3,14 @@
     ref="container"
     class="relative flex justify-center pb-0.5 mb-1"
     @fullscreenchange="onFullScreenChange"
+    @click="onVideoClick"
+    @dblclick="togglePlay"
   >
     <video
       ref="video"
       :controls="useNativeControls"
       :poster="poster"
       :src="src"
-      @click="onVideoClick"
-      @dblclick="togglePlay"
       @play="onVideoPlay"
       @pause="onVideoPause"
       @timeupdate="onVideoTimeUpdate"
@@ -26,10 +26,12 @@
       class="text-white text-6xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
       @click="play"
     />
+    <!-- top control -->
     <Transition>
       <div
         v-if="!useNativeControls"
         v-show="isControlShown"
+        ref="topControl"
         class="absolute left-0 right-0 top-0 flex justify-between bg-gradient-to-b from-slate-900 to-transparent"
         style="--tw-gradient-from: rgba(0, 0, 0, 0.6)"
       >
@@ -55,12 +57,13 @@
     <!-- control -->
     <div
       v-if="!useNativeControls"
+      ref="control"
       class="absolute bottom-0 w-full text-white transition-all bg-gradient-to-t from-transparent to-transparent"
       :style="isControlShown ? '--tw-gradient-from: rgba(0, 0, 0, 0.8)' : ''"
     >
       <Transition>
         <div v-show="isControlShown" class="flex justify-between">
-          <div class="p-2 text-xs">
+          <div class="p-2 text-xs select-none">
             {{ durationLabel }}
           </div>
           <div v-on-click-outside="closeRatePopup" class="flex">
@@ -74,14 +77,17 @@
                 <div
                   v-for="rate in playbackRateList"
                   :key="rate"
-                  class="py-0.5 px-2 text-xs cursor-pointer"
+                  class="py-0.5 px-2 text-xs cursor-pointer select-none"
                   :class="{ 'text-blue-400': rate === playbackRate }"
                   @click="() => setPlaybackRate(rate)"
                 >
                   {{ rate.toFixed(2) }}x
                 </div>
               </div>
-              <div class="p-2 text-xs cursor-pointer" @click="toggleRatePopup">
+              <div
+                class="p-2 text-xs cursor-pointer select-none"
+                @click="toggleRatePopup"
+              >
                 {{ playbackRate.toFixed(2) }}x
               </div>
             </div>
@@ -159,6 +165,8 @@ import { downloadLink } from '@/utils/flie';
 
 const container = ref<HTMLElement | null>(null);
 const video = ref<HTMLVideoElement | null>(null);
+const control = ref<HTMLVideoElement | null>(null);
+const topControl = ref<HTMLVideoElement | null>(null);
 
 const props = defineProps<{
   poster?: string;
@@ -364,10 +372,27 @@ const onTouchUp = () => {
   stopBoost();
 };
 
-useEventListener(video, 'pointerdown', onTouchDown);
-useEventListener(video, 'pointerup', onTouchUp);
-useEventListener(video, 'pointerleave', onTouchUp);
-useEventListener(video, 'pointerout', onTouchUp);
+useEventListener(container, 'pointerdown', onTouchDown);
+useEventListener(
+  container,
+  ['pointerup', 'pointerleave', 'pointerout'],
+  onTouchUp
+);
+
+useEventListener(
+  control,
+  ['mousedown', 'pointerdown', 'touchstart', 'click'],
+  (e) => {
+    e.stopPropagation();
+  }
+);
+useEventListener(
+  topControl,
+  ['mousedown', 'pointerdown', 'touchstart', 'click'],
+  (e) => {
+    e.stopPropagation();
+  }
+);
 
 const isLandscape = ref(false);
 
