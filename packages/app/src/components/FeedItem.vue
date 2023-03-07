@@ -30,7 +30,7 @@
         />
         <div
           v-if="item.video?.poster || item.audio"
-          class="media-badge px-1 py-0.5 absolute right-0 bottom-0 bg-black opacity-60 rounded-tl"
+          class="media-badge px-1 py-0.5 absolute right-0 bottom-0 bg-black text-white opacity-60 rounded-tl"
         >
           <ion-icon
             v-if="item.video?.poster"
