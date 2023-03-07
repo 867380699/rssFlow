@@ -106,6 +106,12 @@
               :icon="isFullscreen ? contractOutline : expandOutline"
               @click="toggleFullscreen"
             />
+            <!-- fullscreen iOS support -->
+            <ion-icon
+              v-else-if="video.webkitEnterFullscreen"
+              class="p-2"
+              @click="() => video.webkitEnterFullscreen()"
+            />
           </div>
         </div>
       </Transition>
