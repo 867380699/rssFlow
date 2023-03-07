@@ -8,6 +8,7 @@
   >
     <video
       ref="video"
+      playsinline
       :controls="useNativeControls"
       :poster="poster"
       :src="src"
@@ -32,7 +33,7 @@
         v-if="!useNativeControls"
         v-show="isControlShown"
         ref="topControl"
-        class="absolute left-0 right-0 top-0 flex justify-between bg-gradient-to-b from-slate-900 to-transparent"
+        class="absolute left-0 right-0 top-0 flex justify-between text-white bg-gradient-to-b from-slate-900 to-transparent"
         style="--tw-gradient-from: rgba(0, 0, 0, 0.6)"
       >
         <div>
@@ -100,6 +101,7 @@
 
             <!-- fullscreen -->
             <ion-icon
+              v-if="isFullscreenSupported"
               class="p-2"
               :icon="isFullscreen ? contractOutline : expandOutline"
               @click="toggleFullscreen"
@@ -149,7 +151,7 @@
 <script setup lang="ts">
 import { useBackButton } from '@ionic/vue';
 import { vOnClickOutside } from '@vueuse/components';
-import { useEventListener } from '@vueuse/core';
+import { useEventListener, useFullscreen } from '@vueuse/core';
 import {
   contractOutline,
   downloadOutline,
@@ -250,15 +252,11 @@ const formatTime = (time = 0) => {
   return new Date(time * 1000).toISOString().substring(11, 19);
 };
 
-const isFullscreen = ref(false);
-
-const toggleFullscreen = () => {
-  if (isFullscreen.value) {
-    document.exitFullscreen();
-  } else {
-    container.value?.requestFullscreen();
-  }
-};
+const {
+  isSupported: isFullscreenSupported,
+  isFullscreen,
+  toggle: toggleFullscreen,
+} = useFullscreen(container);
 
 const onFullScreenChange = () => {
   isFullscreen.value = !!document.fullscreenElement;
