@@ -10,3 +10,6 @@ project(':capacitor-filesystem').projectDir = new File('../../../node_modules/.p
 
 include ':capacitor-splash-screen'
 project(':capacitor-splash-screen').projectDir = new File('../../../node_modules/.pnpm/@capacitor+splash-screen@4.2.0_@capacitor+core@4.7.0/node_modules/@capacitor/splash-screen/android')
+
+include ':capacitor-status-bar'
+project(':capacitor-status-bar').projectDir = new File('../../../node_modules/.pnpm/@capacitor+status-bar@4.1.1_@capacitor+core@4.7.0/node_modules/@capacitor/status-bar/android')

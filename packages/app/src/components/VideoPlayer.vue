@@ -32,7 +32,8 @@
         v-if="!useNativeControls"
         v-show="isControlShown"
         ref="topControl"
-        class="absolute left-0 right-0 top-0 flex justify-between text-white bg-gradient-to-b from-slate-900 to-transparent"
+        class="absolute left-0 right-0 top-0 flex justify-between text-white bg-gradient-to-b from-slate-900 to-transparent transition-all"
+        :class="{ 'pt-5': isFullscreen }"
         style="--tw-gradient-from: rgba(0, 0, 0, 0.6)"
       >
         <div>
@@ -154,6 +155,7 @@
 </template>
 
 <script setup lang="ts">
+import { StatusBar } from '@capacitor/status-bar';
 import { useBackButton } from '@ionic/vue';
 import { vOnClickOutside } from '@vueuse/components';
 import { useEventListener, useFullscreen } from '@vueuse/core';
@@ -399,9 +401,14 @@ const {
   rotate: rotateScreen,
 } = useOriention();
 
-watch(isFullscreen, () => {
-  if (!isFullscreen.value) {
+watch(isFullscreen, async () => {
+  if (isFullscreen.value) {
+    StatusBar.setOverlaysWebView({ overlay: true });
+    StatusBar.hide();
+  } else {
     resetOriention();
+    StatusBar.setOverlaysWebView({ overlay: false });
+    StatusBar.show();
   }
 });
 </script>

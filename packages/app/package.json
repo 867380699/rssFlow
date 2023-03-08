@@ -19,6 +19,7 @@
     "@capacitor/filesystem": "^4.1.4",
     "@capacitor/ios": "^4.7.0",
     "@capacitor/splash-screen": "^4.2.0",
+    "@capacitor/status-bar": "^4.1.1",
     "@ionic/vue": "^6.6.0",
     "@ionic/vue-router": "^6.5.7",
     "@vueuse/components": "^9.13.0",

@@ -40,8 +40,9 @@
 </template>
 
 <script setup lang="ts">
+import { StatusBar } from '@capacitor/status-bar';
 import { useBackButton } from '@ionic/vue';
-import { useEventListener, useFullscreen } from '@vueuse/core';
+import { useFullscreen } from '@vueuse/core';
 import {
   contractOutline,
   expandOutline,
@@ -83,12 +84,16 @@ const {
   rotate: rotateScreen,
 } = useOriention();
 
-watch(isFullscreen, () => {
-  if (!isFullscreen.value) {
+watch(isFullscreen, async () => {
+  if (isFullscreen.value) {
+    StatusBar.setOverlaysWebView({ overlay: true });
+    StatusBar.hide();
+  } else {
     resetOriention();
+    StatusBar.setOverlaysWebView({ overlay: false });
+    StatusBar.show();
   }
 });
-
 const isBubbleActive = ref(true);
 
 let deactiveTimeout: ReturnType<typeof setTimeout> | undefined;
