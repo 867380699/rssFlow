@@ -5,6 +5,8 @@
       ref="frame"
       :src="feedItem.link"
       class="w-full h-full"
+      @load="iframeLoad"
+      @error="iframeError"
     />
     <template v-else>
       <h1 class="font-bold text-xl my-4 mx-auto max-w-[800px]">
@@ -37,4 +39,12 @@ scrollState[`detail-${props.feedItem.id}`] = useScroll(content);
 onBeforeUnmount(() => {
   delete scrollState[`detail-${props.feedItem.id}`];
 });
+
+const iframeLoad = ($event: Event) => {
+  console.log('iframe load', $event);
+};
+const iframeError = ($event: Event) => {
+  // won't call when the 'X-Frame-Options' set to 'sameorigin'
+  console.log('iframe error', $event);
+};
 </script>

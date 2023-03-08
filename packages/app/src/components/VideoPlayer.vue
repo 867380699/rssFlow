@@ -2,7 +2,6 @@
   <div
     ref="container"
     class="relative flex justify-center pb-0.5 mb-1"
-    @fullscreenchange="onFullScreenChange"
     @click="onVideoClick"
     @dblclick="togglePlay"
   >
@@ -169,6 +168,7 @@ import {
   volumeMute,
 } from 'ionicons/icons';
 
+import { useOriention } from '@/composables/oriention';
 import { downloadLink } from '@/utils/flie';
 
 const container = ref<HTMLElement | null>(null);
@@ -263,10 +263,6 @@ const {
   isFullscreen,
   toggle: toggleFullscreen,
 } = useFullscreen(container);
-
-const onFullScreenChange = () => {
-  isFullscreen.value = !!document.fullscreenElement;
-};
 
 useEventListener(
   container,
@@ -397,29 +393,17 @@ useEventListener(
     e.stopPropagation();
   }
 );
+const {
+  isLandscape,
+  reset: resetOriention,
+  rotate: rotateScreen,
+} = useOriention();
 
-const isLandscape = ref(false);
-
-const syncOriention = () => {
-  console.log('orientation', window.screen.orientation.type);
-  isLandscape.value = /landscape/.test(window.screen.orientation.type);
-};
-
-useEventListener(container, 'fullscreenchange', () => {
-  if (isFullscreen.value) {
-    syncOriention();
-  } else {
-    window.screen.orientation.unlock();
+watch(isFullscreen, () => {
+  if (!isFullscreen.value) {
+    resetOriention();
   }
 });
-
-useEventListener(screen.orientation, 'change', syncOriention);
-
-const rotateScreen = () => {
-  const rotation = isLandscape.value ? 'portrait' : 'landscape';
-  window.screen.orientation.unlock();
-  window.screen.orientation.lock(rotation);
-};
 </script>
 
 <style lang="less" scoped>

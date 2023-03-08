@@ -5,6 +5,7 @@ import { useGallery } from '@/composables/gallery';
 import { useMinHeight } from '@/composables/image';
 import { time } from '@/utils/log';
 
+import EnhancedFrame from '../components/EnhancedFrame.vue';
 import LazyFeedContent from '../components/LazyFeedContent.vue';
 import LazyImage from '../components/LazyImage.vue';
 import VideoPlayer from '../components/VideoPlayer.vue';
@@ -277,6 +278,8 @@ const buildVNode = (
     component = VideoPlayer;
     props.src = e.getAttribute('src');
     props.poster = e.getAttribute('poster');
+  } else if (e.tagName === 'IFRAME') {
+    component = EnhancedFrame;
   } else if (e.tagName === 'TABLE') {
     return h(
       'div',
