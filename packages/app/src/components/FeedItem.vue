@@ -12,13 +12,13 @@
 
     <ion-item
       lines="none"
-      class="feed-item flex h-[96px]"
+      class="feed-item h-[80px]"
       :class="{ 'opacity-50': item.isRead }"
       :style="{ '--inner-padding-end': '0' }"
       @click="($event)=>toDetail(item.id!, $event)"
     >
       <ion-thumbnail
-        v-if="item.image || item.video"
+        v-show="item.image || item.video"
         slot="end"
         class="m-1 w-[64px] h-[64px] relative"
       >
@@ -44,20 +44,14 @@
           ></ion-icon>
         </div>
       </ion-thumbnail>
-      <ion-label class="m-0 py-1 h-[96px]">
+      <ion-label class="m-0 py-1 h-[80px]">
         <div
-          class="line block absolute h-[72px] w-[1px] bg-slate-400 top-6 left-[5.5px] rounded opacity-20"
+          class="line block absolute h-[72px] w-[1px] bg-slate-400 left-[5.5px] rounded opacity-20"
         ></div>
-        <div class="flex items-center">
-          <div
-            class="rounded-full w-3 h-3 bg-slate-400 bg-opacity-60 mr-3 opacity-40"
-          />
-          <p class="!text-xs opacity-70">{{ pubDate }}</p>
-        </div>
-        <h2 class="!text-base line-clamp-2 whitespace-normal pl-6">
+        <h2 class="!text-base line-clamp-2 whitespace-normal pl-5">
           {{ item.title }}
         </h2>
-        <p class="!text-sm pl-6 font-light">
+        <p class="!text-sm pl-5 font-light">
           {{ item.shortDescription?.slice(0, 100) }}
         </p>
       </ion-label>
@@ -78,7 +72,6 @@ import {
   IonThumbnail,
   useIonRouter,
 } from '@ionic/vue';
-import { formatRelative } from 'date-fns';
 import {
   musicalNotesOutline,
   trashOutline,
@@ -96,10 +89,6 @@ const { alertConfirm } = useAlertConfirm();
 const props = defineProps<{
   item: FeedItem;
 }>();
-
-const pubDate = computed(() =>
-  props.item.pubDate ? formatRelative(props.item.pubDate, new Date()) : ''
-);
 
 const toDetail = (id: number, $event: Event) => {
   const itemEl = ($event.target as HTMLElement).closest('ion-item');

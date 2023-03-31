@@ -48,6 +48,7 @@ declare module '@vue/runtime-core' {
     LazyFeedContent: typeof import('./src/components/LazyFeedContent.vue')['default']
     LazyImage: typeof import('./src/components/LazyImage.vue')['default']
     MoreMenuModal: typeof import('./src/components/modals/MoreMenuModal.vue')['default']
+    RecycleTreeList: typeof import('./src/components/RecycleTreeList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
