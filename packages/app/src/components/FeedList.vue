@@ -47,6 +47,7 @@
               <div
                 class="flex-1 cursor-pointer"
                 @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
+                @click.prevent.stop="selectItem(feed.id)"
               >
                 {{ feed.title }}
               </div>
@@ -89,7 +90,7 @@ import AsideItemModal from './modals/AsideItemModal.vue';
 const props = defineProps<{ parentId: number; reorderToggle: boolean }>();
 const emit = defineEmits(['itemSelected']);
 
-const { feeds } = useChildFeeds(props.parentId);
+const { feeds } = useChildFeeds(toRef(props, 'parentId'));
 
 const feedStore = useFeedStore();
 const { feedItemCounts: itemCounts } = storeToRefs(feedStore);

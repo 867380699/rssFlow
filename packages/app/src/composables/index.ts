@@ -34,7 +34,7 @@ export const useFeed = (id: Ref<number>) => {
 };
 
 export const useAllFeeds = () => {
-  const feeds = useObservable<Feed[]>(
+  const feeds = useObservable<Feed[], Feed[]>(
     liveQuery(() => feedDB.feeds.toArray()) as any
   );
   return {
@@ -42,13 +42,25 @@ export const useAllFeeds = () => {
   };
 };
 
-export const useChildFeeds = (parentId: number) => {
-  const feeds = useObservable<Feed[], Feed[]>(
-    liveQuery(() => feedDB.feeds.where({ parentId }).sortBy('rank')) as any
+export const useChildFeeds = (parentId: Ref<number>) => {
+  const feeds = ref<Feed[]>([]);
+  let subscription: Subscription;
+  watch(
+    parentId,
+    () => {
+      subscription?.unsubscribe();
+      subscription = liveQuery(() =>
+        feedDB.feeds
+          .orderBy('rank')
+          .filter((feed) => feed.parentId === parentId.value)
+          .toArray()
+      ).subscribe((newFeeds) => {
+        feeds.value = newFeeds;
+      });
+    },
+    { immediate: true }
   );
-  return {
-    feeds,
-  };
+  return { feeds };
 };
 
 export const useAllFeedItems = () => {
@@ -153,13 +165,13 @@ export const useLiveFeedItems = (
 };
 
 export const useHomeFeedItemIds = (
-  feedId: Ref<number> = ref(0),
+  feedIds: Ref<number[]> = ref([]),
   feedItemFilter: Ref<FeedItemFilter> = ref(FeedItemFilter.UNREAD)
 ) => {
   const feedItemIds = ref<number[]>([]);
   let subscription: Subscription;
   watch(
-    [feedId, feedItemFilter],
+    [feedIds, feedItemFilter],
     async () => {
       let start = performance.now();
 
@@ -168,20 +180,18 @@ export const useHomeFeedItemIds = (
       const isUnread = feedItemFilter.value === FeedItemFilter.UNREAD;
       const isFavorite = feedItemFilter.value === FeedItemFilter.FAVORITE;
 
-      const feedIds = feedId.value ? [feedId.value] : [];
-
       const isReadRange = isUnread ? [0] : [0, 1];
 
       const isFavoriteRange = isFavorite ? [1] : [0, 1];
 
       const allRanges: FeedItemQuery = {
-        feedIds,
+        feedIds: feedIds.value,
         isReadRange,
         isFavoriteRange,
       };
 
       const recentRanges: FeedItemQuery = {
-        feedIds,
+        feedIds: feedIds.value,
         isReadRange: [1],
         isFavoriteRange,
         readTimeRange: [new Date().getTime() - 1000 * 60 * 2, Dexie.maxKey],

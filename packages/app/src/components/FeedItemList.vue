@@ -4,7 +4,7 @@
     <template #feed="slotPorps">
       <div
         class="flex items-center pl-1.5 h-6"
-        style="background-color: var(--ion-item-background)"
+        style="background-color: var(--ion-item-background, #fff)"
       >
         <div class="w-4 h-4 rounded-full mr-2 overflow-hidden">
           <LazyImage
@@ -22,7 +22,7 @@
     <template #date="slotPorps">
       <div
         class="flex items-center text-sm h-6 pl-1.5"
-        style="background-color: var(--ion-item-background)"
+        style="background-color: var(--ion-item-background, #fff)"
       >
         {{ formatRelative(slotPorps.data.pubDate || 0, now) }}
       </div>
@@ -37,7 +37,7 @@
 import { formatRelative } from 'date-fns';
 import { ComponentPublicInstance } from 'vue';
 
-import { useAllFeeds } from '@/composables';
+import { useAllFeeds, useFeed } from '@/composables';
 import { Feed, FeedItem as FeedItemType } from '@/types';
 
 import LazyImage from './LazyImage.vue';
@@ -50,6 +50,8 @@ const props = withDefaults(
   }>(),
   { feedId: 0, items: () => [] }
 );
+
+const { feed } = useFeed(toRef(props, 'feedId'));
 
 const { feeds } = useAllFeeds();
 
@@ -102,7 +104,9 @@ const recycleItems = computed<RecycleItem[]>(() => {
       }
     }
   });
-  return resultItems;
+  return feed.value?.type === 'feed'
+    ? resultItems[0]?.children || []
+    : resultItems;
 });
 
 const scroller = ref<ComponentPublicInstance | null>(null);
