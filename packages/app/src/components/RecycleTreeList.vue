@@ -8,6 +8,7 @@
           class="absolute w-full"
           :class="{
             'overflow-hidden': !flatItems[itemIndex].value.childrenHeight,
+            'pointer-events-none': flatItems[itemIndex].value.childrenHeight,
           }"
           :style="{
             top: `${flatItems[itemIndex].value.top}px`,

@@ -51,13 +51,10 @@ export class FeedDB extends Dexie {
             }
           });
       });
-    this.version(30).stores({
-      feedItems:
-        '++id, feedId, [feedId+isRead], [feedId+isRead+isFavorite+readTime+id]',
-    });
-    // remove link index
-    this.version(31).stores({
+    this.version(41).stores({
       feeds: '++id, title, parentId, rank, type',
+      feedItems:
+        '++id, feedId, [feedId+isRead], [feedId+isRead+isFavorite+readTime], [pubDate+id], [isRead+isFavorite+readTime]',
     });
   }
 }
@@ -240,90 +237,32 @@ export type FeedItemIndex = [
   isRead: number,
   isFavorite: number,
   readTime: number,
+  pubDate: number,
   id: number
 ];
 
-const buildRanges = ({
-  feedIds,
-  isReadRange,
-  isFavoriteRange,
-  readTimeRange = [Dexie.minKey, Dexie.maxKey],
-}: FeedItemQuery) => {
-  const ranges: any[] = feedIds.flatMap((feedId) =>
-    isReadRange.flatMap((isRead) =>
-      isFavoriteRange.map((isFavorite) => [
-        [feedId, isRead, isFavorite, readTimeRange[0], Dexie.minKey],
-        [feedId, isRead, isFavorite, readTimeRange[1], Dexie.maxKey],
-      ])
-    )
-  );
-  return ranges;
-};
-
 export const allFeedIds$ = liveQuery(() => feedDB.feeds.toCollection().keys());
 
-export const buildRangesObservable = (query: FeedItemQuery) => {
-  const {
-    feedIds,
-    isReadRange,
-    isFavoriteRange,
-    readTimeRange = [Dexie.minKey, Dexie.maxKey],
-  } = query;
-  const expandRanges = (feedIds: (number | string)[]) =>
-    feedIds.flatMap((feedId) =>
-      isReadRange.flatMap((isRead) =>
-        isFavoriteRange.map((isFavorite) => [
-          [feedId, isRead, isFavorite, readTimeRange[0], Dexie.minKey],
-          [feedId, isRead, isFavorite, readTimeRange[1], Dexie.maxKey],
-        ])
-      )
-    );
-  if (feedIds.length) {
-    return of(feedIds).pipe(map((ids) => expandRanges(ids)));
-  } else {
-    return from(allFeedIds$).pipe(map((ids) => expandRanges(ids as number[])));
-  }
-};
-
-export const buildFeedItemKeysObservable = (ranges: any[]) => {
+export const buildFeedItemPrimaryKeyObservable = (range: IndexableType[][]) => {
   return liveQuery(() => {
-    console.log('liveQuery getFeedItemKeysObservable1');
+    const [lower, upper] = range;
     return feedDB.feedItems
-      .where('[feedId+isRead+isFavorite+readTime+id]')
-      .inAnyRange(ranges, { includeLowers: true, includeUppers: true })
-      .keys() as unknown as FeedItemIndex[];
-  });
+      .where('[feedId+isRead+isFavorite+readTime]')
+      .between(lower, upper, true, true)
+      .primaryKeys();
+  }) as unknown as number[];
 };
 
-export const loadFeedItemCollectionByIndex = async ({
-  feedIds,
-  isReadRange,
-  isFavoriteRange,
-  readTimeRange = [Dexie.minKey, Dexie.maxKey],
-}: FeedItemQuery) => {
-  const start = performance.now();
-  const feedIdRange = feedIds.length
-    ? feedIds
-    : ((await feedDB.feeds.toCollection().keys()) as number[]);
-  console.log(
-    `loadFeedItemCollectionByIndex:feedIds`,
-    performance.now() - start
-  );
-  const ranges: any[] = buildRanges({
-    feedIds: feedIdRange,
-    isReadRange,
-    isFavoriteRange,
-    readTimeRange,
-  });
-
-  return feedDB.feedItems
-    .where('[feedId+isRead+isFavorite+readTime+id]')
-    .inAnyRange(ranges, { includeLowers: true, includeUppers: true });
-};
-
-export const loadFeedItemsByIndex = async (query: FeedItemQuery) => {
-  const collection = await loadFeedItemCollectionByIndex(query);
-  return collection.toArray();
+export const buildAllFeedItemPrimaryKeyObservable = (
+  range: IndexableType[][]
+) => {
+  return liveQuery(() => {
+    const [lower, upper] = range;
+    return feedDB.feedItems
+      .where('[isRead+isFavorite+readTime]')
+      .between(lower, upper, true, true)
+      .primaryKeys();
+  }) as unknown as number[];
 };
 
 export const updateFeedItem = async (

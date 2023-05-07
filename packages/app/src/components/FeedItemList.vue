@@ -71,42 +71,51 @@ const recycleItems = computed<RecycleItem[]>(() => {
   let feedId: number | undefined;
   let pubdate = 0;
   props.items.forEach((item) => {
-    if (item.feedId !== feedId) {
-      feedId = item.feedId;
+    const isSameFormatTime =
+      formatRelative(pubdate, now) === formatRelative(item.pubDate || 0, now);
+    if (!isSameFormatTime) {
       resultItems.push({
         height: 24,
-        slot: 'feed',
+        slot: 'date',
         data: item,
         children: [],
       });
     }
-    const prevFeed = resultItems[resultItems.length - 1];
+    const prevDate = resultItems[resultItems.length - 1];
 
-    if (prevFeed.children) {
-      const isSameFormatTime =
-        formatRelative(pubdate, now) === formatRelative(item.pubDate || 0, now);
-      if (!isSameFormatTime || !prevFeed.children.length) {
-        pubdate = item.pubDate || 0;
-        prevFeed.children.push({
-          height: 24,
-          slot: 'date',
-          data: item,
-          children: [],
-        });
-      }
-      const prevDate = prevFeed.children[prevFeed.children.length - 1];
-      if (prevDate.children) {
+    if (prevDate.children) {
+      if (feed.value?.type === 'feed') {
         prevDate.children.push({
           height: 80,
           slot: 'feedItem',
           data: item,
         });
+      } else {
+        // all and group
+        if (item.feedId !== feedId || !prevDate.children.length) {
+          prevDate.children.push({
+            height: 24,
+            slot: 'feed',
+            data: item,
+            children: [],
+          });
+        }
+        const prevFeed = prevDate.children[prevDate.children.length - 1];
+
+        if (prevFeed.children) {
+          prevFeed.children.push({
+            height: 80,
+            slot: 'feedItem',
+            data: item,
+          });
+        }
       }
+
+      feedId = item.feedId;
+      pubdate = item.pubDate || 0;
     }
   });
-  return feed.value?.type === 'feed'
-    ? resultItems[0]?.children || []
-    : resultItems;
+  return resultItems;
 });
 
 const scroller = ref<ComponentPublicInstance | null>(null);

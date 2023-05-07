@@ -13,7 +13,7 @@
       <FeedItemList
         ref="content"
         :feed-id="feedId"
-        :items="feedItems"
+        :items="homeFeedItems"
         class="ion-content-scroll-host"
       />
       <!-- Read All Fab -->
@@ -85,7 +85,7 @@ import { fromEvent, map, pairwise, share, throttleTime } from 'rxjs';
 import { ComponentPublicInstance } from 'vue';
 
 import FeedItemList from '@/components/FeedItemList.vue';
-import { useFeed, useLiveFeedItemsById } from '@/composables';
+import { useFeed } from '@/composables';
 import { FeedItemFilter } from '@/enums';
 import { readFeedItems } from '@/service/dbService';
 import { useFeedStore } from '@/store';
@@ -96,19 +96,12 @@ const ionRouter = useRouter();
 
 const feedStore = useFeedStore();
 
-const { feedId, feedItemFilter, feedItemIds } = storeToRefs(feedStore);
-
-const feedItemsCount = ref(20);
+const { feedId, feedItemFilter, keySet, feedItemsCount, homeFeedItems } =
+  storeToRefs(feedStore);
 
 watch([feedId, feedItemFilter], () => {
   feedItemsCount.value = 20;
 });
-
-const shownFeedItemsIds = computed(() => {
-  return feedItemIds.value.slice(0, feedItemsCount.value);
-});
-
-const { feedItems } = useLiveFeedItemsById(shownFeedItemsIds);
 
 const tabs = [
   { key: FeedItemFilter.UNREAD, label: t('unread'), icon: eyeOffOutline },
@@ -140,7 +133,7 @@ let undoReadAllFn: () => void;
 let undoReadAllTimeout: ReturnType<typeof setTimeout>;
 
 const readAll = async () => {
-  const ids: number[] = feedItems.value?.map((f) => f.id) as number[];
+  const ids: number[] = homeFeedItems.value?.map((f) => f.id) as number[];
   if (ids.length) {
     undoReadAllFn = await readFeedItems(ids);
     canUndoReadAll.value = true;
@@ -195,7 +188,7 @@ onMounted(() => {
       if (scrollTop + clientHeight > scrollHeight - 96 * 3) {
         feedItemsCount.value = Math.min(
           feedItemsCount.value + 20,
-          feedItemIds.value.length
+          keySet.value.size
         );
       }
     });

@@ -94,18 +94,18 @@ import { ComponentPublicInstance } from 'vue';
 
 import FeedItemContent from '@/components/FeedItemContent.vue';
 import LazyImage from '@/components/LazyImage.vue';
-import { useFeed, useFeedItem } from '@/composables';
+import { useFeed, useFeedItem, useLiveHomeFeedItems } from '@/composables';
 import { scrollState } from '@/composables/scroll';
 import { useFeedStore } from '@/store';
 import { FeedItem } from '@/types';
 
-import { feedDB, loadFeedItem, updateFeedItem } from '../service/dbService';
+import { loadFeedItem, updateFeedItem } from '../service/dbService';
 
 const props = defineProps<{ id: number }>();
 
-const feedId = ref(props.id);
+const itemId = ref(props.id);
 
-let { feedItem } = useFeedItem(feedId);
+let { feedItem } = useFeedItem(itemId);
 
 feedItem.value = await loadFeedItem(props.id);
 
@@ -115,7 +115,11 @@ const { feed } = useFeed(currentFeedId);
 
 const feedStore = useFeedStore();
 
-const feedItemIds = [...feedStore.feedItemIds];
+const keySet = ref(toRaw(feedStore.keySet));
+
+const itemCount = ref(toRaw(feedStore.feedItemsCount));
+
+const { feedItems: cacheFeedItems } = useLiveHomeFeedItems(keySet, itemCount);
 
 const feedItems = ref<FeedItem[]>([feedItem.value!]);
 
@@ -124,24 +128,36 @@ const afterSlideInit = (swiper: SwiperClass) => {
 };
 
 const updateSlide = async (itemId: number, swiper: SwiperClass) => {
-  const index = feedItemIds.indexOf(itemId);
-  const slideItemIds = feedItemIds.slice(Math.max(0, index - 1), index + 2);
+  let index = 0;
+  let cacheItems = [];
+  if (cacheFeedItems.value.length) {
+    cacheItems = cacheFeedItems.value;
+  } else {
+    cacheItems = feedStore.homeFeedItems;
+  }
+  if (cacheItems.length) {
+    index = cacheItems.findIndex(({ id = 0 }) => id === itemId);
 
-  console.log('slide:updateSlide', index, slideItemIds);
+    if (
+      index + 3 > cacheItems.length &&
+      cacheItems.length < keySet.value.size
+    ) {
+      itemCount.value += 20;
+    }
 
-  const newFeedItems = await feedDB.feedItems
-    .where('id')
-    .anyOf(slideItemIds)
-    .toArray();
+    const start = Math.max(0, index - 1);
+    const end = start + 3;
 
-  const newIndex = slideItemIds.findIndex((id) => id === itemId);
+    feedItems.value = cacheItems.slice(start, end);
 
-  feedItems.value = newFeedItems;
+    const newIndex = feedItems.value.findIndex(({ id }) => id === itemId);
 
-  nextTick(() => {
-    swiper.slideTo(newIndex, 0);
-    swiper.update();
-  });
+    // nextTick(() => {
+    swiper.activeIndex = newIndex;
+    // swiper.slideTo(newIndex, 0);
+    // swiper.update();
+    // });
+  }
 };
 
 const transitionEnd = async (swiper: SwiperClass) => {
@@ -155,7 +171,7 @@ const transitionEnd = async (swiper: SwiperClass) => {
         isRead: 1,
         readTime: new Date().getTime(),
       });
-      feedId.value = newId;
+      itemId.value = newId;
       updateSlide(newId, swiper);
     }
   }
