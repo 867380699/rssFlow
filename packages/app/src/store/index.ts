@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
 import {
-  useChildFeeds,
+  useChildFeedIds,
   useFeed,
   useFeedItem,
   useFeedItemCounts,
@@ -20,7 +20,7 @@ export const useFeedStore = defineStore('feed', () => {
 
   const { feed } = toRefs(useFeed(feedId));
 
-  const { feeds: childFeeds } = useChildFeeds(feedId);
+  const { feedIds: childFeedIds } = useChildFeedIds(feedId);
 
   const feedItemFilter = ref(FeedItemFilter.UNREAD);
 
@@ -28,19 +28,20 @@ export const useFeedStore = defineStore('feed', () => {
     feedItemFilter.value = filter;
   };
 
-  const feedIds = computed(() =>
-    feedId.value // is all
-      ? childFeeds.value.length // is group
-        ? childFeeds.value.map((f) => f.id!)
+  const feedIds = computed(() => {
+    return feedId.value // is all
+      ? childFeedIds.value.length // is group
+        ? toRaw(childFeedIds.value)
         : [feedId.value]
-      : []
-  );
+      : [];
+  });
 
   const { keySet } = useHomeFeedItemsKeySet(feedIds, feedItemFilter);
 
   const feedItemsCount = ref(20);
 
   const { feedItems: homeFeedItems } = useLiveHomeFeedItems(
+    feedIds,
     keySet,
     feedItemsCount
   );
@@ -56,7 +57,7 @@ export const useFeedStore = defineStore('feed', () => {
   return {
     feedId,
     feed,
-    childFeeds,
+    feedIds,
     setFeedId,
     feedItemFilter,
     setFeedItemFilter,

@@ -1,5 +1,4 @@
 import Dexie, { IndexableType, liveQuery, Table } from 'dexie';
-import { from, map, of } from 'rxjs';
 
 import { getNextRank, getRankBetween, getSeed } from '@/utils/rank';
 
@@ -51,10 +50,10 @@ export class FeedDB extends Dexie {
             }
           });
       });
-    this.version(41).stores({
+    this.version(42).stores({
       feeds: '++id, title, parentId, rank, type',
       feedItems:
-        '++id, feedId, [feedId+isRead], [feedId+isRead+isFavorite+readTime], [pubDate+id], [isRead+isFavorite+readTime]',
+        '++id, feedId, [feedId+isRead], [feedId+isRead+isFavorite+readTime], [isRead+isFavorite+readTime], [pubDate+id], [feedId+pubDate+id]',
     });
   }
 }

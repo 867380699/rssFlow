@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useObservable } from '@vueuse/rxjs';
-import Dexie, { IndexableType, liveQuery, Subscription } from 'dexie';
+import Dexie, {
+  IndexableType,
+  liveQuery,
+  Observable as DexieObservable,
+  Subscription,
+} from 'dexie';
 import { combineLatest, Observable } from 'rxjs';
 import { Ref } from 'vue';
 
@@ -59,6 +64,27 @@ export const useChildFeeds = (parentId: Ref<number>) => {
     { immediate: true }
   );
   return { feeds };
+};
+
+export const useChildFeedIds = (parentId: Ref<number>) => {
+  const feedIds = ref<number[]>([]);
+  let subscription: Subscription;
+  watch(
+    parentId,
+    () => {
+      subscription?.unsubscribe();
+      subscription = liveQuery(
+        () =>
+          feedDB.feeds
+            .where({ parentId: parentId.value })
+            .primaryKeys() as unknown as number[]
+      ).subscribe((ids) => {
+        feedIds.value = ids;
+      });
+    },
+    { immediate: true }
+  );
+  return { feedIds };
 };
 
 export const useAllFeedItems = () => {
@@ -142,8 +168,13 @@ export const useHomeFeedItemsKeySet = (
   let observable: Observable<number[]>;
   watch(
     [feedIds, feedItemFilter],
-    async () => {
-      const t0 = performance.now();
+    ([ids, filter], [oldIds, oldFilter]) => {
+      if (ids.join(',') === oldIds?.join(',') && filter === oldFilter) {
+        console.log('keySet:return');
+        return;
+      }
+
+      let t0 = performance.now();
       subscription?.unsubscribe();
 
       const isUnread = feedItemFilter.value === FeedItemFilter.UNREAD;
@@ -205,7 +236,9 @@ export const useHomeFeedItemsKeySet = (
       }
       subscription = observable.subscribe((indexes) => {
         keySet.value = new Set(indexes.flat());
-        console.log('keySet:', performance.now() - t0);
+        const t1 = performance.now();
+        console.log(`keySet:${ranges.length}:${keySet.value.size}`, t1 - t0);
+        t0 = t1;
       });
     },
     { immediate: true }
@@ -214,6 +247,7 @@ export const useHomeFeedItemsKeySet = (
 };
 
 export const useLiveHomeFeedItems = (
+  feedIds: Ref<number[]>,
   idSet: Ref<Set<number>>,
   limit: Ref<number>
 ) => {
@@ -222,16 +256,38 @@ export const useLiveHomeFeedItems = (
   watch(
     [idSet, limit],
     () => {
+      const t0 = performance.now();
       subscription?.unsubscribe();
-      subscription = liveQuery(() => {
-        return feedDB.feedItems
-          .orderBy('[pubDate+id]')
-          .reverse()
-          .limit(limit.value)
-          .filter(({ id }) => !!id && idSet.value.has(id))
-          .toArray();
-      }).subscribe((items) => {
+      let observable: DexieObservable<FeedItem[]>;
+      if (feedIds.value.length === 1) {
+        const feedId = feedIds.value[0];
+        observable = liveQuery(() => {
+          return feedDB.feedItems
+            .where('[feedId+pubDate+id]')
+            .between(
+              [feedId, Dexie.minKey, Dexie.minKey],
+              [feedId, Dexie.maxKey, Dexie.maxKey],
+              true,
+              true
+            )
+            .reverse()
+            .limit(Math.min(limit.value, idSet.value.size))
+            .filter(({ id }) => !!id && idSet.value.has(id))
+            .toArray();
+        });
+      } else {
+        observable = liveQuery(() => {
+          return feedDB.feedItems
+            .orderBy('[pubDate+id]')
+            .reverse()
+            .limit(Math.min(limit.value, idSet.value.size))
+            .filter(({ id }) => !!id && idSet.value.has(id))
+            .toArray();
+        });
+      }
+      subscription = observable.subscribe((items) => {
         feedItems.value = items;
+        console.log(`key home items:${items.length}`, performance.now() - t0);
       });
     },
     { immediate: true }
