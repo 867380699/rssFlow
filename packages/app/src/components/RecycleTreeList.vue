@@ -10,13 +10,21 @@
             'overflow-hidden': !flatItems[itemIndex].value.childrenHeight,
             'pointer-events-none': flatItems[itemIndex].value.childrenHeight,
           }"
-          :style="{
-            top: `${flatItems[itemIndex].value.top}px`,
-            height: `${
-              flatItems[itemIndex].value.height +
-              flatItems[itemIndex].value.childrenHeight
-            }px`,
-          }"
+          :style="[
+            flatItems[itemIndex].value.childrenHeight
+              ? {
+                  top: `${flatItems[itemIndex].value.top}px`,
+                }
+              : {
+                  transform: `translateY(${flatItems[itemIndex].value.top}px)`,
+                },
+            {
+              height: `${
+                flatItems[itemIndex].value.height +
+                flatItems[itemIndex].value.childrenHeight
+              }px`,
+            },
+          ]"
         >
           <div
             v-if="flatItems[itemIndex].value.childrenHeight"
@@ -51,6 +59,7 @@
 
 <script setup lang="ts">
 import { useElementSize, useEventListener } from '@vueuse/core';
+import { throttle } from 'lodash-es';
 
 export type RecycleItem = {
   height: number;
@@ -141,6 +150,18 @@ const flatItems = computed(() => {
   }
 });
 
+const flatItemLevelIndex = computed(() => {
+  const index: number[][] = [];
+  flatItems.value.forEach((item, i) => {
+    const level = item.value.level - 1;
+    if (!index[level]) {
+      index[level] = [];
+    }
+    index[level].push(i);
+  });
+  return index;
+});
+
 const container = ref<HTMLElement | null>(null);
 const itemsRef = ref<HTMLElement[] | null>(null);
 
@@ -170,32 +191,67 @@ const addPoolItem = (id: number) => {
 
 const scrollTop = ref(0);
 
-useEventListener(container, 'scroll', (e) => {
-  scrollTop.value = (e.target as HTMLElement).scrollTop;
-});
+useEventListener(
+  container,
+  'scroll',
+  throttle((e) => {
+    scrollTop.value = (e.target as HTMLElement).scrollTop;
+  }, 10)
+);
 
-// FIXME: performance
 const shownFlatItemIds = computed(() => {
   // const t0 = performance.now();
   const shownTop = scrollTop.value - containerHeight.value * 0.5;
   const shownBottom = scrollTop.value + containerHeight.value * 1.5;
 
-  const ids = flatItems.value
-    .filter((item) => {
-      const { top: itemTop, height, childrenHeight } = item.value;
-      const itemBottom = itemTop + height + childrenHeight;
-      return itemTop < shownBottom && shownTop < itemBottom;
-    })
-    .map((item) => item.value.id);
-  // console.log('flat', flatItems.value.length, performance.now() - t0);
+  const isShown = (item: Ref<InnerRecycleItem>) => {
+    const { top: itemTop, height, childrenHeight } = item.value;
+    const itemBottom = itemTop + height + childrenHeight;
+    return itemTop < shownBottom && shownTop < itemBottom;
+  };
+  // find the biggest itemTop less then shownTop
+  const findStartIndex = (ids: number[]) => {
+    let a = 0;
+    let b = ids.length;
+    let i = ~~((a + b) / 2);
 
-  return ids;
+    do {
+      const item = flatItems.value[ids[i]];
+      if (item.value.top >= shownTop) {
+        b = i;
+      } else {
+        a = i;
+      }
+      i = ~~((a + b) / 2);
+    } while (i !== a);
+
+    return i;
+  };
+
+  const shownIds: number[] = [];
+  for (let i = 0; i < flatItemLevelIndex.value.length; i++) {
+    const ids = flatItemLevelIndex.value[i];
+    const start = findStartIndex(ids);
+    for (let j = start; j < ids.length; j++) {
+      const item = flatItems.value[ids[j]];
+      if (isShown(item)) {
+        shownIds.push(item.value.id);
+      } else if (j > start) {
+        break;
+      }
+    }
+  }
+
+  // const shownIds = flatItems.value.filter(isShown).map((item) => item.value.id);
+  // const t1 = performance.now();
+  // console.log(`flat:${shownIds.length}/${flatItems.value.length}`, t1 - t0);
+  return shownIds;
 });
 
 const joinIds = computed(() => shownFlatItemIds.value.join(','));
 
 watch(joinIds, () => {
-  const currentItemIds = pool.map((poolItem) => poolItem.itemIndex);
+  const currentItemIds = new Set(pool.map((poolItem) => poolItem.itemIndex));
 
   const recycleIndexes = pool.reduce((ids, poolItem, index) => {
     if (!shownFlatItemIds.value.includes(poolItem.itemIndex)) {
@@ -204,9 +260,7 @@ watch(joinIds, () => {
     return ids;
   }, [] as number[]);
 
-  const addIds = shownFlatItemIds.value.filter(
-    (id) => !currentItemIds.includes(id)
-  );
+  const addIds = shownFlatItemIds.value.filter((id) => !currentItemIds.has(id));
 
   recycleIndexes.forEach((index) => {
     if (!invisiblePoolIndexes.has(pool[index].slot)) {
