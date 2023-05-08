@@ -87,7 +87,7 @@ const imageRoute = new Route(
     cacheName,
     plugins: [
       new ExpirationPlugin({
-        maxAgeSeconds: 60 * 60 * 24 * 1,
+        maxAgeSeconds: 60 * 60 * 24 * 1, // one day
       }),
       {
         cachedResponseWillBeUsed: async (params) => {

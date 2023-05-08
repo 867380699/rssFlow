@@ -311,8 +311,9 @@ export const destroySync = () => {
 
 export const syncAllFeeds = async () => {
   const feeds = await feedDB.feeds.where('type').equals('feed').toArray();
-  feeds.forEach(async (feed) => {
-    const now = new Date().getTime();
+  for (let i = 0; i < feeds.length; i++) {
+    const feed = feeds[i];
+    const now = Date.now();
     const syncInterval = 1000 * 60 * 60 * 2;
     if (!feed.lastUpdateTime || now - feed.lastUpdateTime > syncInterval) {
       console.log('sync feed:', feed.source);
@@ -327,5 +328,5 @@ export const syncAllFeeds = async () => {
         console.log(e);
       }
     }
-  });
+  }
 };
