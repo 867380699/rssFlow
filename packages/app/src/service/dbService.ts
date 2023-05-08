@@ -80,7 +80,7 @@ export const storeFeed = async (feed: Feed) => {
     description,
     link,
     imageUrl,
-    lastUpdateTime: new Date().getTime(),
+    lastUpdateTime: Date.now(),
     parentId,
     type,
     rank,
@@ -117,7 +117,7 @@ export const storeGroup = async (groupName: string) => {
     title: groupName,
     link: groupName,
     imageUrl: '',
-    lastUpdateTime: new Date().getTime(),
+    lastUpdateTime: Date.now(),
     type: 'group',
     rank,
   });
@@ -206,7 +206,7 @@ export const loadFeedItems = async (feedId: number | string) => {
 };
 
 export const loadRecentFeedItems = async (feedId: number | string) => {
-  const now = new Date().getTime();
+  const now = Date.now();
   let query;
   if (feedId) {
     query = feedDB.feedItems.where({ feedId });

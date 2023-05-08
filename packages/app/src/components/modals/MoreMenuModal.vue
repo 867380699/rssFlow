@@ -122,7 +122,7 @@ const exportOPML = async () => {
 
   const opmlString = xmlService.serialize(xml);
 
-  const timeStamp = Math.round(new Date().getTime() / 1000);
+  const timeStamp = Math.round(Date.now() / 1000);
   const result = await downloadFile(opmlString, `rssflow_${timeStamp}.opml`);
   await toast(`${t('exportSuccess')}: ${result?.uri.replace('file://', '')}`);
 };

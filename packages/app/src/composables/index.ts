@@ -136,7 +136,7 @@ export const useFeedItems = (
   feedId: Ref<number> = ref(0),
   feedItemFilter: Ref<FeedItemFilter> = ref(FeedItemFilter.UNREAD)
 ): FeedItem[] => {
-  const now = new Date().getTime();
+  const now = Date.now();
   return feedItems.value
     .filter((item) => {
       if (feedId.value && item.feedId !== feedId.value) return false;
@@ -190,7 +190,7 @@ export const useHomeFeedItemsKeySet = (
           [0, 1, Dexie.maxKey],
         ]);
 
-        const recent = new Date().getTime() - 2 * 60 * 1000;
+        const recent = Date.now() - 2 * 60 * 1000;
         // recent read
         ranges.push([
           [1, 0, recent],

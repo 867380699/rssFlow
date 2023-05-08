@@ -174,7 +174,7 @@ const transitionEnd = async (swiper: SwiperClass) => {
     if (newId !== feedItem.value?.id) {
       await updateFeedItem(newId, {
         isRead: 1,
-        readTime: new Date().getTime(),
+        readTime: Date.now(),
       });
       itemId.value = newId;
       updateSlide(newId, swiper);
