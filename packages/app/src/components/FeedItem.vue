@@ -13,7 +13,6 @@
     <ion-item
       lines="none"
       class="feed-item h-[80px]"
-      :class="{ 'opacity-50': item.isRead }"
       :style="{ '--inner-padding-end': '0' }"
       @click="($event)=>toDetail(item.id!, $event)"
     >
@@ -21,6 +20,7 @@
         v-show="item.image || item.video"
         slot="end"
         class="m-1 w-[64px] h-[64px] relative"
+        :class="{ 'opacity-25': item.isRead }"
       >
         <LazyImage
           :key="item.id"
@@ -44,7 +44,10 @@
           ></ion-icon>
         </div>
       </ion-thumbnail>
-      <ion-label class="m-0 py-1 h-[80px]">
+      <ion-label
+        class="m-0 py-1 h-[80px]"
+        :class="{ 'opacity-25': item.isRead }"
+      >
         <div
           class="line block absolute h-[72px] w-[1px] bg-slate-400 left-[5.5px] rounded opacity-20"
         ></div>
@@ -93,7 +96,7 @@ const props = defineProps<{
 const toDetail = (id: number, $event: Event) => {
   const itemEl = ($event.target as HTMLElement).closest('ion-item');
   const { top, bottom } = itemEl!.getBoundingClientRect();
-  updateFeedItem(id, { isRead: 1, readTime: new Date().getTime() });
+  updateFeedItem(id, { isRead: 1, readTime: Date.now() });
   router.push(`/detail/${id}`, (baseEl, opts) => {
     const isForward = opts.direction === 'forward';
     const enteringAnimation: Animation = createAnimation()

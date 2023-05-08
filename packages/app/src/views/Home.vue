@@ -15,6 +15,7 @@
         :feed-id="feedId"
         :items="homeFeedItems"
         class="ion-content-scroll-host"
+        style="background-color: var(--ion-item-background)"
       />
       <!-- Read All Fab -->
       <Transition name="fab">
