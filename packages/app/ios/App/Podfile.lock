@@ -1,0 +1,52 @@
+PODS:
+  - Capacitor (5.0.1):
+    - CapacitorCordova
+  - CapacitorApp (5.0.1):
+    - Capacitor
+  - CapacitorCordova (5.0.1)
+  - CapacitorFilesystem (5.0.1):
+    - Capacitor
+  - CapacitorSplashScreen (5.0.1):
+    - Capacitor
+  - CapacitorStatusBar (5.0.1):
+    - Capacitor
+  - CordovaPlugins (5.0.1):
+    - CapacitorCordova
+
+DEPENDENCIES:
+  - "Capacitor (from `../../../../node_modules/.pnpm/@capacitor+ios@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/ios`)"
+  - "CapacitorApp (from `../../../../node_modules/.pnpm/@capacitor+app@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/app`)"
+  - "CapacitorCordova (from `../../../../node_modules/.pnpm/@capacitor+ios@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/ios`)"
+  - "CapacitorFilesystem (from `../../../../node_modules/.pnpm/@capacitor+filesystem@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/filesystem`)"
+  - "CapacitorSplashScreen (from `../../../../node_modules/.pnpm/@capacitor+splash-screen@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/splash-screen`)"
+  - "CapacitorStatusBar (from `../../../../node_modules/.pnpm/@capacitor+status-bar@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/status-bar`)"
+  - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
+
+EXTERNAL SOURCES:
+  Capacitor:
+    :path: "../../../../node_modules/.pnpm/@capacitor+ios@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/ios"
+  CapacitorApp:
+    :path: "../../../../node_modules/.pnpm/@capacitor+app@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/app"
+  CapacitorCordova:
+    :path: "../../../../node_modules/.pnpm/@capacitor+ios@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/ios"
+  CapacitorFilesystem:
+    :path: "../../../../node_modules/.pnpm/@capacitor+filesystem@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/filesystem"
+  CapacitorSplashScreen:
+    :path: "../../../../node_modules/.pnpm/@capacitor+splash-screen@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/splash-screen"
+  CapacitorStatusBar:
+    :path: "../../../../node_modules/.pnpm/@capacitor+status-bar@5.0.1_@capacitor+core@5.0.1/node_modules/@capacitor/status-bar"
+  CordovaPlugins:
+    :path: "../capacitor-cordova-ios-plugins"
+
+SPEC CHECKSUMS:
+  Capacitor: c550a8485d00d5d92b4f91a245f43555a2230eb6
+  CapacitorApp: 23d62678d1092403c9c32d8b53c0cdd0da29fb2c
+  CapacitorCordova: 4f8cf089c691f0e21032d22b1014808308cbc467
+  CapacitorFilesystem: d8ea223e82008ee25dd305cf4d5ca3acba8aa172
+  CapacitorSplashScreen: b3aa7304627a561e98d894d6fb301eced671e599
+  CapacitorStatusBar: 4edd082a8dadcedb5b1fa2b8480d67a220c79849
+  CordovaPlugins: f5675ddfb66c0c3756ae111008d5e42ac20b67c0
+
+PODFILE CHECKSUM: a05654bd7f4107290f115f79541c546bf64aa6c7
+
+COCOAPODS: 1.11.3
