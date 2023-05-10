@@ -1,4 +1,4 @@
-import vueI18n from '@intlify/vite-plugin-vue-i18n';
+import vueI18n from '@intlify/unplugin-vue-i18n/vite';
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
