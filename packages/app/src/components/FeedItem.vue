@@ -22,12 +22,7 @@
         class="m-1 w-[64px] h-[64px] relative"
         :class="{ 'opacity-25': item.isRead }"
       >
-        <LazyImage
-          :key="item.id"
-          :src="item.video?.poster || item.image"
-          class="rounded"
-          crossorigin="anonymous"
-        />
+        <LazyImage :src="imageSrc" class="rounded" crossorigin="anonymous" />
         <div
           v-if="item.video?.poster || item.audio"
           class="media-badge px-1 py-0.5 absolute right-0 bottom-0 bg-black text-white opacity-60 rounded-tl"
@@ -92,6 +87,15 @@ const { alertConfirm } = useAlertConfirm();
 const props = defineProps<{
   item: FeedItem;
 }>();
+
+const imageSrc = computed(() => {
+  const src = props.item.video?.poster || props.item.image;
+  if (src) {
+    return `${src}#thumbnail`;
+  } else {
+    return src;
+  }
+});
 
 const toDetail = (id: number, $event: Event) => {
   const itemEl = ($event.target as HTMLElement).closest('ion-item');
