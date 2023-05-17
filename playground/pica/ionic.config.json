@@ -1,0 +1,7 @@
+{
+  "name": "pica",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
