@@ -26,12 +26,18 @@
 
       <ion-header collapse="condense">
         <ion-toolbar>
-          <ion-title size="large">Inbox</ion-title>
+          <ion-title>
+            <ion-radio-group v-model="suffix">
+              <ion-radio value="">Origin</ion-radio>
+              <ion-radio value="?thumbnail">Canvas</ion-radio>
+              <ion-radio value="?pica">Pica</ion-radio>
+            </ion-radio-group>
+          </ion-title>
         </ion-toolbar>
       </ion-header>
 
       <ion-list>
-        <MessageListItem v-for="message in messages" :key="message.id" :message="message" />
+        <MessageListItem v-for="message in messages" :key="message.id" :message="message" :suffix="suffix"/>
       </ion-list>
     </ion-content>
   </ion-page>
@@ -50,11 +56,15 @@ import {
   IonToolbar,
   IonButtons,
   IonMenuButton,
-  IonItem
+  IonItem,
+  IonRadio,
+  IonRadioGroup
 } from '@ionic/vue';
 import MessageListItem from '@/components/MessageListItem.vue';
 import { getMessages, Message } from '@/data/messages';
 import { ref } from 'vue';
+
+const suffix = ref('');
 
 const messages = ref<Message[]>(getMessages());
 

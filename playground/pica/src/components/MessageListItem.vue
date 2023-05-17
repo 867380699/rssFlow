@@ -1,5 +1,5 @@
 <template>
-  <ion-item v-if="message" :routerLink="'/message/' + message.id" :detail="false" class="list-item">
+  <ion-item v-if="message" :detail="false" class="list-item">
     <div slot="start" :class="!message.read ? 'dot dot-unread' : 'dot'"></div>
     <ion-label class="ion-text-wrap">
       <h2>
@@ -15,18 +15,20 @@
       </p>
     </ion-label>
     <ion-thumbnail slot="end">
-      <img :src="`/images/${message.id}.jpg`" alt="">
+      <img :src="`/images/${message.id}.jpg${suffix||''}`">
     </ion-thumbnail>
   </ion-item>
 </template>
 
 <script setup lang="ts">
+import { Message } from '@/data/messages';
 import { IonIcon, IonItem, IonLabel, IonNote, IonThumbnail } from '@ionic/vue';
 import { chevronForward } from 'ionicons/icons';
 
-defineProps({
-  message: Object,
-});
+defineProps<{
+  message: Message, 
+  suffix?: String
+}>();
 
 const isIos = () => {
   const win = window as any;
