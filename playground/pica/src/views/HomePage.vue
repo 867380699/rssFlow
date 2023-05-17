@@ -28,7 +28,7 @@
         <ion-toolbar>
           <ion-title>
             <ion-radio-group v-model="suffix">
-              <ion-radio value="">Origin</ion-radio>
+              <ion-radio value="?origin">Origin</ion-radio>
               <ion-radio value="?thumbnail">Canvas</ion-radio>
               <ion-radio value="?pica">Pica</ion-radio>
             </ion-radio-group>
@@ -64,7 +64,7 @@ import MessageListItem from '@/components/MessageListItem.vue';
 import { getMessages, Message } from '@/data/messages';
 import { ref } from 'vue';
 
-const suffix = ref('');
+const suffix = ref('?origin');
 
 const messages = ref<Message[]>(getMessages());
 
