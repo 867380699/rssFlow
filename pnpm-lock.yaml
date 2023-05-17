@@ -295,6 +295,9 @@ importers:
 
   playground/pica:
     dependencies:
+      '@capacitor/android':
+        specifier: 5.0.2
+        version: 5.0.2(@capacitor/core@5.0.2)
       '@capacitor/app':
         specifier: 5.0.2
         version: 5.0.2(@capacitor/core@5.0.2)
@@ -1588,6 +1591,14 @@ packages:
       '@capacitor/core': ^5.0.0
     dependencies:
       '@capacitor/core': 5.0.1
+    dev: false
+
+  /@capacitor/android@5.0.2(@capacitor/core@5.0.2):
+    resolution: {integrity: sha512-IYqr+qO4LvvqjJGkH+tIFm1iclGu8m1QTCFz4+8qxJ2QwUiz3P/iS5HYw+GCx+rqJIDcywtAm4kp9Lh4jS3amA==}
+    peerDependencies:
+      '@capacitor/core': ^5.0.0
+    dependencies:
+      '@capacitor/core': 5.0.2
     dev: false
 
   /@capacitor/app@5.0.1(@capacitor/core@5.0.1):
