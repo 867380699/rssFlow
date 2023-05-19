@@ -86,9 +86,6 @@ const imageRoute = new Route(
   new CacheFirst({
     cacheName,
     plugins: [
-      new ExpirationPlugin({
-        maxAgeSeconds: 60 * 60 * 24 * 1, // one day
-      }),
       {
         cachedResponseWillBeUsed: async (params) => {
           if (!params.cachedResponse && main && platform !== 'web') {
@@ -124,6 +121,11 @@ const imageRoute = new Route(
           return proxyRequest;
         },
       },
+      new ExpirationPlugin({
+        maxAgeSeconds: 60 * 60 * 24 * 1, // one day
+        maxEntries: 5000,
+        purgeOnQuotaError: true,
+      }),
     ],
   })
 );
