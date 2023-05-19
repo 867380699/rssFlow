@@ -6,6 +6,7 @@ export interface Message {
   subject: string;
   date: string;
   id: number;
+  read?: boolean;
 }
 
 const messages: Message[] = Array.from({length: 50}).map((_,i)=>({

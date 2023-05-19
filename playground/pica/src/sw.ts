@@ -27,11 +27,11 @@ const scaleImage = (blob: Blob, size=200) => {
     createImageBitmap(blob).then(function(bitmap) {
       const {width, height} = bitmap;
       const scaleRatio = size / Math.min(width, height)
-      const canvas = new OffscreenCanvas(width * scaleRatio, height * scaleRatio);
-      const ctx = canvas.getContext('2d');
+      const canvas = new OffscreenCanvas(width * scaleRatio, height * scaleRatio) as any;
+      const ctx = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
       if (ctx) {
         ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-        canvas.convertToBlob({type: blob.type}).then(function(resizedBlob) {
+        canvas.convertToBlob({type: blob.type}).then((resizedBlob: Blob) => {
           resolve(resizedBlob);
         });
       }
@@ -68,17 +68,17 @@ const imageRoute = new Route(
 registerRoute(imageRoute);
 
 const picaInstance = pica({
-  createCanvas: (w,h)=>new OffscreenCanvas(w,h)
+  createCanvas: (w,h)=>new OffscreenCanvas(w,h) as any
 });
 
 const picaImage = async (blob: Blob, size=120) => {
   const bitmap = await createImageBitmap(blob);
   const {width, height} = bitmap;
   const scaleRatio = size / Math.min(width, height)
-  const canvas = new OffscreenCanvas(width * scaleRatio, height * scaleRatio);
+  const canvas = new OffscreenCanvas(width * scaleRatio, height * scaleRatio) as any;
   await picaInstance.resize(bitmap, canvas, {quality: 3});
   return await new Promise<Blob>((resolve) =>{
-    canvas.convertToBlob({type: 'image/jpeg', quality: 0.9}).then(function(resizedBlob) {
+    canvas.convertToBlob({type: 'image/jpeg', quality: 0.9}).then(function(resizedBlob: Blob) {
       resolve(resizedBlob);
     });
   })

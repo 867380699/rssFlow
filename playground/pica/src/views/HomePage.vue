@@ -15,7 +15,13 @@
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>Inbox</ion-title>
+        <ion-title>
+          <ion-radio-group v-model="suffix">
+            <ion-radio value="?origin">Origin</ion-radio>
+            <ion-radio value="?thumbnail">Canvas</ion-radio>
+            <ion-radio value="?pica">Pica</ion-radio>
+          </ion-radio-group>
+        </ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -23,18 +29,6 @@
       <ion-refresher slot="fixed" @ionRefresh="refresh($event)">
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>
-
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title>
-            <ion-radio-group v-model="suffix">
-              <ion-radio value="?origin">Origin</ion-radio>
-              <ion-radio value="?thumbnail">Canvas</ion-radio>
-              <ion-radio value="?pica">Pica</ion-radio>
-            </ion-radio-group>
-          </ion-title>
-        </ion-toolbar>
-      </ion-header>
 
       <ion-list>
         <MessageListItem v-for="message in messages" :key="message.id" :message="message" :suffix="suffix"/>

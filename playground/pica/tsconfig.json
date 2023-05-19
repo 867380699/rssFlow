@@ -9,7 +9,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "lib": ["ESNext", "DOM", "WebWorker"],
+    "lib": ["ESNext", "WebWorker", "DOM"],
     "skipLibCheck": true,
     "noEmit": true,
     "paths": {
