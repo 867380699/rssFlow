@@ -262,6 +262,9 @@ watch(joinIds, () => {
 
   const addIds = shownFlatItemIds.value.filter((id) => !currentItemIds.has(id));
 
+  for (let slotSet of invisiblePoolIndexes.values()) {
+    slotSet.clear();
+  }
   recycleIndexes.forEach((index) => {
     if (!invisiblePoolIndexes.has(pool[index].slot)) {
       invisiblePoolIndexes.set(pool[index].slot, new Set());
