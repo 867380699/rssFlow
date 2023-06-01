@@ -32,7 +32,7 @@ const props = defineProps<{
 
 const content = ref<ComponentPublicInstance<HTMLElement> | null>(null);
 
-const FeedContentComponent = parseFeedContent(props.feedItem.description || '');
+const FeedContentComponent = parseFeedContent(props.feedItem);
 
 scrollState[`detail-${props.feedItem.id}`] = useScroll(content);
 

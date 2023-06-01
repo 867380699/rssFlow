@@ -14,6 +14,7 @@ declare module '@vue/runtime-core' {
     AddGroupModal: typeof import('./src/components/modals/AddGroupModal.vue')['default']
     Aside: typeof import('./src/components/Aside.vue')['default']
     AsideItemModal: typeof import('./src/components/modals/AsideItemModal.vue')['default']
+    AudioPlayer: typeof import('./src/components/AudioPlayer.vue')['default']
     DragDownContainer: typeof import('./src/components/DragDownContainer.vue')['default']
     EnhancedFrame: typeof import('./src/components/EnhancedFrame.vue')['default']
     FeedItem: typeof import('./src/components/FeedItem.vue')['default']

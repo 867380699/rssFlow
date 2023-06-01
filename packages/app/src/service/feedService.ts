@@ -5,6 +5,7 @@ import { useGallery } from '@/composables/gallery';
 import { useMinHeight } from '@/composables/image';
 import { time } from '@/utils/log';
 
+import AudioPlayer from '../components/AudioPlayer.vue';
 import EnhancedFrame from '../components/EnhancedFrame.vue';
 import LazyFeedContent from '../components/LazyFeedContent.vue';
 import LazyImage from '../components/LazyImage.vue';
@@ -198,7 +199,7 @@ const isVideo = (url = '', mimeType = '') => {
   return false;
 };
 
-export const parseFeedContent = time((content: string) => {
+export const parseFeedContent = time((feedItem: FeedItem) => {
   DOMPurify.removeAllHooks();
   DOMPurify.addHook('afterSanitizeElements', (node) => {
     if (node.nodeName === 'BR') {
@@ -214,9 +215,11 @@ export const parseFeedContent = time((content: string) => {
       node.remove();
     }
   });
-  const result = DOMPurify.sanitize(content, { ADD_TAGS: ['iframe'] });
+  const result = DOMPurify.sanitize(feedItem.description || '', {
+    ADD_TAGS: ['iframe'],
+  });
   const domObj = parser.parseFromString(result, 'text/html');
-  const buildScope = { imageIndex: 0 };
+  const buildScope = { imageIndex: 0, feedItem };
   const vNode = buildVNode(domObj.body, buildScope);
   console.log(buildScope);
 
@@ -278,6 +281,11 @@ const buildVNode = (
     component = VideoPlayer;
     props.src = e.getAttribute('src');
     props.poster = e.getAttribute('poster');
+  } else if (e.tagName === 'AUDIO') {
+    component = AudioPlayer;
+    props.src = e.querySelector('source')?.src;
+    props.title = scope.feedItem?.title;
+    props.artwork = scope.feedItem?.image;
   } else if (e.tagName === 'IFRAME') {
     component = EnhancedFrame;
   } else if (e.tagName === 'TABLE') {
