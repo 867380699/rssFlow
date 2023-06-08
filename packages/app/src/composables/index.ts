@@ -131,30 +131,6 @@ export const useFeedItemCounts = () => {
   };
 };
 
-export const useFeedItems = (
-  feedItems: Ref<FeedItem[]>,
-  feedId: Ref<number> = ref(0),
-  feedItemFilter: Ref<FeedItemFilter> = ref(FeedItemFilter.UNREAD)
-): FeedItem[] => {
-  const now = Date.now();
-  return feedItems.value
-    .filter((item) => {
-      if (feedId.value && item.feedId !== feedId.value) return false;
-      switch (feedItemFilter.value) {
-        case FeedItemFilter.UNREAD:
-          return !item.isRead || (item.readTime || 0) + 1000 * 60 * 2 > now;
-        case FeedItemFilter.FAVORITE:
-          return item.isFavorite;
-        default:
-          return true;
-      }
-    })
-    .map((item) => ({
-      ...item,
-      image: item.image && `/img/${item.image}`,
-    }));
-};
-
 /**
  * return a `Set` with all available feed item ids.
  * If filter is `unread`, add recent read feedItems to result

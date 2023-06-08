@@ -1,5 +1,5 @@
 import { HttpResponse } from '@capacitor/core';
-import { clientsClaim } from 'workbox-core';
+import { clientsClaim, WorkboxPlugin } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import {
   cleanupOutdatedCaches,
@@ -73,54 +73,59 @@ const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
   return blob;
 };
 
-const cacheName = 'images';
+const nativeRequestPlugin: WorkboxPlugin = {
+  cachedResponseWillBeUsed: async (params) => {
+    // native request
+    if (!params.cachedResponse && main && platform !== 'web') {
+      const nativeResp = await nativeRequest(params.request.url);
+      if (nativeResp.data) {
+        const blob = b64toBlob(
+          nativeResp.data,
+          nativeResp.headers['Content-Type']
+        );
 
+        const resp = new Response(blob, {
+          status: nativeResp.status,
+          headers: nativeResp.headers,
+        });
+        const cache = await caches.open(params.cacheName);
+        await cache.put(params.request, resp);
+        const cacheResp = await cache.match(params.request.url);
+        return cacheResp;
+      }
+    }
+    return params.cachedResponse;
+  },
+};
+
+const requestForwardPlugin: WorkboxPlugin = {
+  requestWillFetch: async ({ request }) => {
+    // web request proxy
+    const url = new URL(request.url);
+    const headers = new Headers(request.headers);
+    const prefix = import.meta.env.VITE_PROXY_HOST || '/img/';
+    const proxyRequest = new Request(
+      `${prefix}${encodeURIComponent(url.toString())}`,
+      { mode: 'cors', headers }
+    );
+    return proxyRequest;
+  },
+};
+
+// localhost: dev or native
+// else: web prod
 const imageRoute = new Route(
   ({ request }) => {
     const url = new URL(request.url);
-    return (
-      (url.hostname !== 'localhost' || /^\/(rss|img)/.test(url.pathname)) &&
-      request.destination === 'image'
-    );
+    const sameOrigin = url.hostname === location.hostname;
+    const isImage = request.destination === 'image';
+    return !sameOrigin && isImage;
   },
   new CacheFirst({
-    cacheName,
+    cacheName: 'images',
     plugins: [
-      {
-        cachedResponseWillBeUsed: async (params) => {
-          if (!params.cachedResponse && main && platform !== 'web') {
-            const nativeResp = await nativeRequest(params.request.url);
-            if (nativeResp.data) {
-              const blob = b64toBlob(
-                nativeResp.data,
-                nativeResp.headers['Content-Type']
-              );
-
-              const resp = new Response(blob, {
-                status: nativeResp.status,
-                headers: nativeResp.headers,
-              });
-              const cache = await caches.open(cacheName);
-              await cache.put(params.request, resp);
-              const cacheResp = await cache.match(params.request.url);
-              return cacheResp;
-            }
-          }
-          return params.cachedResponse;
-        },
-        requestWillFetch: async ({ request }) => {
-          const url = new URL(request.url);
-          const proxyRequest = new Request(
-            `${import.meta.env.VITE_PROXY_HOST || '/img/'}${encodeURIComponent(
-              url.hostname === 'localhost'
-                ? url.toString().replace(/^.*?\/img\//, '')
-                : url.toString()
-            )}`,
-            { mode: 'cors' }
-          );
-          return proxyRequest;
-        },
-      },
+      nativeRequestPlugin, // native only
+      requestForwardPlugin, // web only
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24 * 1, // one day
         maxEntries: 5000,

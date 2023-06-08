@@ -68,6 +68,58 @@ The data is copied rather than shared.
 
 ## MessageChannel
 
+## Workbox
+
+```js
+class CacheFirst {
+  _handle(request: Request, handler: StrategyHandler) {
+    let response = await handler.cacheMatch(request);
+    if (!response) {
+      response = await handler.fetchAndCachePut(request);
+    }
+    if (!response) {
+      throw new WorkboxError();
+    }
+    return response;
+  }
+}
+```
+
+```js
+class StrategyHandler {
+  cacheMatch() {
+    const effectiveRequest = await this.getCacheKey(request, 'read');
+    cachedResponse = await caches.match(effectiveRequest, multiMatchOptions);
+    for (const callback of this.iterateCallbacks('cachedResponseWillBeUsed')) {
+      cachedResponse = (await callback({ /* ... */})) || undefined;
+    }
+    return cachedResponse;
+  }
+
+  fetchAndCachePut(input: RequestInfo): Promise<Response> {
+    const response = await this.fetch(input);
+    const responseClone = response.clone();
+
+    void this.waitUntil(this.cachePut(input, responseClone));
+
+    return response;
+  }
+
+  fetch() {
+    for (const cb of this.iterateCallbacks('requestWillFetch')) {
+      request = await cb({request: request.clone(), event});
+    }
+
+    fetchResponse = await fetch(request);
+
+    for (const callback of this.iterateCallbacks('fetchDidSucceed')) {
+      fetchResponse = await callback({ /* ... */ });
+    }
+    
+  }
+}
+```
+
 # B64 to Blob
 
 ```js
