@@ -112,14 +112,26 @@ const requestForwardPlugin: WorkboxPlugin = {
   },
 };
 
+const isImageRequest = (request: Request) => {
+  if (request.destination === 'image') {
+    return true;
+  }
+  const url = new URL(request.url);
+  if (/\.(jpg|jpeg|png|webp|avif|gif)$/.test(url.pathname)) {
+    return true;
+  }
+};
+
+const isSameOrigin = (request: Request) => {
+  const url = new URL(request.url);
+  return url.hostname === location.hostname;
+};
+
 // localhost: dev or native
 // else: web prod
 const imageRoute = new Route(
   ({ request }) => {
-    const url = new URL(request.url);
-    const sameOrigin = url.hostname === location.hostname;
-    const isImage = request.destination === 'image';
-    return !sameOrigin && isImage;
+    return !isSameOrigin(request) && isImageRequest(request);
   },
   new CacheFirst({
     cacheName: 'images',
@@ -135,4 +147,111 @@ const imageRoute = new Route(
   })
 );
 
+const scaleImage = (blob: Blob, size = 200) => {
+  return new Promise<Blob>((resolve) => {
+    createImageBitmap(blob).then((bitmap) => {
+      const { width, height } = bitmap;
+      const scaleRatio = size / Math.min(width, height);
+      const canvas = new OffscreenCanvas(
+        width * scaleRatio,
+        height * scaleRatio
+      );
+      const ctx = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
+      if (ctx) {
+        ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        canvas.convertToBlob({ type: blob.type }).then((resizedBlob: Blob) => {
+          resolve(resizedBlob);
+        });
+      }
+    });
+  });
+};
+
+const thumbnailRoute = new Route(
+  ({ request }) => {
+    const url = new URL(request.url);
+    return (
+      !isSameOrigin(request) &&
+      isImageRequest(request) &&
+      /#thumbnail/.test(url.hash)
+    );
+  },
+  new CacheFirst({
+    cacheName: 'thumbnail',
+    plugins: [
+      {
+        requestWillFetch: async ({ request }) => {
+          const url = request.url.split('#')[0];
+          return new Request(url);
+        },
+      },
+      {
+        requestWillFetch: async ({ request, state }) => {
+          if (state) {
+            state['originUrl'] = request.url;
+          }
+          return request;
+        },
+        cachedResponseWillBeUsed: async (params) => {
+          if (!params.cachedResponse && main && platform !== 'web') {
+            const nativeResp = await nativeRequest(params.request.url);
+            if (nativeResp.data) {
+              const blob = b64toBlob(
+                nativeResp.data,
+                nativeResp.headers['Content-Type']
+              );
+
+              const resp = new Response(blob, {
+                status: nativeResp.status,
+                headers: nativeResp.headers,
+              });
+              const originUrl = params.state?.originUrl;
+              if (originUrl) {
+                const imagesCache = await caches.open('images');
+                const isCached = await imagesCache.match(originUrl);
+                if (!isCached) {
+                  const imageResp = resp.clone();
+                  imagesCache.put(originUrl, imageResp);
+                }
+              }
+              const thumbBlob = await scaleImage(blob);
+              const thumbResp = new Response(thumbBlob, {
+                status: nativeResp.status,
+                headers: nativeResp.headers,
+              });
+              const cache = await caches.open(params.cacheName);
+              await cache.put(params.request, thumbResp);
+              const cacheResp = await cache.match(params.request.url);
+              return cacheResp;
+            }
+          }
+
+          return params.cachedResponse;
+        },
+        fetchDidSucceed: async ({ response, state }) => {
+          // web only
+          const originUrl = state?.originUrl;
+          if (originUrl) {
+            const imageResp = response.clone();
+            const imagesCache = await caches.open('images');
+            imagesCache.put(originUrl, imageResp);
+          }
+          const blob = await response.blob();
+          const newBlob = await scaleImage(blob);
+          return new Response(newBlob, {
+            status: response.status,
+            headers: response.headers,
+          });
+        },
+      },
+      requestForwardPlugin, // web only
+      new ExpirationPlugin({
+        maxEntries: 5000,
+        purgeOnQuotaError: true,
+      }),
+    ],
+  })
+);
+
+registerRoute(thumbnailRoute);
 registerRoute(imageRoute);

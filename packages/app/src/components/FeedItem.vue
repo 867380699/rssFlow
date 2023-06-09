@@ -22,7 +22,7 @@
         class="m-1 w-[64px] h-[64px] relative"
         :class="{ 'opacity-25': item.isRead }"
       >
-        <LazyImage :src="imageSrc" class="rounded" crossorigin="anonymous" />
+        <LazyImage :src="imageSrc" crossorigin="anonymous" />
         <div
           v-if="item.video?.poster || item.audio"
           class="media-badge px-1 py-0.5 absolute right-0 bottom-0 bg-black text-white opacity-60 rounded-tl"

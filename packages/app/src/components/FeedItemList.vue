@@ -8,7 +8,6 @@
       >
         <div class="w-4 h-4 rounded-full mr-2 overflow-hidden">
           <LazyImage
-            class=""
             :src="feedsMap && feedsMap[slotPorps.data.feedId].imageUrl"
           />
         </div>
