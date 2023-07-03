@@ -1,18 +1,22 @@
 <template>
-  <div class="relative h-full w-full">
+  <div class="relative h-full w-full rounded-sm">
     <img
       class="bg-slate-400 h-full w-full object-cover rounded-sm"
-      :crossorigin="crossorigin"
       :style="minStyle"
+      :crossorigin="crossorigin"
       :loading="loading"
       :src="src"
       :onload="onLoad"
       :onerror="onError"
     />
     <img
-      v-show="isLoading || isError"
+      :class="{
+        'opacity-0': !(isLoading || isError),
+        transition: !(isLoading || isError),
+        'bg-transparent': !(isLoading || isError),
+      }"
       :style="minStyle"
-      class="absolute bg-slate-400 h-full w-full object-cover rounded-sm top-0"
+      class="absolute h-full w-full bg-slate-500 object-cover top-0 rounded-sm pointer-events-none"
       :src="dummySrc"
     />
   </div>
@@ -29,7 +33,7 @@ const props = withDefaults(
   {
     src: '',
     loading: 'lazy',
-    minHeight: '60px',
+    minHeight: '36px',
     crossorigin: '',
   }
 );
