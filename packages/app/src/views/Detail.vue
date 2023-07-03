@@ -207,6 +207,12 @@ const currentScrollState = computed(
   () => scrollState[`detail-${feedItem.value?.id}`] || {}
 );
 
+watch(itemId, (id, oldId) => {
+  if (id !== oldId) {
+    showToolbar.value = true;
+  }
+});
+
 from(currentScrollState, { deep: true })
   .pipe(
     map((e) => e.y),
