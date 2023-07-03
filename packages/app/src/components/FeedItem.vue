@@ -91,7 +91,7 @@ const props = defineProps<{
 const imageSrc = computed(() => {
   const src = props.item.video?.poster || props.item.image;
   if (src) {
-    return `${src}#thumbnail`;
+    return `${src}?thumbnail=1#thumbnail`;
   } else {
     return src;
   }

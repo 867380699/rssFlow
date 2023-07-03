@@ -174,45 +174,34 @@ const thumbnailRoute = new Route(
       !isSameOrigin(request) &&
       isImageRequest(request) &&
       /#thumbnail/.test(url.hash)
-    );
+    ); // `?thumbnail=1` used to aviod cache
   },
   new CacheFirst({
     cacheName: 'thumbnail',
     plugins: [
       {
-        requestWillFetch: async ({ request }) => {
-          const url = request.url.split('#')[0];
-          return new Request(url);
-        },
-      },
-      {
-        requestWillFetch: async ({ request, state }) => {
-          if (state) {
-            state['originUrl'] = request.url;
-          }
-          return request;
-        },
         cachedResponseWillBeUsed: async (params) => {
+          // native only
           if (!params.cachedResponse && main && platform !== 'web') {
-            const nativeResp = await nativeRequest(params.request.url);
+            const imageUrl = params.request.url.replace(
+              /\?thumbnail=1#thumbnail$/,
+              ''
+            );
+            const nativeResp = await nativeRequest(imageUrl);
             if (nativeResp.data) {
               const blob = b64toBlob(
                 nativeResp.data,
                 nativeResp.headers['Content-Type']
               );
 
-              const resp = new Response(blob, {
-                status: nativeResp.status,
-                headers: nativeResp.headers,
-              });
-              const originUrl = params.state?.originUrl;
-              if (originUrl) {
-                const imagesCache = await caches.open('images');
-                const isCached = await imagesCache.match(originUrl);
-                if (!isCached) {
-                  const imageResp = resp.clone();
-                  imagesCache.put(originUrl, imageResp);
-                }
+              const imagesCache = await caches.open('images');
+              const isCached = await imagesCache.match(imageUrl);
+              if (!isCached) {
+                const imageResp = new Response(blob, {
+                  status: nativeResp.status,
+                  headers: nativeResp.headers,
+                });
+                await imagesCache.put(imageUrl, imageResp);
               }
               const thumbBlob = await scaleImage(blob);
               const thumbResp = new Response(thumbBlob, {
@@ -225,16 +214,28 @@ const thumbnailRoute = new Route(
               return cacheResp;
             }
           }
-
           return params.cachedResponse;
+        },
+      },
+      {
+        requestWillFetch: async ({ request, state }) => {
+          // web only
+          if (state) {
+            state['originUrl'] = request.url;
+          }
+          const url = request.url.replace(/\?thumbnail=1#thumbnail$/, '');
+          return new Request(url);
         },
         fetchDidSucceed: async ({ response, state }) => {
           // web only
           const originUrl = state?.originUrl;
           if (originUrl) {
-            const imageResp = response.clone();
             const imagesCache = await caches.open('images');
-            imagesCache.put(originUrl, imageResp);
+            const isCached = await imagesCache.match(originUrl);
+            if (!isCached) {
+              const imageResp = response.clone();
+              imagesCache.put(originUrl, imageResp);
+            }
           }
           const blob = await response.blob();
           const newBlob = await scaleImage(blob);
