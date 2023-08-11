@@ -225,12 +225,13 @@ export const useHomeFeedItemsKeySet = (
 export const useLiveHomeFeedItems = (
   feedIds: Ref<number[]>,
   idSet: Ref<Set<number>>,
-  limit: Ref<number>
+  limit: Ref<number>,
+  desc: Ref<boolean>,
 ) => {
   const feedItems = ref<FeedItem[]>([]);
   let subscription: Subscription;
   watch(
-    [idSet, limit],
+    [idSet, limit, desc],
     () => {
       const t0 = performance.now();
       subscription?.unsubscribe();
@@ -238,24 +239,25 @@ export const useLiveHomeFeedItems = (
       if (feedIds.value.length === 1) {
         const feedId = feedIds.value[0];
         observable = liveQuery(() => {
-          return feedDB.feedItems
+          const source = feedDB.feedItems
             .where('[feedId+pubDate+id]')
             .between(
               [feedId, Dexie.minKey, Dexie.minKey],
               [feedId, Dexie.maxKey, Dexie.maxKey],
               true,
               true
-            )
-            .reverse()
+            );
+          return (desc.value ? source.reverse() : source)
             .limit(Math.min(limit.value, idSet.value.size))
             .filter(({ id }) => !!id && idSet.value.has(id))
             .toArray();
         });
       } else {
         observable = liveQuery(() => {
-          return feedDB.feedItems
-            .orderBy('[pubDate+id]')
-            .reverse()
+          const source = feedDB.feedItems
+            .orderBy('[pubDate+id]');
+
+          return (desc.value ? source.reverse() : source)
             .limit(Math.min(limit.value, idSet.value.size))
             .filter(({ id }) => !!id && idSet.value.has(id))
             .toArray();

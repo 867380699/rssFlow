@@ -117,13 +117,15 @@ const feedStore = useFeedStore();
 
 const keySet = ref(toRaw(feedStore.keySet));
 const feedIds = ref(toRaw(feedStore.feedIds));
+const desc = ref(feedStore.isHomeFeedItemsDesc);
 
 const itemCount = ref(toRaw(feedStore.feedItemsCount));
 
 const { feedItems: cacheFeedItems } = useLiveHomeFeedItems(
   feedIds,
   keySet,
-  itemCount
+  itemCount,
+  desc
 );
 
 const feedItems = ref<FeedItem[]>([feedItem.value!]);

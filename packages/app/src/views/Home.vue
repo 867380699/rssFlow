@@ -14,6 +14,14 @@
           </ion-thumbnail>
             {{ feed?.title || 'All' }}
         </div>
+        <ion-buttons slot="end">
+          <ion-button
+            v-bind="{color: isHomeFeedItemsDesc ? '':'primary'}"
+            @click="toggleDesc"
+          >
+          <ion-icon slot="icon-only" :icon="swapVerticalOutline" />
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
     <ion-content id="main-content" class="ion-padding" :scroll-y="false">
@@ -80,7 +88,6 @@ import {
   IonRefresherContent,
   IonSegment,
   IonSegmentButton,
-  IonTitle,
   IonToolbar,
   RefresherCustomEvent,
 } from '@ionic/vue';
@@ -90,6 +97,7 @@ import {
   listOutline,
   returnUpBackOutline,
   starOutline,
+  swapVerticalOutline,
 } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 import { fromEvent, map, pairwise, share, throttleTime } from 'rxjs';
@@ -107,7 +115,7 @@ const ionRouter = useRouter();
 
 const feedStore = useFeedStore();
 
-const { feedId, feedItemFilter, keySet, feedItemsCount, homeFeedItems } =
+const { feedId, feedItemFilter, keySet, feedItemsCount, homeFeedItems, isHomeFeedItemsDesc } =
   storeToRefs(feedStore);
 
 watch([feedId, feedItemFilter], () => {
@@ -161,6 +169,11 @@ const unreadAll = () => {
     undoReadAllFn();
   }
 };
+
+const toggleDesc = () => {
+  isHomeFeedItemsDesc.value = !isHomeFeedItemsDesc.value;
+   (content.value?.$el as HTMLElement).scrollTop = 0;
+}
 
 const isFabShow = ref(true);
 

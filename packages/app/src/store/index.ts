@@ -40,10 +40,13 @@ export const useFeedStore = defineStore('feed', () => {
 
   const feedItemsCount = ref(20);
 
+  const isHomeFeedItemsDesc = ref(true);
+
   const { feedItems: homeFeedItems } = useLiveHomeFeedItems(
     feedIds,
     keySet,
-    feedItemsCount
+    feedItemsCount,
+    isHomeFeedItemsDesc
   );
 
   const feedItemId = ref(0);
@@ -68,5 +71,6 @@ export const useFeedStore = defineStore('feed', () => {
     feedItemId,
     setFeedItemId,
     feedItemCounts,
+    isHomeFeedItemsDesc
   };
 });
