@@ -1,5 +1,11 @@
 {
   "unread": "Unread",
   "all": "All",
-  "favorite": "Favorite"
+  "favorite": "Favorite",
+  "exportSuccess": "export success",
+  "justNow": "just now",
+  "minutesAgo": "{n}m ago",
+  "hoursAgo": "{n}h ago",
+  "daysAgo": "{n}d ago",
+  "yesterday": "yesterday h a"
 }

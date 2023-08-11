@@ -33,10 +33,10 @@
   </RecycleList>
 </template>
 <script lang="ts" setup>
-import { formatRelative } from 'date-fns';
 import { ComponentPublicInstance } from 'vue';
 
 import { useAllFeeds, useFeed } from '@/composables';
+import { formatRelative } from '@/composables/date';
 import { Feed, FeedItem as FeedItemType } from '@/types';
 
 import LazyImage from './LazyImage.vue';
@@ -63,7 +63,7 @@ const feedsMap = computed(() => {
   }, {} as Record<number, Feed>);
 });
 
-const now = new Date();
+const now = Date.now();
 
 const recycleItems = computed<RecycleItem[]>(() => {
   const resultItems: RecycleItem[] = [];

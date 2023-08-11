@@ -9,5 +9,11 @@
   "cancel": "取消",
   "import": "导入",
   "export": "导出",
-  "exportSuccess": "导出成功"
+  "exportSuccess": "导出成功",
+  "justNow": "刚刚",
+  "minutesAgo": "{n} 分钟前",
+  "hoursAgo": "{n} 小时前",
+  "daysAgo": "{n} 天前",
+  "today": "a h 时",
+  "yesterday": "昨日 a h 时"
 }
