@@ -17,25 +17,17 @@ import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
 import { useRegisterSW } from 'virtual:pwa-register/vue';
 import { createApp } from 'vue';
-import { createI18n } from 'vue-i18n';
 import VueVirtualScroller from 'vue-virtual-scroller';
 
+import { i18n } from '@/i18n';
+
 import App from './App.vue';
-import messageEn from './locales/en.json';
-import messageCn from './locales/zh.json';
 import router from './router';
 import Logger from './utils/log';
 
 setTimeout(() => {
   SplashScreen.hide();
 }, 300);
-
-const i18n = createI18n({
-  locale: 'zh',
-  fallbackLocale: 'en',
-  globalInjection: true,
-  messages: { en: messageEn, zh: messageCn },
-});
 
 const app = createApp(App)
   .use(IonicVue)
