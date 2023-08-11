@@ -2,8 +2,18 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-menu-button slot="start" />
-        <ion-title>{{ feed?.title || 'All' }}</ion-title>
+        <ion-buttons slot="start">
+          <ion-menu-button/>
+        </ion-buttons>
+        <div class="flex items-center ml-1">
+          <ion-thumbnail
+            class="rounded-full overflow-hidden"
+            style="--size: 32px"
+          >
+            <LazyImage :src="feed?.imageUrl" />
+          </ion-thumbnail>
+            {{ feed?.title || 'All' }}
+        </div>
       </ion-toolbar>
     </ion-header>
     <ion-content id="main-content" class="ion-padding" :scroll-y="false">

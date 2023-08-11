@@ -9,10 +9,10 @@
         <ion-buttons slot="start">
           <ion-back-button text="" />
         </ion-buttons>
-        <div class="flex items-center">
+        <div class="flex items-center ml-1">
           <ion-thumbnail
             class="rounded-full overflow-hidden"
-            style="--size: 36px"
+            style="--size: 32px"
           >
             <LazyImage :src="feed?.imageUrl" />
           </ion-thumbnail>
