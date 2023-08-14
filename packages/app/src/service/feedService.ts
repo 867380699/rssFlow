@@ -10,7 +10,7 @@ import EnhancedFrame from '../components/EnhancedFrame.vue';
 import LazyFeedContent from '../components/LazyFeedContent.vue';
 import LazyImage from '../components/LazyImage.vue';
 import VideoPlayer from '../components/VideoPlayer.vue';
-import { Feed, FeedItem } from '../types';
+import { Feed, FeedItem, ItemMeta } from '../types';
 import { getFeeds } from './apiService';
 import { feedDB, storeFeedItems } from './dbService';
 
@@ -91,13 +91,14 @@ const parseRSSFeedItems = (nodeTree: Document): Array<FeedItem> => {
     const contentDocument = parser.parseFromString(description, 'text/html');
     const pubDate = node.querySelector('pubDate')?.textContent;
 
-    const { image, video, audio } = parseFeedItemMedia(description);
+    const { image, video, audio, meta } = parseFeedItemMedia(description);
 
     items.push({
       title: node.querySelector('title')?.textContent || '',
       image,
       video,
       audio,
+      meta,
       shortDescription: (contentDocument.body.textContent || '').trim(),
       description,
       link:
@@ -122,13 +123,14 @@ const parseAtomFeedItems = (nodeTree: Document): Array<FeedItem> => {
     const contentDocument = parser.parseFromString(description, 'text/html');
     const pubDate = node.querySelector('updated')?.textContent;
 
-    const { image, video, audio } = parseFeedItemMedia(description);
+    const { image, video, audio, meta } = parseFeedItemMedia(description);
 
     items.push({
       title: node.querySelector('title')?.textContent || '',
       image,
       video,
       audio,
+      meta,
       shortDescription: (contentDocument.body.textContent || '').trim(),
       description,
       link:
@@ -144,12 +146,24 @@ const parseAtomFeedItems = (nodeTree: Document): Array<FeedItem> => {
 
 const parseFeedItemMedia = (description: string) => {
   const contentDocument = parser.parseFromString(description, 'text/html');
-  const image = contentDocument.querySelector('img')?.src;
-  const videoEl = contentDocument.querySelector('video');
-  const audio =
-    contentDocument.querySelector<HTMLSourceElement>('audio source')?.src;
-  const src = videoEl?.src;
-  const poster = videoEl?.poster;
+  const bodyEl = contentDocument.querySelector('body');
+  const imageEls = contentDocument.querySelectorAll('img');
+  const videoEls = contentDocument.querySelectorAll('video');
+  const audioEls = contentDocument.querySelectorAll('audio');
+  const frameEls = contentDocument.querySelectorAll('iframe');
+
+  const image = imageEls[0]?.src;
+  const audio = audioEls[0]?.querySelector<HTMLSourceElement>('source')?.src;
+  const src = videoEls[0]?.src;
+  const poster = videoEls[0]?.poster;
+
+  const meta: ItemMeta = {
+    contentLength: bodyEl?.textContent?.trim()?.length,
+    imageCount: imageEls.length,
+    videoCount: videoEls.length,
+    audioCount: audioEls.length,
+    frameCount: frameEls.length,
+  };
 
   const video = src
     ? {
@@ -162,6 +176,7 @@ const parseFeedItemMedia = (description: string) => {
     image,
     video,
     audio,
+    meta,
   };
 };
 

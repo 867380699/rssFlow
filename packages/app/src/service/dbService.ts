@@ -146,6 +146,7 @@ export const storeFeedItems = async (feedItems: FeedItem[], feedId: number) => {
           image,
           video,
           audio,
+          meta,
           pubDate,
         }) => ({
           feedId,
@@ -153,6 +154,7 @@ export const storeFeedItems = async (feedItems: FeedItem[], feedId: number) => {
           image,
           video,
           audio,
+          meta,
           description,
           shortDescription,
           link,

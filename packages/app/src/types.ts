@@ -19,6 +19,7 @@ export type FeedItem = {
   title: string;
   shortDescription?: string;
   description?: string;
+  meta?: ItemMeta;
   image?: string;
   video?: {
     src: string;
@@ -29,6 +30,14 @@ export type FeedItem = {
   pubDate?: number;
   link: string;
 } & ItemStatus;
+
+export type ItemMeta = {
+  contentLength?: number;
+  imageCount?: number;
+  videoCount?: number;
+  audioCount?: number;
+  frameCount?: number;
+};
 
 export type ItemStatus = {
   isRead?: 0 | 1;
