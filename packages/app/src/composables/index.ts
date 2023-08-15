@@ -226,15 +226,17 @@ export const useLiveHomeFeedItems = (
   feedIds: Ref<number[]>,
   idSet: Ref<Set<number>>,
   limit: Ref<number>,
-  desc: Ref<boolean>,
+  desc: Ref<boolean>
 ) => {
   const feedItems = ref<FeedItem[]>([]);
+  const loading = ref(true);
   let subscription: Subscription;
   watch(
     [idSet, limit, desc],
     () => {
       const t0 = performance.now();
       subscription?.unsubscribe();
+      loading.value = true;
       let observable: DexieObservable<FeedItem[]>;
       if (feedIds.value.length === 1) {
         const feedId = feedIds.value[0];
@@ -254,8 +256,7 @@ export const useLiveHomeFeedItems = (
         });
       } else {
         observable = liveQuery(() => {
-          const source = feedDB.feedItems
-            .orderBy('[pubDate+id]');
+          const source = feedDB.feedItems.orderBy('[pubDate+id]');
 
           return (desc.value ? source.reverse() : source)
             .limit(Math.min(limit.value, idSet.value.size))
@@ -265,6 +266,7 @@ export const useLiveHomeFeedItems = (
       }
       subscription = observable.subscribe((items) => {
         feedItems.value = items;
+        loading.value = false;
         console.log(`key home items:${items.length}`, performance.now() - t0);
       });
     },
@@ -272,6 +274,7 @@ export const useLiveHomeFeedItems = (
   );
   return {
     feedItems,
+    loading,
   };
 };
 

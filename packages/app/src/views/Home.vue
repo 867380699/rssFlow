@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-menu-button/>
+          <ion-menu-button />
         </ion-buttons>
         <div class="flex items-center ml-1">
           <ion-thumbnail
@@ -12,14 +12,14 @@
           >
             <LazyImage :src="feed?.imageUrl" />
           </ion-thumbnail>
-            {{ feed?.title || 'All' }}
+          {{ feed?.title || 'All' }}
         </div>
         <ion-buttons slot="end">
           <ion-button
-            v-bind="{color: isHomeFeedItemsDesc ? '':'primary'}"
+            v-bind="{ color: isHomeFeedItemsDesc ? 'medium' : 'primary' }"
             @click="toggleDesc"
           >
-          <ion-icon slot="icon-only" :icon="swapVerticalOutline" />
+            <ion-icon slot="icon-only" :icon="swapVerticalOutline" />
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
@@ -115,8 +115,15 @@ const ionRouter = useRouter();
 
 const feedStore = useFeedStore();
 
-const { feedId, feedItemFilter, keySet, feedItemsCount, homeFeedItems, isHomeFeedItemsDesc } =
-  storeToRefs(feedStore);
+const {
+  feedId,
+  feedItemFilter,
+  keySet,
+  feedItemsCount,
+  homeLoading,
+  homeFeedItems,
+  isHomeFeedItemsDesc,
+} = storeToRefs(feedStore);
 
 watch([feedId, feedItemFilter], () => {
   feedItemsCount.value = 20;
@@ -172,8 +179,8 @@ const unreadAll = () => {
 
 const toggleDesc = () => {
   isHomeFeedItemsDesc.value = !isHomeFeedItemsDesc.value;
-   (content.value?.$el as HTMLElement).scrollTop = 0;
-}
+  (content.value?.$el as HTMLElement).scrollTop = 0;
+};
 
 const isFabShow = ref(true);
 
@@ -209,7 +216,8 @@ onMounted(() => {
       })
     )
     .subscribe(({ scrollTop, scrollHeight, clientHeight }) => {
-      if (scrollTop + clientHeight > scrollHeight - 96 * 3) {
+      if (scrollTop + clientHeight > scrollHeight - 96 * 6) {
+        if (homeLoading.value) return;
         feedItemsCount.value = Math.min(
           feedItemsCount.value + 20,
           keySet.value.size

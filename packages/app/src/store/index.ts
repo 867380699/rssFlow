@@ -42,12 +42,8 @@ export const useFeedStore = defineStore('feed', () => {
 
   const isHomeFeedItemsDesc = ref(true);
 
-  const { feedItems: homeFeedItems } = useLiveHomeFeedItems(
-    feedIds,
-    keySet,
-    feedItemsCount,
-    isHomeFeedItemsDesc
-  );
+  const { feedItems: homeFeedItems, loading: homeLoading } =
+    useLiveHomeFeedItems(feedIds, keySet, feedItemsCount, isHomeFeedItemsDesc);
 
   const feedItemId = ref(0);
   const setFeedItemId = (id: number) => {
@@ -67,10 +63,11 @@ export const useFeedStore = defineStore('feed', () => {
     keySet,
     feedItemsCount,
     homeFeedItems,
+    homeLoading,
     feedItem,
     feedItemId,
     setFeedItemId,
     feedItemCounts,
-    isHomeFeedItemsDesc
+    isHomeFeedItemsDesc,
   };
 });
