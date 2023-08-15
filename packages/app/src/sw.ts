@@ -207,7 +207,7 @@ const thumbnailRoute = new Route(
           });
         },
       },
-      requestForwardPlugin, // web only
+      new RequestForwardPlugin(), // web only
       new ExpirationPlugin({
         maxEntries: 5000,
         purgeOnQuotaError: true,

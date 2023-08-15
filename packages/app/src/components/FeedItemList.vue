@@ -69,10 +69,10 @@ const recycleItems = computed<RecycleItem[]>(() => {
   const resultItems: RecycleItem[] = [];
   let feedId: number | undefined;
   let pubdate = 0;
-  props.items.forEach((item) => {
+  props.items.forEach((item, i) => {
     const isSameFormatTime =
       formatRelative(pubdate, now) === formatRelative(item.pubDate || 0, now);
-    if (!isSameFormatTime) {
+    if (!isSameFormatTime || i === 0) {
       resultItems.push({
         height: 24,
         slot: 'date',
