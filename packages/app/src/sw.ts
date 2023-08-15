@@ -9,6 +9,9 @@ import {
 import { NavigationRoute, registerRoute, Route } from 'workbox-routing';
 import { CacheFirst } from 'workbox-strategies';
 
+import { RequestForwardPlugin, RequestPoolingPlugin } from './worker/plugins';
+import { b64toBlob, isImageRequest, isSameOrigin } from './worker/utils';
+
 declare let self: ServiceWorkerGlobalScope;
 
 // self.__WB_MANIFEST is default injection point
@@ -53,26 +56,6 @@ const nativeRequest = (url: string): Promise<HttpResponse> => {
   });
 };
 
-const b64toBlob = (b64Data: string, contentType = '', sliceSize = 512) => {
-  const byteCharacters = atob(b64Data);
-  const byteArrays = [];
-
-  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-    const slice = byteCharacters.slice(offset, offset + sliceSize);
-
-    const byteNumbers = new Array(slice.length);
-    for (let i = 0; i < slice.length; i++) {
-      byteNumbers[i] = slice.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-    byteArrays.push(byteArray);
-  }
-
-  const blob = new Blob(byteArrays, { type: contentType });
-  return blob;
-};
-
 const nativeRequestPlugin: WorkboxPlugin = {
   cachedResponseWillBeUsed: async (params) => {
     // native request
@@ -98,35 +81,6 @@ const nativeRequestPlugin: WorkboxPlugin = {
   },
 };
 
-const requestForwardPlugin: WorkboxPlugin = {
-  requestWillFetch: async ({ request }) => {
-    // web request proxy
-    const url = new URL(request.url);
-    const headers = new Headers(request.headers);
-    const prefix = import.meta.env.VITE_PROXY_HOST || '/img/';
-    const proxyRequest = new Request(
-      `${prefix}${encodeURIComponent(url.toString())}`,
-      { mode: 'cors', headers }
-    );
-    return proxyRequest;
-  },
-};
-
-const isImageRequest = (request: Request) => {
-  if (request.destination === 'image') {
-    return true;
-  }
-  const url = new URL(request.url);
-  if (/\.(jpg|jpeg|png|webp|avif|gif)$/.test(url.pathname)) {
-    return true;
-  }
-};
-
-const isSameOrigin = (request: Request) => {
-  const url = new URL(request.url);
-  return url.hostname === location.hostname;
-};
-
 // localhost: dev or native
 // else: web prod
 const imageRoute = new Route(
@@ -136,8 +90,12 @@ const imageRoute = new Route(
   new CacheFirst({
     cacheName: 'images',
     plugins: [
+      new RequestPoolingPlugin({
+        concurrentSize: 5,
+        poolSize: 100,
+      }),
       nativeRequestPlugin, // native only
-      requestForwardPlugin, // web only
+      new RequestForwardPlugin(), // web only
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24 * 1, // one day
         maxEntries: 5000,
@@ -179,6 +137,10 @@ const thumbnailRoute = new Route(
   new CacheFirst({
     cacheName: 'thumbnail',
     plugins: [
+      new RequestPoolingPlugin({
+        concurrentSize: 10,
+        poolSize: 100,
+      }),
       {
         cachedResponseWillBeUsed: async (params) => {
           // native only
