@@ -112,6 +112,9 @@ const parseRSSFeedItems = (nodeTree: Document): Array<FeedItem> => {
 };
 
 const parseAtomFeedItems = (nodeTree: Document): Array<FeedItem> => {
+  const lastBuildDate = new Date(
+    nodeTree.querySelector('lastBuildDate')?.textContent || ''
+  ).getTime();
   const itemNodes = nodeTree.querySelectorAll('feed > entry');
   const items: Array<FeedItem> = [];
   itemNodes.forEach((node) => {
@@ -138,7 +141,8 @@ const parseAtomFeedItems = (nodeTree: Document): Array<FeedItem> => {
           .querySelector('link')
           ?.getAttribute('href')
           ?.replace(/^https?/, 'https') || '',
-      pubDate: (pubDate ? new Date(pubDate) : new Date()).getTime(),
+      pubDate:
+        (pubDate && new Date(pubDate).getTime()) || lastBuildDate || Date.now(),
     });
   });
   return items;
