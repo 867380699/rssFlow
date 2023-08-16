@@ -2,6 +2,7 @@
   <div class="relative h-full w-full rounded-sm">
     <img
       class="bg-slate-400 h-full w-full object-cover rounded-sm"
+      :class="{ 'opacity-0': isError }"
       :style="minStyle"
       :crossorigin="crossorigin"
       :loading="loading"
@@ -14,15 +15,23 @@
         'opacity-0': !(isLoading || isError),
         transition: !(isLoading || isError),
         'bg-transparent': !(isLoading || isError),
+        'animate-brightness': isLoading && !isError,
       }"
       :style="minStyle"
       class="absolute h-full w-full bg-slate-500 object-cover top-0 rounded-sm pointer-events-none"
       :src="dummySrc"
     />
+    <ion-icon
+      v-show="isError"
+      :icon="alertOutline"
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-200"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { alertOutline } from 'ionicons/icons';
+
 const props = withDefaults(
   defineProps<{
     src?: string;
