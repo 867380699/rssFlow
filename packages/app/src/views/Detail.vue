@@ -7,7 +7,7 @@
         class="transition-all duration-200"
       >
         <ion-buttons slot="start">
-          <ion-back-button text="" />
+          <ion-back-button text="" mode="md" />
         </ion-buttons>
         <div class="flex items-center ml-1">
           <ion-thumbnail

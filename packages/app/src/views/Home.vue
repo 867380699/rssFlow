@@ -10,7 +10,7 @@
             class="rounded-full overflow-hidden"
             style="--size: 32px"
           >
-            <LazyImage :src="feed?.imageUrl" />
+            <LazyImage :src="feed?.imageUrl" min-height="32" />
           </ion-thumbnail>
           {{ feed?.title || 'All' }}
         </div>
