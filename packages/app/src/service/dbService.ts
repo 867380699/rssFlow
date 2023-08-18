@@ -1,6 +1,6 @@
 import Dexie, { IndexableType, liveQuery, Table } from 'dexie';
 
-import { getNextRank, getRankBetween, getSeed } from '@/utils/rank';
+import { getNextRank, getRankBetween } from '@/utils/rank';
 
 import { Feed, FeedItem } from '../types';
 
@@ -12,44 +12,6 @@ export class FeedDB extends Dexie {
 
   constructor() {
     super(DB_NAME);
-    this.version(1).stores({
-      feeds: '++id, title, &link',
-      feedItems: '++id, feedId, title, link, isRead, isFavorite',
-    });
-    this.version(12)
-      .stores({
-        feeds: '++id, title, &link, parentId',
-        feedItems: '++id, feedId, title, link, [feedId+isRead]',
-      })
-      .upgrade(async (tx) => {
-        const feedCount = await tx.table('feeds').count();
-        let rank = getNextRank(getSeed(feedCount));
-        return tx
-          .table<Feed, number>('feeds')
-          .toCollection()
-          .modify((feed) => {
-            feed.type = 'feed';
-            feed.rank = rank;
-            feed.parentId = 0;
-            rank = getNextRank(rank);
-          });
-      });
-    this.version(29)
-      .stores({
-        feeds: '++id, title, &link, parentId, rank, type',
-        feedItems:
-          '++id, feedId, [feedId+isRead], [feedId+isRead+isFavorite+readTime]',
-      })
-      .upgrade(async (tx) => {
-        return tx
-          .table<FeedItem, number>('feedItems')
-          .toCollection()
-          .modify((feed) => {
-            if (!feed.readTime) {
-              feed.readTime = 0;
-            }
-          });
-      });
     this.version(42).stores({
       feeds: '++id, title, parentId, rank, type',
       feedItems:
