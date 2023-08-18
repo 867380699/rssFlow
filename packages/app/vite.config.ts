@@ -34,7 +34,11 @@ export default defineConfig({
         target: 'http://localhost:2999',
       },
     }),
-    vue(),
+    vue({
+      script: {
+        defineModel: true,
+      },
+    }),
     AutoImport({
       imports: [
         'vue',
