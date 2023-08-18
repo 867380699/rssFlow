@@ -22,12 +22,29 @@
             <ion-icon slot="icon-only" :icon="swapVerticalOutline" />
           </ion-button>
         </ion-buttons>
+        <progress-bar
+          class="absolute bottom-0 left-0 right-0"
+          :progress="pullProgress"
+          :loading="pullLoading"
+        ></progress-bar>
       </ion-toolbar>
     </ion-header>
     <ion-content id="main-content" class="ion-padding" :scroll-y="false">
-      <ion-refresher slot="fixed" @ion-refresh="handleRefresh($event)">
-        <ion-refresher-content></ion-refresher-content>
+      <ion-refresher
+        slot="fixed"
+        mode="md"
+        :pull-max="120"
+        :pull-min="3"
+        :disabled="pullLoading"
+        @ion-pull="onRefresherPull"
+        @ion-refresh="handleRefresh($event)"
+      >
+        <ion-refresher-content
+          :pulling-icon="null"
+          :refreshing-spinner="null"
+        />
       </ion-refresher>
+
       <FeedItemList
         ref="content"
         :feed-id="feedId"
@@ -146,10 +163,31 @@ onBeforeUnmount(() => {
   console.log('unmount');
 });
 
+const pullProgress = ref(0);
+const pullLoading = ref(false);
+
+const onRefresherPull = (event: CustomEvent) => {
+  const refresher = event.target as unknown as typeof IonRefresher;
+  const { progress, pullMin, pullMax } = refresher;
+  pullProgress.value = progress / (pullMax / pullMin);
+};
+
 const handleRefresh = (event: RefresherCustomEvent) => {
-  setTimeout(() => {
-    event.target?.complete();
-  }, 1500);
+  const refresher = event.target as unknown as typeof IonRefresher;
+  const { progress, pullMin, pullMax } = refresher;
+  const realProgress = progress / (pullMax / pullMin);
+  console.log('refresh', realProgress);
+  event.target?.complete();
+
+  if (realProgress > 1) {
+    pullLoading.value = true;
+    setTimeout(() => {
+      pullProgress.value = 0;
+      pullLoading.value = false;
+    }, 3000);
+  } else {
+    pullProgress.value = 0;
+  }
 };
 
 const canUndoReadAll = ref(false);
