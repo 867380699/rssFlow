@@ -3,6 +3,7 @@ import { VNode } from 'vue';
 
 import { useGallery } from '@/composables/gallery';
 import { useMinHeight } from '@/composables/image';
+import { useFeedStore } from '@/store';
 import { time } from '@/utils/log';
 
 import AudioPlayer from '../components/AudioPlayer.vue';
@@ -344,16 +345,30 @@ export const syncAllFeeds = async () => {
     const syncInterval = 1000 * 60 * 60 * 2;
     if (!feed.lastUpdateTime || now - feed.lastUpdateTime > syncInterval) {
       console.log('sync feed:', feed.source);
-      try {
-        const feedText = await getFeeds(feed.source);
-        const newItems = parseFeed(feedText, feed.source).items;
-        if (newItems) {
-          await storeFeedItems(newItems, Number(feed.id));
-          feedDB.feeds.update(Number(feed.id), { lastUpdateTime: now });
-        }
-      } catch (e) {
-        console.log(e);
+      await fetchFeed(feed);
+    }
+  }
+};
+
+export const fetchFeed = async (feed: Feed) => {
+  const feedStore = useFeedStore();
+  try {
+    if (feed.id) {
+      feedStore.addLoadingFeed(feed.id);
+    }
+    if (feed.source) {
+      const feedText = await getFeeds(feed.source);
+      const newItems = parseFeed(feedText, feed.source).items;
+      if (newItems) {
+        await storeFeedItems(newItems, Number(feed.id));
+        feedDB.feeds.update(Number(feed.id), { lastUpdateTime: Date.now() });
       }
+    }
+  } catch (e) {
+    console.log(e);
+  } finally {
+    if (feed.id) {
+      feedStore.removeLoadingFeed(feed.id);
     }
   }
 };

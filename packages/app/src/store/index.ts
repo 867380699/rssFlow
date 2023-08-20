@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 
 import {
+  useAllFeeds,
   useChildFeedIds,
   useFeed,
   useFeedItem,
@@ -53,6 +54,31 @@ export const useFeedStore = defineStore('feed', () => {
 
   const { counts: feedItemCounts } = useFeedItemCounts();
 
+  const { feeds } = useAllFeeds();
+
+  const getLoadingFeedIds = (feedId: number, ids: number[] = []): number[] => {
+    const feed = feeds.value.find((f) => f.id === feedId);
+    if (feed?.id) {
+      ids.push(feed.id);
+      return getLoadingFeedIds(feed.parentId, ids);
+    } else {
+      ids.push(0);
+    }
+    return ids;
+  };
+
+  const loadingFeedIds = ref(new Set<number>());
+
+  const addLoadingFeed = (feedId: number) => {
+    const ids = getLoadingFeedIds(feedId);
+    ids.forEach((id) => loadingFeedIds.value.add(id));
+  };
+
+  const removeLoadingFeed = (feedId: number) => {
+    const ids = getLoadingFeedIds(feedId);
+    ids.forEach((id) => loadingFeedIds.value.delete(id));
+  };
+
   return {
     feedId,
     feed,
@@ -69,5 +95,9 @@ export const useFeedStore = defineStore('feed', () => {
     setFeedItemId,
     feedItemCounts,
     isHomeFeedItemsDesc,
+    feeds,
+    loadingFeedIds,
+    addLoadingFeed,
+    removeLoadingFeed,
   };
 });

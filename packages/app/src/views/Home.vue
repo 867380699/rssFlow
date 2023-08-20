@@ -124,6 +124,7 @@ import FeedItemList from '@/components/FeedItemList.vue';
 import { useFeed } from '@/composables';
 import { FeedItemFilter } from '@/enums';
 import { readFeedItems } from '@/service/dbService';
+import { fetchFeed } from '@/service/feedService';
 import { useFeedStore } from '@/store';
 
 const { t } = useI18n();
@@ -140,6 +141,7 @@ const {
   homeLoading,
   homeFeedItems,
   isHomeFeedItemsDesc,
+  loadingFeedIds,
 } = storeToRefs(feedStore);
 
 watch([feedId, feedItemFilter], () => {
@@ -166,6 +168,19 @@ onBeforeUnmount(() => {
 const pullProgress = ref(0);
 const pullLoading = ref(false);
 
+watch(
+  () => loadingFeedIds.value.has(feedId.value),
+  (isLoading) => {
+    if (isLoading) {
+      pullLoading.value = true;
+      pullProgress.value = 1;
+    } else {
+      pullLoading.value = false;
+      pullProgress.value = 0;
+    }
+  }
+);
+
 const onRefresherPull = (event: CustomEvent) => {
   const refresher = event.target as unknown as typeof IonRefresher;
   const { progress, pullMin, pullMax } = refresher;
@@ -180,11 +195,13 @@ const handleRefresh = (event: RefresherCustomEvent) => {
   event.target?.complete();
 
   if (realProgress > 1) {
-    pullLoading.value = true;
-    setTimeout(() => {
+    // pullLoading.value = true;
+
+    if (feed.value && feed.value.type === 'feed') {
+      fetchFeed(feed.value);
+    } else {
       pullProgress.value = 0;
-      pullLoading.value = false;
-    }, 3000);
+    }
   } else {
     pullProgress.value = 0;
   }
