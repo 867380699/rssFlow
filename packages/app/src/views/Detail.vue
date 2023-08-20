@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-header>
+    <ion-header :class="{ 'shadow-none': !showToolbar }">
       <ion-toolbar
         ref="toolbar"
         :style="topToolbarStyle"
@@ -56,7 +56,7 @@
         </swiper-slide>
       </swiper>
     </ion-content>
-    <ion-footer>
+    <ion-footer :class="{ 'shadow-none': !showToolbar }">
       <ion-toolbar
         :style="bottomToolbarStyle"
         class="transition-all duration-200"
