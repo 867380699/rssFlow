@@ -14,16 +14,18 @@ const props = withDefaults(
   defineProps<{
     progress?: number;
     loading?: boolean;
+    position?: 'left' | 'center';
   }>(),
   {
     progress: 0,
     loading: false,
+    position: 'center',
   }
 );
 
 const style = computed(() => ({
   height: '2px',
-  'background-position': '50% 0',
+  'background-position': `${props.position === 'center' ? '50%' : 0} 0`,
   'background-size': `${(props.progress || 0) * 100}% 100vw`,
   animation: props.loading ? 'progress 1.5s linear infinite alternate' : 'none',
 }));

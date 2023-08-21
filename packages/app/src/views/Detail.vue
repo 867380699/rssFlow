@@ -1,17 +1,13 @@
 <template>
   <ion-page>
-    <ion-header :class="{ 'shadow-none': !showToolbar }">
-      <ion-toolbar
-        ref="toolbar"
-        :style="topToolbarStyle"
-        class="transition-all duration-200"
-      >
+    <ion-header class="transition-all duration-200" :style="topToolbarStyle">
+      <ion-toolbar ref="toolbar">
         <ion-buttons slot="start">
           <ion-back-button text="" mode="md" />
         </ion-buttons>
         <div class="flex items-center ml-1">
           <ion-thumbnail
-            class="rounded-full overflow-hidden"
+            class="rounded-full overflow-hidden shrink-0"
             style="--size: 32px"
           >
             <LazyImage :src="feed?.imageUrl" />
@@ -26,6 +22,13 @@
             <ion-icon slot="icon-only" :icon="swapHorizontalOutline"></ion-icon>
           </ion-button>
         </ion-buttons>
+        <progress-bar
+          v-show="showProgress"
+          class="absolute bottom-0 left-0 right-0 transition-none"
+          :class="{ 'opacity-50': !showToolbar }"
+          position="left"
+          :progress="progress"
+        ></progress-bar>
       </ion-toolbar>
     </ion-header>
     <ion-content
@@ -232,14 +235,23 @@ from(currentScrollState, { deep: true })
   });
 
 const topToolbarStyle = computed(() => ({
-  opacity: `${showToolbar.value ? 1 : 0}`,
-  top: `${showToolbar.value ? 0 : -toolbarHeight.value}px`,
+  top: `${
+    showToolbar.value ? 0 : -toolbarHeight.value + (showProgress.value ? 1 : 1)
+  }px`,
 }));
 
 const bottomToolbarStyle = computed(() => ({
   opacity: `${showToolbar.value ? 1 : 0}`,
   bottom: `${showToolbar.value ? 0 : -toolbarHeight.value}px`,
 }));
+
+const showProgress = computed(() => {
+  return currentScrollState.value.totalY > window.innerHeight * 2;
+});
+
+const progress = computed(() => {
+  return currentScrollState.value.progressY;
+});
 
 const toggleRead = () => {
   if (feedItem.value && feedItem.value.id) {

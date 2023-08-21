@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { useScroll } from '@vueuse/core';
+import { useEventListener } from '@vueuse/core';
 import format from 'date-fns/format';
 import {
   browsersOutline,
@@ -99,6 +99,47 @@ const metaInfo = computed<MetaInfo[]>(() => {
 const content = ref<ComponentPublicInstance<HTMLElement> | null>(null);
 
 const FeedContentComponent = parseFeedContent(props.feedItem);
+
+const useScroll = (
+  element: Ref<ComponentPublicInstance<HTMLElement> | null>
+) => {
+  const x = ref(0);
+  const y = ref(0);
+  const progressX = ref(0);
+  const progressY = ref(0);
+  const totalX = ref(0);
+  const totalY = ref(0);
+  const onScroll = (e: Event) => {
+    const el = e.target as HTMLElement;
+    const {
+      scrollLeft,
+      scrollTop,
+      scrollWidth,
+      scrollHeight,
+      clientWidth,
+      clientHeight,
+    } = el;
+    x.value = scrollLeft;
+    y.value = scrollTop;
+    progressX.value = x.value ? (scrollLeft + clientWidth) / scrollWidth : 0;
+    progressY.value = y.value ? (scrollTop + clientHeight) / scrollHeight : 0;
+    totalX.value = scrollWidth;
+    totalY.value = scrollHeight;
+    // console.log(x.value, y.value, progressX.value, progressY.value);
+  };
+
+  useEventListener(element, 'scroll', onScroll);
+  useEventListener(element, 'scrollend', onScroll);
+
+  return {
+    x,
+    y,
+    progressX,
+    progressY,
+    totalX,
+    totalY,
+  };
+};
 
 scrollState[`detail-${props.feedItem.id}`] = useScroll(content);
 
