@@ -10,16 +10,16 @@
     ></iframe>
     <div
       ref="bubble"
-      class="absolute left-0 top-1/2 -translate-y-1/2 flex transition-all overflow-hidden shadow"
+      class="absolute left-0 top-1/2 -translate-y-1/2 flex transition-all overflow-hidden py-2 pr-2"
       :class="{ 'opacity-60': isBubbleActive, 'opacity-20': !isBubbleActive }"
       @click="activeBubble"
       @pointerover="activeBubble"
     >
       <div
-        class="flex flex-col bg-black text-white rounded-tr rounded-br transition-all"
+        class="flex flex-col bg-black text-white rounded-tr rounded-br transition-all border-t border-b border-r border-white"
         :class="{
           '-translate-x-6': !isBubbleActive,
-          'pointer-events-none': !isBubbleActive,
+          'shadow-[2px_0_4px_3px_rgba(0,0,0,0.3)]': !isBubbleActive,
         }"
       >
         <ion-icon
@@ -67,22 +67,44 @@ const bubble = ref<HTMLElement | null>(null);
 const {
   isSupported: isFullscreenSupported,
   isFullscreen,
-  toggle: toggleFullscreen,
+  toggle,
 } = useFullscreen(container);
+
+const isBubbleActive = ref(true);
+
+const enable = ref(isBubbleActive.value);
+
+let enableTimeout: ReturnType<typeof setTimeout>;
+watch(isBubbleActive, () => {
+  if (isBubbleActive.value) {
+    enableTimeout = setTimeout(() => {
+      enable.value = true;
+    }, 150);
+  } else {
+    clearTimeout(enableTimeout);
+    enable.value = false;
+  }
+});
+
+const toggleFullscreen = () => {
+  if (!enable.value) return;
+  toggle();
+};
 
 useBackButton(10, (processNextHandler) => {
   if (isFullscreen.value) {
-    toggleFullscreen();
+    toggle();
   } else {
     processNextHandler();
   }
 });
 
-const {
-  isLandscape,
-  reset: resetOriention,
-  rotate: rotateScreen,
-} = useOriention();
+const { isLandscape, reset: resetOriention, rotate } = useOriention();
+
+const rotateScreen = () => {
+  if (!enable.value) return;
+  rotate();
+};
 
 watch(isFullscreen, async () => {
   if (isFullscreen.value) {
@@ -94,7 +116,6 @@ watch(isFullscreen, async () => {
     StatusBar.show();
   }
 });
-const isBubbleActive = ref(true);
 
 let deactiveTimeout: ReturnType<typeof setTimeout> | undefined;
 
