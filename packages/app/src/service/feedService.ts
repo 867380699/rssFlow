@@ -105,7 +105,7 @@ const parseRSSFeedItems = (nodeTree: Document): Array<FeedItem> => {
       link:
         node.querySelector('link')?.textContent?.replace(/^https?/, 'https') ||
         '',
-      pubDate: (pubDate ? new Date(pubDate) : new Date()).getTime(),
+      pubDate: (pubDate ? new Date(pubDate) : new Date()).getTime() || 0,
       readTime: 0,
     });
   });
