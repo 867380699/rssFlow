@@ -117,7 +117,7 @@ import {
   swapVerticalOutline,
 } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
-import { fromEvent, map, pairwise, share, throttleTime } from 'rxjs';
+import { fromEvent, map, mergeWith, pairwise, share, throttleTime } from 'rxjs';
 import { ComponentPublicInstance } from 'vue';
 
 import FeedItemList from '@/components/FeedItemList.vue';
@@ -242,11 +242,17 @@ const isFabShow = ref(true);
 const content = ref<ComponentPublicInstance<HTMLElement> | null>(null);
 
 onMounted(() => {
-  const scroll$ = fromEvent<Event>(content.value?.$el, 'scroll').pipe(share());
+  const scrollEnd$ = fromEvent<Event>(content.value?.$el, 'scrollend');
+
+  const scroll$ = fromEvent<Event>(content.value?.$el, 'scroll').pipe(
+    mergeWith(scrollEnd$),
+    share()
+  );
 
   scroll$
     .pipe(
       throttleTime(60),
+      // tap((e) => console.log(e.type)),
       map((e) => (e.target as HTMLElement).scrollTop),
       pairwise(),
       map(([prevScrollTop, scrollTop]) => scrollTop - prevScrollTop)
