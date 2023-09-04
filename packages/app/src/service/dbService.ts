@@ -6,16 +6,48 @@ import { Feed, FeedItem } from '../types';
 
 const DB_NAME = 'feedDB';
 
+const feedIndexes = ['++id', 'title', 'parentId', 'rank', 'type'] as const;
+
+const feedItemIndexes = [
+  '++id',
+  'feedId',
+  '[feedId+isRead]',
+  '[feedId+isRead+isFavorite+readTime]',
+  '[feedId+isRead+isFavorite+readTime+id]',
+  '[isRead+isFavorite+readTime]',
+  '[pubDate+id]',
+  '[feedId+pubDate+id]',
+] as const;
+
+type TypeFeedIndexKey = typeof feedIndexes[number];
+
+type TypeFeedItemIndexKey = typeof feedItemIndexes[number];
+
+type TypeFeedIndex = {
+  [k in TypeFeedIndexKey]: k;
+};
+
+type TypeFeedItemIndex = {
+  [k in TypeFeedItemIndexKey]: k;
+};
+
+export const FeedIndex: TypeFeedIndex = Object.fromEntries(
+  new Map(feedIndexes.map((k) => [k, k]))
+) as TypeFeedIndex;
+
+export const FeedItemIndex: TypeFeedItemIndex = Object.fromEntries(
+  new Map(feedItemIndexes.map((k) => [k, k]))
+) as TypeFeedItemIndex;
+
 export class FeedDB extends Dexie {
   feeds!: Table<Feed>;
   feedItems!: Table<FeedItem>;
 
   constructor() {
     super(DB_NAME);
-    this.version(42).stores({
-      feeds: '++id, title, parentId, rank, type',
-      feedItems:
-        '++id, feedId, [feedId+isRead], [feedId+isRead+isFavorite+readTime], [isRead+isFavorite+readTime], [pubDate+id], [feedId+pubDate+id]',
+    this.version(43).stores({
+      feeds: feedIndexes.join(','),
+      feedItems: feedItemIndexes.join(','),
     });
   }
 }
@@ -194,15 +226,6 @@ export type FeedItemQuery = {
   isFavoriteRange: number[];
   readTimeRange?: IndexableType[];
 };
-
-export type FeedItemIndex = [
-  feedId: number,
-  isRead: number,
-  isFavorite: number,
-  readTime: number,
-  pubDate: number,
-  id: number
-];
 
 export const allFeedIds$ = liveQuery(() => feedDB.feeds.toCollection().keys());
 
