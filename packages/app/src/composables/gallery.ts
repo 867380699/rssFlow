@@ -14,7 +14,7 @@ export const useGallery = () => {
       const backdropAnimation = createAnimation()
         .addElement(root.querySelector('ion-backdrop')!)
         .keyframes([
-          { offset: 0, opacity: '0.01' },
+          { offset: 0, opacity: '1' },
           {
             offset: 1,
             opacity: 'var(--backdrop-opacity)',

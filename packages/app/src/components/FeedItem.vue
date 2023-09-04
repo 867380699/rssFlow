@@ -108,7 +108,7 @@ const toDetail = (id: number, $event: Event) => {
       .keyframes([
         {
           offset: 0,
-          opacity: 0.2,
+          opacity: 1,
           clipPath: `inset(${top}px 0px calc(100vh - ${bottom}px) 0px)`,
         },
         {
