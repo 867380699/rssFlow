@@ -273,3 +273,48 @@ export const readFeedItems = async (ids: number[]) => {
   };
   return undo;
 };
+
+export const getPages = async (
+  tableName: string,
+  indexName: string,
+  range: IndexableType[] = [],
+  reverse = false,
+  size = 20,
+  maxLength = Number.MAX_SAFE_INTEGER
+) => {
+  const t0 = performance.now();
+  const keyPages: IndexableType[] = [];
+  await feedDB.transaction('r', feedDB.feedItems, async (tx) => {
+    const index = feedDB.feedItems.core?.schema.getIndexByKeyPath(indexName);
+    if (index) {
+      const cursor = await feedDB.core.table(tableName).openCursor({
+        trans: tx.idbtrans,
+        reverse,
+        query: {
+          index,
+          range: {
+            type: 2,
+            lower: range[0] || Dexie.minKey,
+            upper: range[1] || Dexie.maxKey,
+          },
+        },
+      });
+      cursor?.start(() => {
+        keyPages.push(cursor.key);
+        if (!cursor.done && keyPages.length < maxLength) {
+          cursor?.advance(size);
+        } else {
+          cursor.stop();
+        }
+      });
+    }
+  });
+  console.log(
+    'paging',
+    tableName,
+    indexName,
+    JSON.stringify(range),
+    performance.now() - t0
+  );
+  return keyPages;
+};
