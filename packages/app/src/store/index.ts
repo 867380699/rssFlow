@@ -6,8 +6,7 @@ import {
   useFeed,
   useFeedItem,
   useFeedItemCounts,
-  useHomeFeedItemsKeySet,
-  useLiveHomeFeedItems,
+  useHomeFeedItems,
 } from '@/composables';
 import { FeedItemFilter } from '@/enums';
 
@@ -17,6 +16,7 @@ export const useFeedStore = defineStore('feed', () => {
 
   const setFeedId = (id: number) => {
     feedId.value = id;
+    childFeedIds.value = [];
   };
 
   const { feed } = toRefs(useFeed(feedId));
@@ -37,14 +37,13 @@ export const useFeedStore = defineStore('feed', () => {
       : [];
   });
 
-  const { keySet } = useHomeFeedItemsKeySet(feedIds, feedItemFilter);
-
-  const feedItemsCount = ref(20);
-
   const isHomeFeedItemsDesc = ref(true);
 
-  const { feedItems: homeFeedItems, loading: homeLoading } =
-    useLiveHomeFeedItems(feedIds, keySet, feedItemsCount, isHomeFeedItemsDesc);
+  const {
+    feedItems: homeFeedItems,
+    loading: homeLoading,
+    nextPage: homeNextPage,
+  } = useHomeFeedItems(feedIds, feedItemFilter, isHomeFeedItemsDesc);
 
   const feedItemId = ref(0);
   const setFeedItemId = (id: number) => {
@@ -86,10 +85,9 @@ export const useFeedStore = defineStore('feed', () => {
     setFeedId,
     feedItemFilter,
     setFeedItemFilter,
-    keySet,
-    feedItemsCount,
     homeFeedItems,
     homeLoading,
+    homeNextPage,
     feedItem,
     feedItemId,
     setFeedItemId,

@@ -90,6 +90,7 @@ import {
   starOutline,
   swapHorizontalOutline,
 } from 'ionicons/icons';
+import { storeToRefs } from 'pinia';
 import { bufferCount, map, throttleTime } from 'rxjs';
 import { Swiper as SwiperClass } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -97,7 +98,7 @@ import { ComponentPublicInstance } from 'vue';
 
 import FeedItemContent from '@/components/FeedItemContent.vue';
 import LazyImage from '@/components/LazyImage.vue';
-import { useFeed, useFeedItem, useLiveHomeFeedItems } from '@/composables';
+import { useFeed, useFeedItem } from '@/composables';
 import { scrollState } from '@/composables/scroll';
 import { useFeedStore } from '@/store';
 import { FeedItem } from '@/types';
@@ -118,18 +119,7 @@ const { feed } = useFeed(currentFeedId);
 
 const feedStore = useFeedStore();
 
-const keySet = ref(toRaw(feedStore.keySet));
-const feedIds = ref(toRaw(feedStore.feedIds));
-const desc = ref(feedStore.isHomeFeedItemsDesc);
-
-const itemCount = ref(toRaw(feedStore.feedItemsCount));
-
-const { feedItems: cacheFeedItems } = useLiveHomeFeedItems(
-  feedIds,
-  keySet,
-  itemCount,
-  desc
-);
+const { homeFeedItems: cacheFeedItems, homeNextPage } = storeToRefs(feedStore);
 
 const feedItems = ref<FeedItem[]>([feedItem.value!]);
 
@@ -139,20 +129,17 @@ const afterSlideInit = (swiper: SwiperClass) => {
 
 const updateSlide = async (itemId: number, swiper: SwiperClass) => {
   let index = 0;
-  let cacheItems = [];
-  if (cacheFeedItems.value.length) {
+  let cacheItems: FeedItem[] = [];
+  if (cacheFeedItems.value?.length) {
     cacheItems = cacheFeedItems.value;
-  } else {
-    cacheItems = feedStore.homeFeedItems;
   }
   if (cacheItems.length) {
     index = cacheItems.findIndex(({ id = 0 }) => id === itemId);
 
-    if (
-      index + 3 > cacheItems.length &&
-      cacheItems.length < keySet.value.size
-    ) {
-      itemCount.value += 20;
+    if (index + 3 > cacheItems.length) {
+      if (homeNextPage.value) {
+        homeNextPage.value();
+      }
     }
 
     const start = Math.max(0, index - 1);

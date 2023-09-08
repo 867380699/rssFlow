@@ -71,6 +71,12 @@
     </ion-content>
     <ion-footer>
       <ion-toolbar>
+        <progress-bar
+          v-if="false"
+          class="absolute top-0 left-0 right-0"
+          :progress="homeLoading ? 1 : 0"
+          :loading="homeLoading"
+        ></progress-bar>
         <ion-segment
           class="flex-1"
           :value="feedItemFilter"
@@ -136,17 +142,12 @@ const feedStore = useFeedStore();
 const {
   feedId,
   feedItemFilter,
-  keySet,
-  feedItemsCount,
   homeLoading,
+  homeNextPage,
   homeFeedItems,
   isHomeFeedItemsDesc,
   loadingFeedIds,
 } = storeToRefs(feedStore);
-
-watch([feedId, feedItemFilter], () => {
-  feedItemsCount.value = 20;
-});
 
 const tabs = [
   { key: FeedItemFilter.UNREAD, label: t('unread'), icon: eyeOffOutline },
@@ -277,12 +278,11 @@ onMounted(() => {
       })
     )
     .subscribe(({ scrollTop, scrollHeight, clientHeight }) => {
-      if (scrollTop + clientHeight > scrollHeight - 96 * 6) {
+      if (scrollTop + clientHeight > scrollHeight - 80 * 6) {
         if (homeLoading.value) return;
-        feedItemsCount.value = Math.min(
-          feedItemsCount.value + 20,
-          keySet.value.size
-        );
+        if (homeNextPage.value) {
+          homeNextPage.value();
+        }
       }
     });
 });
