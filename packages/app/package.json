@@ -21,7 +21,7 @@
     "@capacitor/splash-screen": "^5.0.1",
     "@capacitor/status-bar": "^5.0.1",
     "@ionic/vue": "^7.3.0",
-    "@ionic/vue-router": "^7.0.5",
+    "@ionic/vue-router": "^7.3.3",
     "@vueuse/components": "^9.13.0",
     "@vueuse/core": "^9.13.0",
     "@vueuse/rxjs": "^8.9.4",
