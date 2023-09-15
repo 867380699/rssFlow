@@ -6,8 +6,8 @@ import {
   useFeed,
   useFeedItem,
   useFeedItemCounts,
-  useHomeFeedItems,
 } from '@/composables';
+import { useHomeFeedItems } from '@/composables/home';
 import { FeedItemFilter } from '@/enums';
 
 export const useFeedStore = defineStore('feed', () => {

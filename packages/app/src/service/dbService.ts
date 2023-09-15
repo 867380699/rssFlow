@@ -4,7 +4,14 @@ import { getNextRank, getRankBetween } from '@/utils/rank';
 
 import { Feed, FeedItem } from '../types';
 
-const DB_NAME = 'feedDB';
+export const DB_NAME = 'feedDB';
+
+export const TABLE_NAME = {
+  feeds: 'feeds',
+  feedItems: 'feedItems',
+};
+
+export type TypeTableName = keyof typeof TABLE_NAME;
 
 const feedIndexes = ['++id', 'title', 'parentId', 'rank', 'type'] as const;
 
@@ -19,9 +26,9 @@ const feedItemIndexes = [
   '[feedId+pubDate+id]',
 ] as const;
 
-type TypeFeedIndexKey = typeof feedIndexes[number];
+export type TypeFeedIndexKey = typeof feedIndexes[number];
 
-type TypeFeedItemIndexKey = typeof feedItemIndexes[number];
+export type TypeFeedItemIndexKey = typeof feedItemIndexes[number];
 
 type TypeFeedIndex = {
   [k in TypeFeedIndexKey]: k;
@@ -310,9 +317,8 @@ export const getPages = async (
     }
   });
   console.log(
-    'paging',
-    tableName,
-    indexName,
+    'paging index:',
+    `${tableName}${indexName} range:`,
     JSON.stringify(range),
     performance.now() - t0
   );
