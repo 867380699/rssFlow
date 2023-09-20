@@ -15,6 +15,14 @@
           {{ feed?.title || 'All' }}
         </div>
         <ion-buttons slot="end">
+          <ion-button v-show="!!newItemsCount" @click="resetHomeFeedItems">
+            <ion-icon slot="icon-only" :icon="sparklesOutline" />
+            <span
+              class="p-0.5 absolute bottom-[-4px] right-[-8px] text-[10px] leading-none"
+              >{{ Math.min(newItemsCount || 0, 99) }}</span
+            >
+          </ion-button>
+
           <ion-button
             v-bind="{ color: isHomeFeedItemsDesc ? 'medium' : 'primary' }"
             @click="toggleDesc"
@@ -119,6 +127,7 @@ import {
   eyeOffOutline,
   listOutline,
   returnUpBackOutline,
+  sparklesOutline,
   starOutline,
   swapVerticalOutline,
 } from 'ionicons/icons';
@@ -147,7 +156,10 @@ const {
   homeFeedItems,
   isHomeFeedItemsDesc,
   loadingFeedIds,
+  newItemsCount,
 } = storeToRefs(feedStore);
+
+const resetHomeFeedItems = feedStore.resetHomeFeedItems;
 
 const tabs = [
   { key: FeedItemFilter.UNREAD, label: t('unread'), icon: eyeOffOutline },

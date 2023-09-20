@@ -160,7 +160,7 @@ export const useFeedItems = (
           [feedIds[0], Dexie.minKey],
           [feedIds[0], Dexie.maxKey],
         ]
-      : undefined;
+      : [Dexie.minKey, Dexie.maxKey];
 
   const reverse = orderDesc;
 
@@ -245,10 +245,14 @@ export const useFeedItems = (
 
   const subscriptions: Subscription[] = [];
 
+  const firstPage = ref<IndexableType>();
+
   const nextPage = async (): Promise<Result<FeedItem[]>> => {
     const isFirstPage = !endPageIndex;
     if (isFirstPage) {
       endPageIndex = (await next())?.value;
+      firstPage.value = endPageIndex;
+      console.log(firstPage.value);
     }
     const nextIndex = (await next())?.value;
 
@@ -353,6 +357,21 @@ export const useFeedItems = (
 
   const wrappedPrevPage = wrapLoading(prevPage, loadingResult);
 
+  const newItemCount = ref(0);
+
+  const updateNewItemCount = async () => {
+    if (!firstPage.value) return 0;
+    const lower = reverse ? toRaw(firstPage.value) : range[0];
+    const upper = reverse ? range[1] : toRaw(firstPage.value);
+    newItemCount.value = await feedDB.feedItems
+      .where(indexName)
+      .between(lower, upper, false, false)
+      .count();
+    console.log('new Items count:', newItemCount.value, lower, upper);
+  };
+
+  watch(firstPage, () => updateNewItemCount());
+
   // init
   wrappedNextPage();
 
@@ -362,6 +381,8 @@ export const useFeedItems = (
     prevPage: wrappedPrevPage,
     loading,
     destory,
+    newItemCount,
+    updateNewItemCount,
   });
 };
 
@@ -376,6 +397,18 @@ export const useHomeFeedItems = (
   const loading = computed(() => result.value?.loading);
   const nextPage = computed(() => result.value?.nextPage);
   const prevPage = computed(() => result.value?.prevPage);
+  const newItemsCount = computed(() => result.value?.newItemCount);
+  const updateNewItemCount = computed(() => result.value?.updateNewItemCount);
+
+  const reset = () => {
+    console.log('reset home');
+    result.value?.destory();
+    result.value = useFeedItems(
+      feedIds.value,
+      feedItemFilter.value,
+      orderDesc.value
+    );
+  };
 
   watch(
     [feedIds, feedItemFilter, orderDesc],
@@ -390,8 +423,7 @@ export const useHomeFeedItems = (
       const shouldReset = idChanged || filterChanged || orderChanged;
 
       if (shouldReset) {
-        result.value?.destory();
-        result.value = useFeedItems(feedIds, feedItemFilter, orderDesc);
+        reset();
       }
     },
     { immediate: true }
@@ -402,5 +434,8 @@ export const useHomeFeedItems = (
     loading,
     nextPage,
     prevPage,
+    newItemsCount,
+    updateNewItemCount,
+    reset,
   };
 };

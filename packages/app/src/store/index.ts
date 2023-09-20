@@ -43,6 +43,9 @@ export const useFeedStore = defineStore('feed', () => {
     feedItems: homeFeedItems,
     loading: homeLoading,
     nextPage: homeNextPage,
+    newItemsCount,
+    updateNewItemCount,
+    reset: resetHomeFeedItems,
   } = useHomeFeedItems(feedIds, feedItemFilter, isHomeFeedItemsDesc);
 
   const feedItemId = ref(0);
@@ -76,6 +79,9 @@ export const useFeedStore = defineStore('feed', () => {
   const removeLoadingFeed = (feedId: number) => {
     const ids = getLoadingFeedIds(feedId);
     ids.forEach((id) => loadingFeedIds.value.delete(id));
+    if (updateNewItemCount.value) {
+      updateNewItemCount.value();
+    }
   };
 
   return {
@@ -88,6 +94,8 @@ export const useFeedStore = defineStore('feed', () => {
     homeFeedItems,
     homeLoading,
     homeNextPage,
+    newItemsCount,
+    resetHomeFeedItems,
     feedItem,
     feedItemId,
     setFeedItemId,
