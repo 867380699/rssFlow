@@ -24,16 +24,16 @@
       >
         <LazyImage :src="imageSrc" crossorigin="anonymous" />
         <div
-          v-if="item.video?.poster || item.audio"
+          v-if="item.meta?.videoCount || item.meta?.audioCount"
           class="media-badge px-1 py-0.5 absolute right-0 bottom-0 bg-black text-white opacity-60 rounded-tl"
         >
           <ion-icon
-            v-if="item.video?.poster"
+            v-if="item.meta.videoCount"
             :icon="videocamOutline"
             class="text-xs block"
           ></ion-icon>
           <ion-icon
-            v-else-if="item.audio"
+            v-else-if="item.meta.audioCount"
             :icon="musicalNotesOutline"
             class="text-xs block"
           ></ion-icon>

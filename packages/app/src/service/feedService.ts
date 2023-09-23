@@ -154,12 +154,14 @@ const parseFeedItemMedia = (description: string) => {
   const bodyEl = contentDocument.querySelector('body');
   const imageEls = contentDocument.querySelectorAll('img');
   const videoEls = contentDocument.querySelectorAll('video');
+  const vodeoSourceEls: NodeListOf<HTMLSourceElement> =
+    contentDocument.querySelectorAll('video > source');
   const audioEls = contentDocument.querySelectorAll('audio');
   const frameEls = contentDocument.querySelectorAll('iframe');
 
   const image = imageEls[0]?.src;
   const audio = audioEls[0]?.querySelector<HTMLSourceElement>('source')?.src;
-  const src = videoEls[0]?.src;
+  const src = videoEls[0]?.src || vodeoSourceEls[0]?.src;
   const poster = videoEls[0]?.poster;
 
   const meta: ItemMeta = {
@@ -299,7 +301,8 @@ const buildVNode = (
     scope.imageIndex += 1;
   } else if (e.tagName === 'VIDEO') {
     component = VideoPlayer;
-    props.src = e.getAttribute('src');
+    props.src =
+      e.getAttribute('src') || e.querySelector('source')?.getAttribute('src');
     props.poster = e.getAttribute('poster');
   } else if (e.tagName === 'AUDIO') {
     component = AudioPlayer;

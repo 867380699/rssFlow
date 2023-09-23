@@ -10,14 +10,15 @@
       playsinline
       :controls="useNativeControls"
       :poster="poster"
-      :src="src"
       @play="onVideoPlay"
       @pause="onVideoPause"
       @timeupdate="onVideoTimeUpdate"
       @loadedmetadata="onMetadataLoaded"
       @volumechange="onVolumeChange"
       @ratechange="onPlaybackChange"
-    ></video>
+    >
+      <source :src="src" />
+    </video>
     <!-- play/pause -->
     <ion-icon
       v-if="!useNativeControls"
