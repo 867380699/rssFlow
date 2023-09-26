@@ -98,7 +98,7 @@ const imageRoute = new Route(
       new RequestForwardPlugin(), // web only
       new ExpirationPlugin({
         maxAgeSeconds: 60 * 60 * 24 * 1, // one day
-        maxEntries: 5000,
+        maxEntries: 3000,
         purgeOnQuotaError: true,
       }),
     ],
@@ -142,72 +142,32 @@ const thumbnailRoute = new Route(
         poolSize: 100,
       }),
       {
-        cachedResponseWillBeUsed: async (params) => {
-          // native only
-          if (!params.cachedResponse && main && platform !== 'web') {
-            const imageUrl = params.request.url.replace(
-              /\?thumbnail=1#thumbnail$/,
-              ''
-            );
-            const nativeResp = await nativeRequest(imageUrl);
-            if (nativeResp.data) {
-              const blob = b64toBlob(
-                nativeResp.data,
-                nativeResp.headers['Content-Type']
-              );
-
-              const imagesCache = await caches.open('images');
-              const isCached = await imagesCache.match(imageUrl);
-              if (!isCached) {
-                const imageResp = new Response(blob, {
-                  status: nativeResp.status,
-                  headers: nativeResp.headers,
-                });
-                await imagesCache.put(imageUrl, imageResp);
-              }
-              const thumbBlob = await scaleImage(blob);
-              const thumbResp = new Response(thumbBlob, {
-                status: nativeResp.status,
-                headers: nativeResp.headers,
-              });
-              const cache = await caches.open(params.cacheName);
-              await cache.put(params.request, thumbResp);
-              const cacheResp = await cache.match(params.request.url);
-              return cacheResp;
-            }
-          }
-          return params.cachedResponse;
-        },
-      },
-      {
-        requestWillFetch: async ({ request, state }) => {
-          // web only
-          if (state) {
-            state['originUrl'] = request.url;
-          }
-          const url = request.url.replace(/\?thumbnail=1#thumbnail$/, '');
-          return new Request(url);
-        },
-        fetchDidSucceed: async ({ response, state }) => {
-          // web only
-          const originUrl = state?.originUrl;
-          if (originUrl) {
-            const imagesCache = await caches.open('images');
-            const isCached = await imagesCache.match(originUrl);
-            if (!isCached) {
-              const imageResp = response.clone();
-              imagesCache.put(originUrl, imageResp);
-            }
-          }
-          const blob = await response.blob();
-          const newBlob = await scaleImage(blob);
-          return new Response(newBlob, {
-            status: response.status,
-            headers: response.headers,
+        cachedResponseWillBeUsed: async ({
+          cachedResponse,
+          request,
+          event,
+          cacheName,
+        }) => {
+          if (cachedResponse) return cachedResponse;
+          const imageUrl = request.url.replace(/\?thumbnail=1#thumbnail$/, '');
+          const imageRequest = new Request(imageUrl);
+          const resp = await imageRoute.handler.handle({
+            url: new URL(imageUrl),
+            request: imageRequest,
+            event,
           });
+          const blob = await resp.blob();
+          const thumbBlob = await scaleImage(blob);
+          const thumbResp = new Response(thumbBlob, {
+            status: resp.status,
+            headers: resp.headers,
+          });
+          const cache = await caches.open(cacheName);
+          await cache.put(request, thumbResp);
+          const cacheResp = await cache.match(request.url);
+          return cacheResp;
         },
       },
-      new RequestForwardPlugin(), // web only
       new ExpirationPlugin({
         maxEntries: 5000,
         purgeOnQuotaError: true,

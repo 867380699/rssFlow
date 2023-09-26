@@ -41,6 +41,7 @@ export class RequestPoolingPlugin implements WorkboxPlugin {
   cachedResponseWillBeUsed: WorkboxPlugin['cachedResponseWillBeUsed'] = async ({
     request,
     cachedResponse,
+    cacheName,
   }) => {
     if (cachedResponse) {
       return cachedResponse;
@@ -48,7 +49,8 @@ export class RequestPoolingPlugin implements WorkboxPlugin {
       // cache not hit
       console.log(
         'RequestPoolingPlugin:cachedResponseWillBeUsed:current',
-        this.current.size
+        this.current.size,
+        cacheName
       );
       if (this.current.size < this.concurrentSize) {
         this.current.add(request.url);
