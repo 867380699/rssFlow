@@ -2,7 +2,9 @@
 	"appId": "com.ll.rssflow",
 	"appName": "RssFlow",
 	"webDir": "dist",
-	"bundledWebRuntime": false,
+	"ios": {
+		"limitsNavigationsToAppBoundDomains": true
+	},
 	"server": {
 		"androidScheme": "http",
 		"hostname": "localhost",
