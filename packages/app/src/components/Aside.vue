@@ -33,7 +33,7 @@
         @click="selectItem()"
       >
         <div class="flex-1 cursor-pointer">All</div>
-        <ion-badge>
+        <ion-badge class="bg-gradient-to-tr from-primary to-secondary from-40%">
           {{ itemCounts && itemCounts[0] }}
         </ion-badge>
       </div>

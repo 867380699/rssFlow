@@ -275,6 +275,8 @@ const openLink = (feedItem?: FeedItem) => {
     max-width: 800px;
     margin: auto;
 
+    @apply leading-7;
+
     h1,
     h2,
     h3,
@@ -288,7 +290,7 @@ const openLink = (feedItem?: FeedItem) => {
       @apply text-lg;
     }
     p {
-      @apply mb-4;
+      @apply mb-4 leading-7;
     }
     blockquote {
       @apply mb-4 pl-2 border-l-2;
