@@ -11,8 +11,12 @@
   </ion-header>
   <ion-content class="ion-padding">
     <ion-item>
-      <ion-label position="floating"> Feed URL </ion-label>
-      <ion-input v-model="rssUrl" inputmode="url" />
+      <ion-input
+        v-model="rssUrl"
+        inputmode="url"
+        label="Feed URL"
+        label-placement="floating"
+      />
     </ion-item>
     <ion-button @click="searchFeed"> Search </ion-button>
     <ion-card v-if="feedRef">

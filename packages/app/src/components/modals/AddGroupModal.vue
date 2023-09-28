@@ -11,8 +11,11 @@
   </ion-header>
   <ion-content class="ion-padding">
     <ion-item>
-      <ion-label position="floating"> Group Name </ion-label>
-      <ion-input v-model="groupName" />
+      <ion-input
+        v-model="groupName"
+        label="Group Name"
+        label-placement="floating"
+      />
     </ion-item>
     <ion-button @click="addGroup"> Add </ion-button>
   </ion-content>
