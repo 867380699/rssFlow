@@ -4,11 +4,12 @@ import {
   setupElectronDeepLinking,
 } from '@capacitor-community/electron';
 import type { MenuItemConstructorOptions } from 'electron';
-import { app, MenuItem } from 'electron';
+import { app, ipcMain, MenuItem } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import unhandled from 'electron-unhandled';
 import { autoUpdater } from 'electron-updater';
 
+import { registerAPI } from './api';
 import {
   ElectronCapacitorApp,
   setupContentSecurityPolicy,
@@ -55,6 +56,7 @@ if (electronIsDev) {
 
 // Run Application
 (async () => {
+  registerAPI(ipcMain);
   // Wait for electron app to be ready.
   await app.whenReady();
   // Security - Set Content-Security-Policy based on whether or not we are in dev mode.

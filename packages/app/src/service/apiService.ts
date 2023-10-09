@@ -15,6 +15,9 @@ export const getFeeds = async (url: string) => {
       }
       const feedText = await resp.text();
       return feedText;
+    } else if (platform === 'electron') {
+      const feedText = await electronAPI.fetchRSS(url);
+      return feedText;
     } else {
       const resp = await CapacitorHttp.get({
         url: (protocol || 'http://') + rest,

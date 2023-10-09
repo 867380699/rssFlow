@@ -130,6 +130,7 @@ export class ElectronCapacitorApp {
       y: this.mainWindowState.y,
       width: this.mainWindowState.width,
       height: this.mainWindowState.height,
+      titleBarStyle: 'hidden',
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: true,
@@ -253,7 +254,7 @@ export function setupContentSecurityPolicy(customScheme: string): void {
         ...details.responseHeaders,
         'Content-Security-Policy': [
           electronIsDev
-            ? `default-src ${customScheme}://* 'unsafe-inline' devtools://* 'unsafe-eval' data:`
+            ? `` //FIXME: later
             : `default-src ${customScheme}://* 'unsafe-inline' data:`,
         ],
       },

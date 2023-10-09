@@ -71,19 +71,32 @@ useRegisterSW({
           if (event.data.type === 'HTTP') {
             const url = event.data.url;
             if (url) {
-              CapacitorHttp.get({ url, responseType: 'arraybuffer' })
-                .then((data) => {
-                  console.log(data);
-                  if (data.status === 200) {
+              const platform = Capacitor.getPlatform();
+              if (platform === 'electron') {
+                electronAPI
+                  .fetchImage(url)
+                  .then((data) => {
                     event.ports[0].postMessage(data);
-                  } else {
+                  })
+                  .catch((e) => {
+                    console.log(e);
                     event.ports[0].postMessage({});
-                  }
-                })
-                .catch((e) => {
-                  console.log(e);
-                  event.ports[0].postMessage({});
-                });
+                  });
+              } else {
+                CapacitorHttp.get({ url, responseType: 'arraybuffer' })
+                  .then((data) => {
+                    console.log(data);
+                    if (data.status === 200) {
+                      event.ports[0].postMessage(data);
+                    } else {
+                      event.ports[0].postMessage({});
+                    }
+                  })
+                  .catch((e) => {
+                    console.log(e);
+                    event.ports[0].postMessage({});
+                  });
+              }
             }
           }
         }
