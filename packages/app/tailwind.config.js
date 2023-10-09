@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+const plugin = require('tailwindcss/plugin');
+
 module.exports = {
   content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
@@ -19,4 +22,9 @@ module.exports = {
       },
     },
   },
+  plugins: [
+    plugin(function ({ addVariant }) {
+      addVariant('electron', '.plt-electron &');
+    }),
+  ],
 };

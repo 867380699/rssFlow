@@ -1,6 +1,10 @@
 <template>
   <ion-header>
-    <ion-toolbar color="medium">
+    <ion-toolbar color="medium" class="electron:pt-4">
+      <div
+        class="h-6 absolute -top-6 right-0 left-0 hidden electron:!block"
+        style="-webkit-app-region: drag"
+      ></div>
       <ion-buttons slot="primary">
         <ion-button @click="showMoreMenu">
           <ion-icon slot="icon-only" :icon="ellipsisHorizontal"></ion-icon>
