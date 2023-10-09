@@ -14,14 +14,15 @@ import { b64toBlob, isImageRequest, isSameOrigin } from './worker/utils';
 
 declare let self: ServiceWorkerGlobalScope;
 
-// self.__WB_MANIFEST is default injection point
-precacheAndRoute(self.__WB_MANIFEST);
+if (/^https?:/.test(location.protocol)) {
+  // self.__WB_MANIFEST is default injection point
+  precacheAndRoute(self.__WB_MANIFEST);
+  // to allow work offline
+  registerRoute(new NavigationRoute(createHandlerBoundToURL('index.html')));
+}
 
 // clean old assets
 cleanupOutdatedCaches();
-
-// to allow work offline
-registerRoute(new NavigationRoute(createHandlerBoundToURL('index.html')));
 
 self.skipWaiting();
 clientsClaim();
