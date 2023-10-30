@@ -7,5 +7,7 @@
   "minutesAgo": "{n}m ago",
   "hoursAgo": "{n}h ago",
   "daysAgo": "{n}d ago",
-  "yesterday": "yesterday h a"
+  "yesterday": "yesterday h a",
+  "unsupportedFormant": "Unsupported formant",
+  "loading": "loading"
 }

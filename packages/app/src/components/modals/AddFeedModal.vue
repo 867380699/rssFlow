@@ -18,15 +18,22 @@
         label-placement="floating"
       />
     </ion-item>
-    <ion-button @click="searchFeed"> Search </ion-button>
+    <div class="p-2">
+      <ion-button expand="block" @click="searchFeed">
+        <ion-spinner v-if="isLoading" name="dots"></ion-spinner>
+        <div v-else class="h-7 flex items-center">Search</div>
+      </ion-button>
+    </div>
     <ion-card v-if="feedRef">
-      <img :src="feedRef.imageUrl" referrerpolicy="no-referrer" />
       <ion-card-header>
+        <img :src="feedRef.imageUrl" referrerpolicy="no-referrer" />
         <ion-card-title>{{ feedRef.title }}</ion-card-title>
         <ion-card-subtitle>{{ feedRef.link }}</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>{{ feedRef.description }}</ion-card-content>
-      <ion-button @click="subscribeFeed"> Subscribe </ion-button>
+      <ion-button class="m-2 float-right" fill="clear" @click="subscribeFeed">
+        Subscribe
+      </ion-button>
     </ion-card>
   </ion-content>
 </template>
@@ -35,6 +42,8 @@
 import { toastController } from '@ionic/vue';
 import { closeOutline } from 'ionicons/icons';
 
+import { useLoading } from '@/composables';
+import { i18n } from '@/i18n';
 import { getFeeds } from '@/service/apiService';
 import { storeFeed } from '@/service/dbService';
 import { parseFeed } from '@/service/feedService';
@@ -46,19 +55,27 @@ const rssUrl = ref('');
 
 const feedRef = ref<Feed>();
 
-const searchFeed = async () => {
-  try {
-    const feedText = await getFeeds(rssUrl.value);
-    feedRef.value = parseFeed(feedText, rssUrl.value);
-  } catch (e) {
+const [isLoading, searchFeed] = useLoading(async () => {
+  const showError = async (message: string) => {
     const toast = await toastController.create({
       duration: 2000,
-      message: `${e}`,
+      message,
     });
     await toast.present();
+  };
+  try {
+    const feedText = await getFeeds(rssUrl.value);
+    const feed = parseFeed(feedText, rssUrl.value);
+    if (feed) {
+      feedRef.value = feed;
+    } else {
+      showError(i18n.global.t('unsupportedFormant'));
+    }
+  } catch (e) {
+    await showError(`${e}`);
     console.log(e);
   }
-};
+});
 
 const subscribeFeed = async () => {
   if (feedRef.value) {

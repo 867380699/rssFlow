@@ -17,12 +17,14 @@ import { feedDB, storeFeedItems } from './dbService';
 
 const parser = new DOMParser();
 
-export const parseFeed = (feed: string, source: string): Feed => {
+export const parseFeed = (feed: string, source: string): Feed | null => {
   const nodeTree = parser.parseFromString(feed, 'text/xml');
   if (nodeTree.querySelector('feed')) {
     return parseAtomFeed(nodeTree, source);
-  } else {
+  } else if (nodeTree.querySelector('rss')) {
     return parseRSSFeed(nodeTree, source);
+  } else {
+    return null;
   }
 };
 
@@ -361,7 +363,8 @@ export const fetchFeed = async (feed: Feed) => {
     }
     if (feed.source) {
       const feedText = await getFeeds(feed.source);
-      const newItems = parseFeed(feedText, feed.source).items;
+      const feedResult = parseFeed(feedText, feed.source);
+      const newItems = feedResult?.items;
       if (newItems) {
         await storeFeedItems(newItems, Number(feed.id));
         feedDB.feeds.update(Number(feed.id), { lastUpdateTime: Date.now() });

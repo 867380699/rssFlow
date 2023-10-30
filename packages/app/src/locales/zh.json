@@ -15,5 +15,7 @@
   "hoursAgo": "{n} 小时前",
   "daysAgo": "{n} 天前",
   "today": "a h 时",
-  "yesterday": "昨日 a h 时"
+  "yesterday": "昨日 a h 时",
+  "unsupportedFormant": "不支持的格式",
+  "loading": "请稍候"
 }

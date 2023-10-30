@@ -10,6 +10,7 @@ import { combineLatest, from, Observable, Subject, switchMap } from 'rxjs';
 import { Ref } from 'vue';
 
 import { FeedItemFilter } from '@/enums';
+import { i18n } from '@/i18n';
 
 import {
   buildAllFeedItemPrimaryKeyObservable,
@@ -298,4 +299,25 @@ export const useFeedItem = (id: Ref<number>) => {
   return {
     feedItem,
   };
+};
+
+export const useLoading = <T, P extends any[]>(
+  asyncFn: (...params: P) => Promise<T>
+) => {
+  const isLoading: Ref<boolean> = ref(false);
+
+  const wrappedFn = async (...params: P): Promise<T> => {
+    if (isLoading.value) {
+      throw new Error(i18n.global.t('loading'));
+    }
+    isLoading.value = true;
+    try {
+      const result = await asyncFn(...params);
+      return result;
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  return [isLoading, wrappedFn];
 };
