@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" class="relative flex justify-center items-center">
+  <div ref="container" class="relative flex items-center justify-center">
     <iframe
       :id="id"
       :src="src"
@@ -10,13 +10,13 @@
     ></iframe>
     <div
       ref="bubble"
-      class="absolute left-0 top-1/2 -translate-y-1/2 flex transition-all overflow-hidden py-2 pr-2"
+      class="absolute left-0 top-1/2 flex -translate-y-1/2 overflow-hidden py-2 pr-2 transition-all"
       :class="{ 'opacity-60': isBubbleActive, 'opacity-20': !isBubbleActive }"
       @click="activeBubble"
       @pointerover="activeBubble"
     >
       <div
-        class="flex flex-col bg-black text-white rounded-tr rounded-br transition-all border-t border-b border-r border-white"
+        class="flex flex-col rounded-r border-y border-r border-white bg-black text-white transition-all"
         :class="{
           '-translate-x-6': !isBubbleActive,
           'shadow-[2px_0_4px_3px_rgba(0,0,0,0.3)]': !isBubbleActive,

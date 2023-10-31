@@ -5,9 +5,9 @@
         <ion-buttons slot="start">
           <ion-menu-button />
         </ion-buttons>
-        <div class="flex items-center ml-1">
+        <div class="ml-1 flex items-center">
           <ion-thumbnail
-            class="rounded-full overflow-hidden"
+            class="overflow-hidden rounded-full"
             style="--size: 32px"
           >
             <LazyImage :src="feed?.imageUrl" min-height="32" />
@@ -18,7 +18,7 @@
           <ion-button v-show="!!newItemsCount" @click="resetHomeFeedItems">
             <ion-icon slot="icon-only" :icon="sparklesOutline" />
             <span
-              class="p-0.5 absolute bottom-[-4px] right-[-8px] text-[10px] leading-none"
+              class="absolute bottom-[-4px] right-[-8px] p-0.5 text-[10px] leading-none"
               >{{ Math.min(newItemsCount || 0, 99) }}</span
             >
           </ion-button>
@@ -31,7 +31,7 @@
           </ion-button>
         </ion-buttons>
         <progress-bar
-          class="absolute bottom-0 left-0 right-0"
+          class="absolute inset-x-0 bottom-0"
           :progress="pullProgress"
           :loading="pullLoading"
         ></progress-bar>
@@ -57,7 +57,7 @@
         ref="content"
         :feed-id="feedId"
         :items="homeFeedItems"
-        class="ion-content-scroll-host pb-2 after:content-['~'] after:flex after:items-center after:justify-center after:opacity-50"
+        class="ion-content-scroll-host pb-2 after:flex after:items-center after:justify-center after:opacity-50 after:content-['~']"
         :class="{ 'after:h-full': !homeFeedItems?.length }"
         style="background-color: var(--ion-item-background)"
       />
@@ -82,7 +82,7 @@
       <ion-toolbar>
         <progress-bar
           v-if="false"
-          class="absolute top-0 left-0 right-0"
+          class="absolute inset-x-0 top-0"
           :progress="homeLoading ? 1 : 0"
           :loading="homeLoading"
         ></progress-bar>
@@ -106,23 +106,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  IonContent,
-  IonFab,
-  IonFabButton,
-  IonFooter,
-  IonHeader,
-  IonIcon,
-  IonLabel,
-  IonMenuButton,
-  IonPage,
-  IonRefresher,
-  IonRefresherContent,
-  IonSegment,
-  IonSegmentButton,
-  IonToolbar,
-  RefresherCustomEvent,
-} from '@ionic/vue';
+import type { IonRefresher, RefresherCustomEvent } from '@ionic/vue';
 import {
   checkmarkDoneOutline,
   eyeOffOutline,

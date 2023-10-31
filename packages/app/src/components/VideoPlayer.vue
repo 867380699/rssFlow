@@ -1,7 +1,7 @@
 <template>
   <div
     ref="container"
-    class="relative flex justify-center pb-0.5 mb-1"
+    class="relative mb-1 flex justify-center pb-0.5"
     @click="onVideoClick"
     @dblclick="togglePlay"
   >
@@ -24,7 +24,7 @@
       v-if="!useNativeControls"
       v-show="showPlayButtom"
       :icon="playCircle"
-      class="text-white text-6xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl text-white"
       @click="play"
     />
     <!-- top control -->
@@ -33,7 +33,7 @@
         v-if="!useNativeControls"
         v-show="isControlShown"
         ref="topControl"
-        class="absolute left-0 right-0 top-0 flex justify-between text-white bg-gradient-to-b from-slate-900 to-transparent transition-all"
+        class="absolute inset-x-0 top-0 flex justify-between bg-gradient-to-b from-slate-900 to-transparent text-white transition-all"
         :class="{ 'pt-5': isFullscreen }"
         style="--tw-gradient-from: rgba(0, 0, 0, 0.6)"
       >
@@ -60,12 +60,12 @@
     <div
       v-if="!useNativeControls"
       ref="control"
-      class="absolute bottom-0 w-full text-white transition-all bg-gradient-to-t from-transparent to-transparent"
+      class="absolute bottom-0 w-full bg-gradient-to-t from-transparent to-transparent text-white transition-all"
       :style="isControlShown ? '--tw-gradient-from: rgba(0, 0, 0, 0.8)' : ''"
     >
       <Transition>
         <div v-show="isControlShown" class="flex justify-between">
-          <div class="p-2 text-xs select-none">
+          <div class="select-none p-2 text-xs">
             {{ durationLabel }}
           </div>
           <div v-on-click-outside="closeRatePopup" class="flex">
@@ -73,13 +73,13 @@
             <div class="relative">
               <div
                 v-show="ratePopupShown"
-                class="absolute -translate-y-full top-0 py-1 rounded-sm"
+                class="absolute top-0 -translate-y-full rounded-sm py-1"
                 style="background-color: rgba(0, 0, 0, 0.5)"
               >
                 <div
                   v-for="rate in playbackRateList"
                   :key="rate"
-                  class="py-0.5 px-2 text-xs cursor-pointer select-none"
+                  class="cursor-pointer select-none px-2 py-0.5 text-xs"
                   :class="{ 'text-blue-400': rate === playbackRate }"
                   @click="() => setPlaybackRate(rate)"
                 >
@@ -87,7 +87,7 @@
                 </div>
               </div>
               <div
-                class="p-2 text-xs cursor-pointer select-none"
+                class="cursor-pointer select-none p-2 text-xs"
                 @click="toggleRatePopup"
               >
                 {{ playbackRate.toFixed(2) }}x
@@ -129,7 +129,7 @@
         @mousemove.stop="() => {}"
       >
         <progress
-          class="w-full block transition-all"
+          class="block w-full transition-all"
           :class="{
             'h-1': isControlShown,
             'mb-2': isControlShown,
@@ -143,7 +143,7 @@
         <input
           v-show="isControlShown"
           type="range"
-          class="absolute top-0 appearance-none bg-transparent left-2 right-2"
+          class="absolute inset-x-2 top-0 appearance-none bg-transparent"
           step="0.001"
           :max="duration"
           :value="currentTime"

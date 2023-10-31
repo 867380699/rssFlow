@@ -3,10 +3,10 @@
     <!-- Feed -->
     <template #feed="slotPorps">
       <div
-        class="flex items-center pl-1.5 h-6"
+        class="flex h-6 items-center pl-1.5"
         style="background-color: var(--ion-item-background, #fff)"
       >
-        <div class="w-4 h-4 rounded-full mr-2 overflow-hidden">
+        <div class="mr-2 h-4 w-4 overflow-hidden rounded-full">
           <LazyImage
             :src="feedsMap && feedsMap[slotPorps.data.feedId].imageUrl"
           />
@@ -20,7 +20,7 @@
     <!-- Date -->
     <template #date="slotPorps">
       <div
-        class="flex items-center text-sm h-6 pl-1.5"
+        class="flex h-6 items-center pl-1.5 text-sm"
         style="background-color: var(--ion-item-background, #fff)"
       >
         {{ formatRelative(slotPorps.data.pubDate || 0, now) }}

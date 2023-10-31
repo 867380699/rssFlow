@@ -1,7 +1,7 @@
 <template>
   <div class="relative h-full w-full rounded-sm">
     <img
-      class="bg-slate-400 h-full w-full object-cover rounded-sm"
+      class="h-full w-full rounded-sm bg-slate-400 object-cover"
       :class="{ 'opacity-0': isError }"
       :style="minStyle"
       :crossorigin="crossorigin"
@@ -18,13 +18,13 @@
         'animate-brightness': isLoading && !isError,
       }"
       :style="minStyle"
-      class="absolute h-full w-full bg-slate-500 object-cover top-0 rounded-sm pointer-events-none"
+      class="pointer-events-none absolute top-0 h-full w-full rounded-sm bg-slate-500 object-cover"
       :src="dummySrc"
     />
     <ion-icon
       v-show="isError"
       :icon="alertOutline"
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-200"
+      class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-200"
     />
   </div>
 </template>

@@ -4,23 +4,23 @@
       v-if="showIframe"
       ref="frame"
       :src="feedItem.link"
-      class="w-full h-full"
+      class="h-full w-full"
       @load="iframeLoad"
       @error="iframeError"
     />
     <template v-else>
       <h1
         ref="feedItemTitle"
-        class="font-bold text-xl my-4 mx-auto max-w-[800px]"
+        class="mx-auto my-4 max-w-[800px] text-xl font-bold"
       >
         {{ feedItem?.title }}
       </h1>
       <div
-        class="meta flex justify-between py-1 border-b border-opacity-10 border-slate-400 mb-3"
+        class="meta mb-3 flex justify-between border-b border-slate-400/10 py-1"
       >
         <div class="flex items-center">
           <template v-for="(info, i) in metaInfo" :key="i">
-            <div class="flex items-center mr-2">
+            <div class="mr-2 flex items-center">
               <ion-icon :icon="info.icon" class="text-sm"></ion-icon>
               <span class="ml-1 text-sm">{{ info.text }}</span>
             </div>
@@ -28,7 +28,7 @@
         </div>
 
         <div v-if="feedItem.pubDate" class="flex items-center text-sm">
-          <ion-icon :icon="calendarOutline" class="text-sm pr-1"></ion-icon>
+          <ion-icon :icon="calendarOutline" class="pr-1 text-sm"></ion-icon>
           {{ format(feedItem.pubDate, 'yyyy-MM-dd HH:mm') }}
         </div>
       </div>

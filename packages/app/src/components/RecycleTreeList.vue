@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" class="overflow-auto h-full relative scroll-smooth">
+  <div ref="container" class="relative h-full overflow-auto scroll-smooth">
     <div :style="{ minHeight: totalHeight }">
       <template v-for="({ itemIndex }, id) in pool" :key="id">
         <div

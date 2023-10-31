@@ -5,7 +5,7 @@
         v-if="feed.type === 'feed'"
         :key="feed.id"
         :data-id="feed.id"
-        class="flex items-center py-2 pr-2 h-12"
+        class="flex h-12 items-center py-2 pr-2"
         :class="{ 'pl-2': !reorderToggle }"
         @click="selectItem(feed.id)"
         @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
@@ -13,11 +13,9 @@
         <ion-icon
           v-if="reorderToggle"
           :icon="reorderThree"
-          class="p-2 text-lg reorder-icon cursor-move"
+          class="reorder-icon cursor-move p-2 text-lg"
         />
-        <div
-          class="flex-1 whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer"
-        >
+        <div class="flex-1 cursor-pointer truncate">
           {{ feed.title }}
         </div>
 
@@ -32,11 +30,11 @@
       >
         <accordion>
           <template #header="{ isExpand }">
-            <div class="flex items-center py-2 pr-2 h-12">
+            <div class="flex h-12 items-center py-2 pr-2">
               <ion-icon
                 v-if="reorderToggle"
                 :icon="reorderThree"
-                class="p-2 text-lg reorder-icon cursor-move"
+                class="reorder-icon cursor-move p-2 text-lg"
               />
               <ion-icon
                 v-else

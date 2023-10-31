@@ -9,6 +9,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:vue/vue3-recommended',
     'plugin:prettier/recommended',
+    'plugin:tailwindcss/recommended',
     './.eslintrc-auto-import.json',
   ],
   rules: {
@@ -19,5 +20,6 @@ module.exports = {
     'import/first': 'error',
     'import/newline-after-import': 'error',
     'import/no-duplicates': 'error',
+    'tailwindcss/no-custom-classname': 'off',
   },
 };

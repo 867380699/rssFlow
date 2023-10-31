@@ -2,7 +2,7 @@
   <div>
     <div @click="isExpand = !isExpand">
       <slot name="header" :is-expand="isExpand">
-        <div class="flex items-center p-2 h-12">
+        <div class="flex h-12 items-center p-2">
           <ion-icon
             :icon="chevronDownOutline"
             class="p-2 text-lg transition"
@@ -14,7 +14,7 @@
     </div>
     <div
       ref="contentRef"
-      class="transition-all overflow-hidden"
+      class="overflow-hidden transition-all"
       :class="{ 'max-h-0': !isExpand }"
       :style="isExpand ? contentStyle : {}"
     >

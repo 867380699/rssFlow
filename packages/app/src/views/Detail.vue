@@ -5,16 +5,16 @@
         <ion-buttons slot="start">
           <ion-back-button text="" mode="md" />
         </ion-buttons>
-        <div class="flex items-center ml-1">
+        <div class="ml-1 flex items-center">
           <ion-thumbnail
-            class="rounded-full overflow-hidden shrink-0"
+            class="shrink-0 overflow-hidden rounded-full"
             style="--size: 32px"
           >
             <LazyImage :src="feed?.imageUrl" />
           </ion-thumbnail>
-          <div class="relative flex-1 h-12" @dblclick="scrollToTop">
+          <div class="relative h-12 flex-1" @dblclick="scrollToTop">
             <div
-              class="absolute top-1/2 transition-all -translate-y-1/2"
+              class="absolute top-1/2 -translate-y-1/2 transition-all"
               :class="{
                 'line-clamp-1': isTitleInvisible,
                 '!top-4': isTitleInvisible,
@@ -25,7 +25,7 @@
             <Transition :name="titleTransition">
               <div
                 v-show="isTitleInvisible"
-                class="absolute bottom-1 text-xs opacity-75 line-clamp-1"
+                class="absolute bottom-1 line-clamp-1 text-xs opacity-75"
               >
                 {{ feedItem?.title }}
               </div>
@@ -42,7 +42,7 @@
         </ion-buttons>
         <progress-bar
           v-show="showProgress"
-          class="absolute bottom-0 left-0 right-0 transition-none"
+          class="absolute inset-x-0 bottom-0 transition-none"
           :class="{ 'opacity-50': !showToolbar }"
           position="left"
           :progress="progress"
@@ -68,7 +68,7 @@
           <FeedItemContent
             :feed-item="item"
             :show-iframe="isShowIframeMap[item.id!]"
-            class="content-container overflow-auto h-full"
+            class="content-container h-full overflow-auto"
             :style="{
               'padding-top': `${toolbarHeight}px`,
               'padding-bottom': `${toolbarHeight}px`,

@@ -21,7 +21,7 @@
     <div class="p-2">
       <ion-button expand="block" @click="searchFeed">
         <ion-spinner v-if="isLoading" name="dots"></ion-spinner>
-        <div v-else class="h-7 flex items-center">Search</div>
+        <div v-else class="flex h-7 items-center">Search</div>
       </ion-button>
     </div>
     <ion-card v-if="feedRef">
@@ -31,7 +31,7 @@
         <ion-card-subtitle>{{ feedRef.link }}</ion-card-subtitle>
       </ion-card-header>
       <ion-card-content>{{ feedRef.description }}</ion-card-content>
-      <ion-button class="m-2 float-right" fill="clear" @click="subscribeFeed">
+      <ion-button class="float-right m-2" fill="clear" @click="subscribeFeed">
         Subscribe
       </ion-button>
     </ion-card>

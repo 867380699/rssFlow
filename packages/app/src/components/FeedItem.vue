@@ -19,37 +19,37 @@
       <ion-thumbnail
         v-show="item.image || item.video"
         slot="end"
-        class="m-1 w-[64px] h-[64px] relative"
+        class="relative m-1 h-[64px] w-[64px]"
         :class="{ 'opacity-25': item.isRead }"
       >
         <LazyImage :src="imageSrc" crossorigin="anonymous" />
         <div
           v-if="item.meta?.videoCount || item.meta?.audioCount"
-          class="media-badge px-1 py-0.5 absolute right-0 bottom-0 bg-black text-white opacity-60 rounded-tl"
+          class="media-badge absolute bottom-0 right-0 rounded-tl bg-black px-1 py-0.5 text-white opacity-60"
         >
           <ion-icon
             v-if="item.meta.videoCount"
             :icon="videocamOutline"
-            class="text-xs block"
+            class="block text-xs"
           ></ion-icon>
           <ion-icon
             v-else-if="item.meta.audioCount"
             :icon="musicalNotesOutline"
-            class="text-xs block"
+            class="block text-xs"
           ></ion-icon>
         </div>
       </ion-thumbnail>
       <ion-label
-        class="m-0 py-1 h-[80px]"
+        class="m-0 h-[80px] py-1"
         :class="{ 'opacity-25': item.isRead }"
       >
         <div
-          class="line block absolute h-[72px] w-[1px] bg-slate-400 left-[5.5px] rounded opacity-20"
+          class="line absolute left-[5.5px] block h-[72px] w-[1px] rounded bg-slate-400 opacity-20"
         ></div>
-        <h2 class="!text-base line-clamp-2 whitespace-normal pl-5">
+        <h2 class="line-clamp-2 whitespace-normal pl-5 !text-base">
           {{ item.title }}
         </h2>
-        <p class="!text-sm pl-5 font-light">
+        <p class="pl-5 !text-sm font-light">
           {{ item.shortDescription?.slice(0, 100) }}
         </p>
       </ion-label>
