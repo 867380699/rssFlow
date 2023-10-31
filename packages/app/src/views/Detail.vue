@@ -12,7 +12,25 @@
           >
             <LazyImage :src="feed?.imageUrl" />
           </ion-thumbnail>
-          {{ feed?.title }}
+          <div class="relative flex-1 h-12">
+            <div
+              class="absolute top-1/2 transition-all -translate-y-1/2"
+              :class="{
+                'line-clamp-1': isTitleInvisible,
+                '!top-4': isTitleInvisible,
+              }"
+            >
+              {{ feed?.title }}
+            </div>
+            <Transition :name="titleTransition">
+              <div
+                v-show="isTitleInvisible"
+                class="absolute bottom-1 text-xs opacity-75 line-clamp-1"
+              >
+                {{ feedItem?.title }}
+              </div>
+            </Transition>
+          </div>
         </div>
         <ion-buttons slot="end">
           <ion-button
@@ -199,8 +217,24 @@ const currentScrollState = computed(
   () => scrollState[`detail-${feedItem.value?.id}`] || {}
 );
 
+const isTitleInvisible = computed(
+  () => currentScrollState.value.isTitleInvisible
+);
+
+const titleTransition = ref('popup');
+let disableTitleTransitionTimeout: ReturnType<typeof setTimeout>;
+
 watch(itemId, (id, oldId) => {
   if (id !== oldId) {
+    if (showToolbar.value) {
+      clearTimeout(disableTitleTransitionTimeout);
+      titleTransition.value = 'popup';
+    } else {
+      titleTransition.value = '';
+      disableTitleTransitionTimeout = setTimeout(() => {
+        titleTransition.value = 'popup';
+      }, 200);
+    }
     showToolbar.value = true;
   }
 });

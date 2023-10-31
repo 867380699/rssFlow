@@ -9,7 +9,10 @@
       @error="iframeError"
     />
     <template v-else>
-      <h1 class="font-bold text-xl my-4 mx-auto max-w-[800px]">
+      <h1
+        ref="feedItemTitle"
+        class="font-bold text-xl my-4 mx-auto max-w-[800px]"
+      >
         {{ feedItem?.title }}
       </h1>
       <div
@@ -131,17 +134,35 @@ const useScroll = (
   useEventListener(element, 'scroll', onScroll);
   useEventListener(element, 'scrollend', onScroll);
 
-  return {
+  return reactive({
     x,
     y,
     progressX,
     progressY,
     totalX,
     totalY,
-  };
+  });
 };
 
 scrollState[`detail-${props.feedItem.id}`] = useScroll(content);
+
+const feedItemTitle = ref<HTMLElement | null>(null);
+const titleBottom = ref(0);
+
+watch(
+  () => scrollState[`detail-${props.feedItem.id}`].y,
+  (y) => {
+    scrollState[`detail-${props.feedItem.id}`].isTitleInvisible =
+      y > titleBottom.value;
+  }
+);
+
+setTimeout(() => {
+  if (feedItemTitle.value) {
+    titleBottom.value =
+      feedItemTitle.value.offsetTop + feedItemTitle.value.offsetHeight - 48;
+  }
+});
 
 onBeforeUnmount(() => {
   delete scrollState[`detail-${props.feedItem.id}`];
