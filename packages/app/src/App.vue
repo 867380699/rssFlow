@@ -2,7 +2,7 @@
   <ion-app>
     <ion-split-pane content-id="main" when="lg">
       <!-- side menu -->
-      <ion-menu menu-id="menu" side="start" content-id="main">
+      <ion-menu menu-id="menu" content-id="main" side="start" type="reveal">
         <Aside @item-selected="onItemSelected" />
       </ion-menu>
       <suspense><ion-router-outlet id="main" /></suspense>

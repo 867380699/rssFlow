@@ -57,7 +57,8 @@
         ref="content"
         :feed-id="feedId"
         :items="homeFeedItems"
-        class="ion-content-scroll-host"
+        class="ion-content-scroll-host pb-2 after:content-['~'] after:flex after:items-center after:justify-center after:opacity-50"
+        :class="{ 'after:h-full': !homeFeedItems?.length }"
         style="background-color: var(--ion-item-background)"
       />
       <!-- Read All Fab -->
