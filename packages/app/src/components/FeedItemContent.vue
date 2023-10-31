@@ -1,5 +1,5 @@
 <template>
-  <div ref="content" :class="{ 'p-2': !showIframe }">
+  <div ref="content" class="scroll-smooth" :class="{ 'p-2': !showIframe }">
     <iframe
       v-if="showIframe"
       ref="frame"
@@ -134,9 +134,31 @@ const useScroll = (
   useEventListener(element, 'scroll', onScroll);
   useEventListener(element, 'scrollend', onScroll);
 
+  const wrappedX = computed<number>({
+    get() {
+      return x.value;
+    },
+    set(x) {
+      if (element.value) {
+        element.value.scrollLeft = x;
+      }
+    },
+  });
+
+  const wrappedY = computed<number>({
+    get() {
+      return y.value;
+    },
+    set(x) {
+      if (element.value) {
+        element.value.scrollTop = x;
+      }
+    },
+  });
+
   return reactive({
-    x,
-    y,
+    x: wrappedX,
+    y: wrappedY,
     progressX,
     progressY,
     totalX,

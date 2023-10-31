@@ -12,7 +12,7 @@
           >
             <LazyImage :src="feed?.imageUrl" />
           </ion-thumbnail>
-          <div class="relative flex-1 h-12">
+          <div class="relative flex-1 h-12" @dblclick="scrollToTop">
             <div
               class="absolute top-1/2 transition-all -translate-y-1/2"
               :class="{
@@ -294,6 +294,10 @@ const openLink = (feedItem?: FeedItem) => {
   if (feedItem) {
     window.open(feedItem.link);
   }
+};
+
+const scrollToTop = () => {
+  currentScrollState.value.y = 0;
 };
 </script>
 <style lang="less" scoped>
