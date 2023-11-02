@@ -6,6 +6,11 @@ const config = {
     {
       dependencies: ['vue'],
       packages: ['**'],
+    },
+    {
+      dependencies: ['vite-plugin-proxy'],
+      packages: ['**'],
+      isIgnored: true
     }
   ],
 };
