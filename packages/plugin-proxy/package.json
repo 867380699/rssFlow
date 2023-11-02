@@ -12,16 +12,16 @@
   "license": "ISC",
   "dependencies": {
     "http2-proxy": "^5.0.53",
-    "vite": "^2.9.9"
+    "vite": "^4.3.9"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^8.4.0",
-    "eslint": "^8.15.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-prettier": "^4.0.0",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "eslint": "^8.40.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "prettier": "2.6.2",
-    "rollup": "^2.74.1",
-    "typescript": "^4.4.4"
+    "rollup": "3.21.6",
+    "typescript": "^5.1.6"
   }
 }
