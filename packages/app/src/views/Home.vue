@@ -60,6 +60,7 @@
         class="ion-content-scroll-host pb-2 after:flex after:items-center after:justify-center after:opacity-50 after:content-['~']"
         :class="{ 'after:h-full': !homeFeedItems?.length }"
         style="background-color: var(--ion-item-background)"
+        @item-visible="onItemVisible"
       />
       <!-- Read All Fab -->
       <Transition name="fab">
@@ -69,11 +70,8 @@
           vertical="bottom"
           horizontal="end"
         >
-          <ion-fab-button v-show="!canUndoReadAll" @click="readAll">
+          <ion-fab-button ref="fab">
             <ion-icon :icon="checkmarkDoneOutline"></ion-icon>
-          </ion-fab-button>
-          <ion-fab-button v-show="canUndoReadAll" @click="unreadAll">
-            <ion-icon :icon="returnUpBackOutline"></ion-icon>
           </ion-fab-button>
         </ion-fab>
       </Transition>
@@ -106,12 +104,15 @@
 </template>
 
 <script lang="ts" setup>
-import type { IonRefresher, RefresherCustomEvent } from '@ionic/vue';
+import {
+  type IonRefresher,
+  type RefresherCustomEvent,
+  createGesture,
+} from '@ionic/vue';
 import {
   checkmarkDoneOutline,
   eyeOffOutline,
   listOutline,
-  returnUpBackOutline,
   sparklesOutline,
   starOutline,
   swapVerticalOutline,
@@ -126,6 +127,7 @@ import { FeedItemFilter } from '@/enums';
 import { readFeedItems } from '@/service/dbService';
 import { fetchFeed } from '@/service/feedService';
 import { useFeedStore } from '@/store';
+import { FeedItem } from '@/types';
 
 const { t } = useI18n();
 
@@ -205,30 +207,72 @@ const handleRefresh = (event: RefresherCustomEvent) => {
   }
 };
 
-const canUndoReadAll = ref(false);
+const visibleItemIdSet = new Set<number>();
+
+watch([feedId, isHomeFeedItemsDesc, feedItemFilter], () => {
+  console.log('visible reset');
+  visibleItemIdSet.clear();
+});
+
+const onItemVisible = (item: FeedItem) => {
+  console.log('item visible:', item.id, item.title);
+  if (item.id) {
+    visibleItemIdSet.add(item.id);
+  }
+};
 
 let undoReadAllFn: () => void;
 
-let undoReadAllTimeout: ReturnType<typeof setTimeout>;
-
 const readAll = async () => {
-  const ids: number[] = homeFeedItems.value?.map((f) => f.id) as number[];
+  console.log('read all');
+  const ids: number[] = [...visibleItemIdSet];
   if (ids.length) {
+    visibleItemIdSet.clear();
     undoReadAllFn = await readFeedItems(ids);
-    canUndoReadAll.value = true;
-    undoReadAllTimeout = setTimeout(() => {
-      canUndoReadAll.value = false;
-    }, 3000);
+  }
+  (content.value?.$el as HTMLElement).scrollTo({ top: 0, behavior: 'instant' });
+  if (homeFeedItems.value?.length || 0 < 20) {
+    if (homeNextPage.value) {
+      homeNextPage.value();
+    }
   }
 };
 
-const unreadAll = () => {
+const undoReadAll = async () => {
+  console.log('undo read all');
   if (undoReadAllFn) {
-    canUndoReadAll.value = false;
-    clearTimeout(undoReadAllTimeout);
+    visibleItemIdSet.clear();
     undoReadAllFn();
   }
 };
+
+const fab = ref<ComponentPublicInstance | null>(null);
+
+onMounted(() => {
+  let fabLongPressTimeout: ReturnType<typeof setTimeout>;
+  let isUndo = false;
+  if (fab.value?.$el) {
+    const fabGesture = createGesture({
+      el: fab.value.$el,
+      gestureName: 'fab',
+      threshold: 0,
+      onStart: () => {
+        isUndo = false;
+        fabLongPressTimeout = setTimeout(() => {
+          undoReadAll();
+          isUndo = true;
+        }, 500);
+      },
+      onEnd: () => {
+        clearTimeout(fabLongPressTimeout);
+        if (!isUndo) {
+          readAll();
+        }
+      },
+    });
+    fabGesture.enable();
+  }
+});
 
 const toggleDesc = () => {
   isHomeFeedItemsDesc.value = !isHomeFeedItemsDesc.value;

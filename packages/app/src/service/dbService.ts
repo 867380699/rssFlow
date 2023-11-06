@@ -273,8 +273,9 @@ export const readFeedItems = async (ids: number[]) => {
   await feedDB.feedItems.where('id').anyOf(ids).modify({
     isRead: 1,
   });
+  const undoIds = [...ids];
   const undo = async () => {
-    await feedDB.feedItems.where('id').anyOf(ids).modify({
+    await feedDB.feedItems.where('id').anyOf(undoIds).modify({
       isRead: 0,
     });
   };

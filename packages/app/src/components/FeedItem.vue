@@ -88,6 +88,17 @@ const props = defineProps<{
   item: FeedItem;
 }>();
 
+const emit = defineEmits<{
+  (event: 'itemChanged', item: FeedItem, oldItem: FeedItem | null): void;
+}>();
+
+watch(
+  () => props.item,
+  (item, oldItem) => {
+    emit('itemChanged', item, oldItem);
+  }
+);
+
 const imageSrc = computed(() => {
   const src = props.item.video?.poster || props.item.image;
   if (src) {

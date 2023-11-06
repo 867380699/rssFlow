@@ -28,12 +28,25 @@
     </template>
     <!-- FeedItem -->
     <template #feedItem="slotPorps">
-      <FeedItem :item="slotPorps.data" />
+      <FeedItem
+        v-intersection-observer="[
+          (entrys) => onElementVisibility(entrys, slotPorps.data),
+          {
+            root: scroller,
+            threshold: 1,
+            rootMargin: '0px 0px -40px 0px',
+            immediate: true,
+          },
+        ]"
+        :item="slotPorps.data"
+        @item-changed="onItemChanged"
+      />
     </template>
   </RecycleList>
 </template>
 <script lang="ts" setup>
-import { ComponentPublicInstance } from 'vue';
+import { vIntersectionObserver } from '@vueuse/components';
+import type { ComponentPublicInstance } from 'vue';
 
 import { useAllFeeds, useFeed } from '@/composables';
 import { formatRelative } from '@/composables/date';
@@ -49,6 +62,10 @@ const props = withDefaults(
   }>(),
   { feedId: 0, items: () => [] }
 );
+
+const emit = defineEmits<{
+  (event: 'itemVisible', item: FeedItemType): void;
+}>();
 
 const { feed } = useFeed(toRef(props, 'feedId'));
 
@@ -125,6 +142,50 @@ watch(
     (scroller.value?.$el as HTMLElement).scrollTop = 0;
   }
 );
+
+const visibleItemIdSet = new Set();
+
+const onElementVisibility = (
+  entries: IntersectionObserverEntry[],
+  item: FeedItemType
+) => {
+  if (entries[0].isIntersecting) {
+    // console.log('visibleL itemAdd', item.id, item.title);
+    visibleItemIdSet.add(item.id);
+    emit('itemVisible', item);
+  } else {
+    // console.log('visibleL itemRemove', item.id, item.title);
+    visibleItemIdSet.delete(item.id);
+  }
+};
+
+const idsToDelete: FeedItemType['id'][] = [];
+const idsToAdd: FeedItemType['id'][] = [];
+
+const onItemChanged = (item: FeedItemType, oldItem?: FeedItemType) => {
+  if (oldItem) {
+    if (visibleItemIdSet.has(oldItem.id)) {
+      idsToAdd.push(item.id);
+      idsToDelete.push(item.id);
+      emit('itemVisible', item);
+    }
+  }
+};
+
+onUpdated(() => {
+  if (idsToDelete.length) {
+    idsToDelete.forEach((id) => {
+      visibleItemIdSet.delete(id);
+    });
+    idsToDelete.length = 0;
+  }
+  if (idsToAdd.length) {
+    idsToAdd.forEach((id) => {
+      visibleItemIdSet.add(id);
+    });
+    idsToAdd.length = 0;
+  }
+});
 </script>
 <style>
 .feed-item {
