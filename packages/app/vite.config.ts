@@ -1,3 +1,5 @@
+/// <reference types="vitest" />
+
 import vueI18n from '@intlify/unplugin-vue-i18n/vite';
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import vue from '@vitejs/plugin-vue';
@@ -119,4 +121,5 @@ export default defineConfig({
   server: {
     // https: true,
   },
+  test: {},
 });

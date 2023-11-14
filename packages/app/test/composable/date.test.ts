@@ -1,9 +1,8 @@
 import { format } from 'date-fns';
 import { assert, describe, it } from 'vitest';
 
+import { TimeSpan, useRelative } from '@/composables/date';
 import { i18n } from '@/i18n';
-
-import { TimeSpan, useRelative } from '../date';
 
 describe('relative date', () => {
   it('now', () => {
