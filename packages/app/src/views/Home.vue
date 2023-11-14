@@ -140,6 +140,7 @@ const {
   feedItemFilter,
   homeLoading,
   homeNextPage,
+  homePrevPage,
   homeFeedItems,
   isHomeFeedItemsDesc,
   loadingFeedIds,

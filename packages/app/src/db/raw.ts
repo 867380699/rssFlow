@@ -28,3 +28,27 @@ export const getFirstKey = async (
     };
   });
 };
+
+export const getLastKey = async (
+  tableName: string,
+  indexName: string,
+  range: IDBKeyRange,
+  direction: IDBCursorDirection
+) => {
+  return getFirstKey(tableName, indexName, range, reverseDirection(direction));
+};
+
+const reverseDirection = (
+  direction: IDBCursorDirection
+): IDBCursorDirection => {
+  switch (direction) {
+    case 'next':
+      return 'prev';
+    case 'prev':
+      return 'next';
+    case 'nextunique':
+      return 'prevunique';
+    case 'prevunique':
+      return 'nextunique';
+  }
+};

@@ -1,7 +1,7 @@
 import Dexie, { IndexableType, liveQuery, Subscription } from 'dexie';
 import { firstValueFrom, from, lastValueFrom, take } from 'rxjs';
 
-import { getFirstKey } from '@/db/raw';
+import { getFirstKey, getLastKey } from '@/db/raw';
 import { FeedItemFilter } from '@/enums';
 import {
   feedDB,
@@ -37,7 +37,7 @@ export const useWrapLoading = () => {
   return { loading, wrapLoading };
 };
 
-const usePages = (
+export const usePages = (
   indexName: TypeFeedItemIndexKey,
   reverse = false,
   range: IndexableType[] = [Dexie.minKey, Dexie.maxKey]
@@ -87,14 +87,15 @@ const usePages = (
         size,
         10
       );
-      if (newPages.length) {
-        if (pages.value.length) {
-          // remove duplicate key
-          newPages.shift();
-        }
-        appendPages(newPages);
+      if (pages.value.length) {
+        // remove duplicate key
+        newPages.shift();
       }
-      if (!newPages.length) {
+      if (newPages.length) {
+        appendPages(newPages);
+      } else {
+        console.log('check end');
+        // check if reached end
         const lastIndex = await getFirstKey(
           tableName,
           indexName,
@@ -113,22 +114,37 @@ const usePages = (
   };
 
   const prev = async (): Promise<Result<IndexableType>> => {
+    const range = reverse
+      ? [toRaw(firstPage.value) || defaultLower, defaultUpper]
+      : [defaultLower, toRaw(firstPage.value) || defaultUpper];
     if (start <= 0) {
       const newPages = await getPages(
         tableName,
         indexName,
-        reverse ? [firstPage.value] : [0, firstPage.value],
-        reverse,
+        range,
+        !reverse,
         size,
         10
       );
+      const isInit = pages.value.length === 0;
+      if (!isInit) {
+        newPages.shift();
+      }
       if (newPages.length) {
-        if (pages.value.length) {
-          newPages.shift();
-        }
         const count = prependPages(newPages);
-        start += count;
-        end += count;
+        start += count + (isInit ? -1 : 0);
+        end += count + (isInit ? -1 : 0);
+      } else {
+        // check if reached end
+        const lastIndex = await getLastKey(
+          tableName,
+          indexName,
+          IDBKeyRange.bound(defaultLower, defaultUpper),
+          reverse ? 'next' : 'prev'
+        );
+        if (lastIndex && lastIndex.toString() !== firstPage.value.toString()) {
+          prependPages([lastIndex as IndexableType]);
+        }
       }
     }
     return {
@@ -298,13 +314,13 @@ export const useFeedItems = (
     const prevIndex = (await prev())?.value;
 
     const feedItemRef = ref<FeedItem[]>([]);
-    pagedFeedItems.value.push(feedItemRef);
+    pagedFeedItems.value.unshift(feedItemRef);
 
-    if (endPageIndex && prevIndex) {
-      const includeLower = !reverse;
+    if (startPageIndex && prevIndex) {
+      const includeLower = !feedItems.value.length || !reverse;
       const includeUpper = reverse;
       const source = createPageSource(
-        [endPageIndex, prevIndex],
+        [prevIndex, startPageIndex],
         reverse,
         includeLower,
         includeUpper
@@ -315,9 +331,9 @@ export const useFeedItems = (
       subscriptions.push(subscription);
       startPageIndex = prevIndex;
       const source$ = from(source);
-      const feedItems = await lastValueFrom(source$.pipe(take(1)));
+      const newFeedItems = await firstValueFrom(source$.pipe(take(1)));
       return {
-        value: feedItems,
+        value: newFeedItems,
         done: false,
       };
     }
@@ -349,13 +365,27 @@ export const useFeedItems = (
       result.done = pageResult.done;
       total += pageResult.value.length;
       pageResult.value.map((item) => result.value.push(item));
-      console.log('wrap next page', total, result);
+      // console.log('wrap next page', total, result);
     } while (!result.done && total < 20);
 
     return result;
   }, loadingResult);
 
-  const wrappedPrevPage = wrapLoading(prevPage, loadingResult);
+  const wrappedPrevPage = wrapLoading(async () => {
+    let total = 0;
+    const result: Result<FeedItem[]> = {
+      value: [],
+      done: false,
+    };
+    do {
+      const pageResult = await prevPage();
+      result.done = pageResult.done;
+      total += pageResult.value.length;
+      pageResult.value.map((item) => result.value.push(item));
+    } while (!result.done && total < 20);
+
+    return result;
+  }, loadingResult);
 
   const newItemCount = ref(0);
 
@@ -373,7 +403,7 @@ export const useFeedItems = (
   watch(firstPage, () => updateNewItemCount());
 
   // init
-  wrappedNextPage();
+  // wrappedNextPage();
 
   return reactive({
     feedItems,
@@ -400,6 +430,10 @@ export const useHomeFeedItems = (
   const newItemsCount = computed(() => result.value?.newItemCount);
   const updateNewItemCount = computed(() => result.value?.updateNewItemCount);
 
+  if (nextPage.value) {
+    nextPage.value();
+  }
+
   const reset = () => {
     console.log('reset home');
     result.value?.destory();
@@ -408,6 +442,9 @@ export const useHomeFeedItems = (
       feedItemFilter.value,
       orderDesc.value
     );
+    if (nextPage.value) {
+      nextPage.value();
+    }
   };
 
   watch(
