@@ -1,0 +1,37 @@
+{
+	"folders": [
+		{
+			"name": "📦 rss-flow-app",
+			"path": "packages/app"
+		}
+	],
+	"settings": {
+		"editor.tabSize": 2,
+		"editor.insertSpaces": true,
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": true,
+		},
+		"eslint.validate": ["javascript"],
+		"search.exclude": {
+			"android/**": true,
+			"**/pnpm-lock.yaml": true,
+			"**/dist": true,
+		},
+		"tailwindCSS.includeLanguages": {
+			"vue": "html",
+			"vue-html": "html"
+		},
+		"i18n-ally.keystyle": "nested",
+		"i18n-ally.localesPaths": [
+			"src/locales"
+		],
+		"testing.automaticallyOpenPeekView": "never",
+		"vitest.commandLine": "pnpm vitest",
+		"vitest.enable": true
+	},
+	"extensions": {
+		"recommendations": [
+			"folke.vscode-monorepo-workspace"
+		]
+	}
+}
