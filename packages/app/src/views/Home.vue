@@ -329,3 +329,8 @@ onMounted(() => {
     });
 });
 </script>
+<style>
+.ion-content-scroll-host::-webkit-scrollbar {
+  display: none;
+}
+</style>

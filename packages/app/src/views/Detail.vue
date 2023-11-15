@@ -58,7 +58,8 @@
       }"
     >
       <swiper
-        class="h-full overflow-auto"
+        class="detail-swiper h-full overflow-auto"
+        style="background-color: var(--ion-background-color)"
         :slides-per-view="1"
         :space-between="24"
         @transition-end="transitionEnd"
@@ -142,7 +143,9 @@ const { homeFeedItems: cacheFeedItems, homeNextPage } = storeToRefs(feedStore);
 const feedItems = ref<FeedItem[]>([feedItem.value!]);
 
 const afterSlideInit = (swiper: SwiperClass) => {
-  updateSlide(props.id, swiper);
+  setTimeout(() => {
+    updateSlide(props.id, swiper);
+  }, 0);
 };
 
 const updateSlide = async (itemId: number, swiper: SwiperClass) => {
@@ -203,14 +206,14 @@ const toggleIframe = () => {
 
 const showToolbar = ref(true);
 
-const toolbarHeight = ref(44);
+const toolbarHeight = ref(0);
 
 const toolbar = ref<ComponentPublicInstance | null>(null);
 
 onMounted(() => {
   setTimeout(() => {
     toolbarHeight.value = toolbar.value?.$el.clientHeight;
-  });
+  }, 300);
 });
 
 const currentScrollState = computed(
@@ -302,8 +305,6 @@ const scrollToTop = () => {
 </script>
 <style lang="less" scoped>
 .content-container {
-  background-color: var(--ion-background-color, #fff);
-
   & > h1 {
     max-width: 800px;
     margin: auto;

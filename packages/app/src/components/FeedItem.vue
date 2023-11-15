@@ -79,6 +79,7 @@ import {
 import { deleteFeedItem, updateFeedItem } from '@/service/dbService';
 import { FeedItem } from '@/types';
 import { useAlertConfirm } from '@/utils/alert';
+import { createFadeInAnimation, createNoAnimation } from '@/utils/animation';
 
 const router = useIonRouter();
 const { t } = useI18n();
@@ -111,9 +112,71 @@ const imageSrc = computed(() => {
 const toDetail = (id: number, $event: Event) => {
   const itemEl = ($event.target as HTMLElement).closest('ion-item');
   const { top, bottom } = itemEl!.getBoundingClientRect();
+  const itemTitleEl = itemEl?.querySelector('h2');
+  let titleTop: number, paddingLeft: string, titleFontSize: string;
+  if (itemTitleEl) {
+    ({ top: titleTop } = itemTitleEl.getBoundingClientRect());
+    ({ paddingLeft, fontSize: titleFontSize } = getComputedStyle(itemTitleEl));
+  }
+
   updateFeedItem(id, { isRead: 1, readTime: Date.now() });
   router.push(`/detail/${id}`, (baseEl, opts) => {
+    const detailTitleEl = baseEl.querySelector(
+      `h1.detail-title-${props.item.id}`
+    );
+    let detailTitleTop;
+    let detailTitleFontSize = '';
+    if (detailTitleEl) {
+      ({ top: detailTitleTop } = detailTitleEl.getBoundingClientRect());
+      ({ fontSize: detailTitleFontSize } = getComputedStyle(detailTitleEl));
+    }
+    // console.log('push', baseEl, paddingLeft, titleTop, detailTitleTop, top);
     const isForward = opts.direction === 'forward';
+
+    const titleScale = parseInt(titleFontSize) / parseInt(detailTitleFontSize);
+
+    const titleAnimation = createAnimation()
+      .addElement(baseEl.querySelector(`h1.detail-title-${props.item.id}`))
+      .beforeStyles({ 'transform-origin': 'top left' })
+      .keyframes([
+        {
+          offset: 0,
+          opacity: props.item.isRead ? 0.25 : 1,
+          transform: `translate3d(${paddingLeft},${
+            titleTop - detailTitleTop
+          }px,0) scale3d(${titleScale},${titleScale},1)`,
+        },
+        {
+          offset: 1,
+          opacity: 1,
+          transform: `translate3d(0,0,0) scale3d(1,1,1)`,
+        },
+      ]);
+
+    const detailMetaEl = baseEl.querySelector(`.detail-meta-${props.item.id}`);
+    const metaAnimation = createFadeInAnimation(detailMetaEl)
+      .delay(isForward ? 250 : 0)
+      .duration(isForward ? 200 : 0);
+
+    const detailContenEl = baseEl.querySelector(
+      `.detail-content-${props.item.id}`
+    );
+    const contentAnimation = createFadeInAnimation(detailContenEl)
+      .delay(isForward ? 300 : 0)
+      .duration(isForward ? 200 : 0);
+
+    const backgroundAnimation = createAnimation()
+      .addElement(baseEl.querySelector(`.detail-swiper`))
+      .keyframes([
+        {
+          offset: 0,
+          background: `var(--ion-item-background, #fff)`,
+        },
+        {
+          offset: 1,
+          background: 'var(--ion-background-color, #fff)',
+        },
+      ]);
     const enteringAnimation: Animation = createAnimation()
       .addElement(isForward ? opts.enteringEl : opts.leavingEl)
       .keyframes([
@@ -128,22 +191,19 @@ const toDetail = (id: number, $event: Event) => {
           clipPath: 'inset(0px 0px 0px 0px)',
         },
       ])
+      .addAnimation(titleAnimation)
+      .addAnimation(metaAnimation)
+      .addAnimation(contentAnimation)
+      .addAnimation(backgroundAnimation)
       .direction(isForward ? 'normal' : 'reverse');
-    const leavingAnimation = createAnimation()
-      .addElement(isForward ? opts.leavingEl : opts.enteringEl)
-      .keyframes([
-        {
-          offset: 0,
-          opacity: 1,
-        },
-        {
-          offset: 1,
-          opacity: 1,
-        },
-      ]);
+
+    const leavingAnimation = createNoAnimation(
+      isForward ? opts.leavingEl : opts.enteringEl
+    );
+
     return createAnimation()
       .addAnimation([enteringAnimation, leavingAnimation])
-      .duration(200);
+      .duration(250);
   });
 };
 

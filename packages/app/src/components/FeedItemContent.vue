@@ -12,11 +12,13 @@
       <h1
         ref="feedItemTitle"
         class="mx-auto my-4 max-w-[800px] text-xl font-bold"
+        :class="`detail-title-${feedItem.id}`"
       >
         {{ feedItem?.title }}
       </h1>
       <div
         class="meta mb-3 flex justify-between border-b border-slate-400/10 py-1"
+        :class="`detail-meta-${feedItem.id}`"
       >
         <div class="flex items-center">
           <template v-for="(info, i) in metaInfo" :key="i">
@@ -32,7 +34,7 @@
           {{ format(feedItem.pubDate, 'yyyy-MM-dd HH:mm') }}
         </div>
       </div>
-      <FeedContentComponent />
+      <FeedContentComponent :class="`detail-content-${feedItem.id}`" />
     </template>
   </div>
 </template>
