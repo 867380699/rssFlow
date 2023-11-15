@@ -62,8 +62,10 @@ export class FeedDB extends Dexie {
 export const feedDB = new FeedDB();
 
 // TODO: remove debug
-(window as any).feedDB = feedDB;
-(window as any).Dexie = Dexie;
+if (typeof window !== 'undefined') {
+  (window as any).feedDB = feedDB;
+  (window as any).Dexie = Dexie;
+}
 
 export const getNextFeedRank = async () => {
   const lastFeed = await feedDB.feeds.orderBy('rank').last();
@@ -296,7 +298,7 @@ export const getPages = async (
     const index = feedDB.feedItems.core?.schema.getIndexByKeyPath(indexName);
     if (index) {
       const cursor = await feedDB.core.table(tableName).openCursor({
-        trans: tx.idbtrans,
+        trans: (tx as any).idbtrans,
         reverse,
         query: {
           index,
@@ -318,9 +320,10 @@ export const getPages = async (
     }
   });
   console.log(
-    'paging index:',
-    `${tableName}${indexName} range:`,
-    JSON.stringify(range),
+    `paging index:${tableName}${indexName}range:${JSON.stringify(
+      range
+    )} reverse:${reverse}`,
+    // keyPages,
     performance.now() - t0
   );
   return keyPages;
