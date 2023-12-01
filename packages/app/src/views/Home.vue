@@ -58,7 +58,10 @@
         :feed-id="feedId"
         :items="homeFeedItems"
         class="ion-content-scroll-host pb-2 after:flex after:items-center after:justify-center after:opacity-50 after:content-['~']"
-        :class="{ 'after:h-full': !homeFeedItems?.length }"
+        :class="{
+          'after:h-full': !homeFeedItems?.length,
+          'after:h-16': homeFeedItems?.length,
+        }"
         style="background-color: var(--ion-item-background)"
         @item-visible="onItemVisible"
       />
@@ -118,7 +121,16 @@ import {
   swapVerticalOutline,
 } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
-import { fromEvent, map, mergeWith, pairwise, share, throttleTime } from 'rxjs';
+import {
+  debounceTime,
+  fromEvent,
+  map,
+  mergeWith,
+  pairwise,
+  share,
+  tap,
+  throttleTime,
+} from 'rxjs';
 import { ComponentPublicInstance } from 'vue';
 
 import FeedItemList from '@/components/FeedItemList.vue';
@@ -285,48 +297,67 @@ const isFabShow = ref(true);
 const content = ref<ComponentPublicInstance<HTMLElement> | null>(null);
 
 onMounted(() => {
-  const scrollEnd$ = fromEvent<Event>(content.value?.$el, 'scrollend');
+  const throttleInterval = 32;
 
-  const scroll$ = fromEvent<Event>(content.value?.$el, 'scroll').pipe(
-    mergeWith(scrollEnd$),
+  const scrollShare$ = fromEvent<Event>(content.value?.$el, 'scroll').pipe(
     share()
   );
 
-  scroll$
-    .pipe(
-      throttleTime(60),
-      // tap((e) => console.log(e.type)),
-      map((e) => (e.target as HTMLElement).scrollTop),
-      pairwise(),
-      map(([prevScrollTop, scrollTop]) => scrollTop - prevScrollTop)
-    )
-    .subscribe((deltaScrollTop) => {
-      if (deltaScrollTop > 60) {
-        // scroll down
-        isFabShow.value = false;
-      } else if (deltaScrollTop < -60) {
-        // scroll up
-        isFabShow.value = true;
-      }
-    });
+  const scrollEnd$ = scrollShare$.pipe(debounceTime(throttleInterval * 2));
+
+  const scroll$ = scrollShare$.pipe(mergeWith(scrollEnd$), share());
+
+  const nextDone = ref(false);
 
   scroll$
     .pipe(
-      throttleTime(30),
+      throttleTime(throttleInterval),
+      // tap((e) => console.log(e.type)),
       map((e) => {
-        const { scrollTop, scrollHeight, clientHeight } =
-          e.target as HTMLElement;
-        return { scrollTop, scrollHeight, clientHeight };
-      })
+        const el = e.target as HTMLElement;
+        const { clientHeight, scrollHeight, scrollTop } = el;
+        return {
+          clientHeight,
+          scrollHeight,
+          scrollTop,
+        };
+      }),
+      pairwise()
     )
-    .subscribe(({ scrollTop, scrollHeight, clientHeight }) => {
-      if (scrollTop + clientHeight > scrollHeight - 80 * 6) {
-        if (homeLoading.value) return;
-        if (homeNextPage.value) {
-          homeNextPage.value();
+    .subscribe(
+      ([
+        { scrollTop: prevScrollTop },
+        { clientHeight, scrollHeight, scrollTop },
+      ]) => {
+        // loading next
+        const shouldLoadingNext =
+          scrollTop + clientHeight > scrollHeight - 80 * 6;
+        if (shouldLoadingNext && !homeLoading.value) {
+          if (homeNextPage.value) {
+            homeNextPage.value().then((result) => {
+              nextDone.value = result.done; // TODO: fixme
+            });
+          }
+        }
+
+        // show/hide fab
+        const isReachEnd = clientHeight + scrollTop + 1 > scrollHeight;
+
+        if (isReachEnd && nextDone.value) {
+          isFabShow.value = true;
+        } else {
+          const deltaThreshold = 40;
+          const deltaScrollTop = scrollTop - prevScrollTop;
+          if (deltaScrollTop > deltaThreshold) {
+            // scroll down
+            isFabShow.value = false;
+          } else if (deltaScrollTop < -deltaThreshold) {
+            // scroll up
+            isFabShow.value = true;
+          }
         }
       }
-    });
+    );
 });
 </script>
 <style>
