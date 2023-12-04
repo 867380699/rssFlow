@@ -138,6 +138,8 @@ const toDetail = (id: number, $event: Event) => {
     const titleAnimation = createAnimation()
       .addElement(baseEl.querySelector(`h1.detail-title-${props.item.id}`))
       .beforeStyles({ 'transform-origin': 'top left' })
+      .beforeRemoveClass(isForward ? [] : ['font-bold'])
+      .beforeAddClass(isForward ? [] : ['line-clamp-2'])
       .keyframes([
         {
           offset: 0,

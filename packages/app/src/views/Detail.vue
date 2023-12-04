@@ -145,7 +145,7 @@ const feedItems = ref<FeedItem[]>([feedItem.value!]);
 const afterSlideInit = (swiper: SwiperClass) => {
   setTimeout(() => {
     updateSlide(props.id, swiper);
-  }, 0);
+  }, 400);
 };
 
 const updateSlide = async (itemId: number, swiper: SwiperClass) => {

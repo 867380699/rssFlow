@@ -77,12 +77,12 @@ export const useGallery = () => {
 
       return createAnimation()
         .addElement(baseEl)
-        .duration(150)
+        .duration(300)
         .addAnimation(animations);
     };
 
     const leaveAnimation = (baseEl: HTMLElement) => {
-      return enterAnimation(baseEl).direction('reverse').duration(150);
+      return enterAnimation(baseEl).direction('reverse').duration(300);
     };
 
     const modal = await modalController.create({

@@ -126,9 +126,11 @@ const onDragEnd = (ev: GestureDetail) => {
 
 const afterInit = (swiper: SwiperClass) => {
   swiperInstance.value = swiper;
+  swiper.disable();
   setTimeout(() => {
     showImages.value = props.imgs;
-  }, 200);
+    swiper.enable();
+  }, 400);
 };
 </script>
 
