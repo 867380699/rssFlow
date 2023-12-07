@@ -57,18 +57,18 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import { useElementSize, useEventListener } from '@vueuse/core';
 import { throttle } from 'lodash-es';
 
-export type RecycleItem = {
+export type RecycleItem<T> = {
   height: number;
   slot: string;
-  data: any;
-  children?: Array<RecycleItem>;
+  data: T;
+  children?: Array<RecycleItem<T>>;
 };
 
-type InnerRecycleItem = {
+type InnerRecycleItem<T> = {
   id: number;
   top: number;
   height: number;
@@ -76,7 +76,7 @@ type InnerRecycleItem = {
   topOffset?: number;
   childrenHeight: number;
   slot: string;
-  data: any;
+  data: T;
 };
 
 type PoolItem = {
@@ -85,30 +85,34 @@ type PoolItem = {
 };
 
 const props = defineProps<{
-  items?: RecycleItem[];
+  items?: RecycleItem<T>[];
 }>();
 
 let innerIndex = 0;
 
+const scrollOffsets = ref<number[]>([]);
+let scrollOffset = computed<number>(() =>
+  scrollOffsets.value.reduce((a = 0, b = 0) => a + b, 0)
+);
 const expandChildren = (
-  items: RecycleItem[],
+  items: RecycleItem<T>[],
   initTop = 0,
   offsetTop = 0,
   level = 1
-): [Ref<InnerRecycleItem>[], number] => {
+): [Ref<InnerRecycleItem<T>>[], number] => {
   let top = initTop;
   let currentLevel = level;
-  const resultItems: Ref<InnerRecycleItem>[] = [];
+  const resultItems: Ref<InnerRecycleItem<T>>[] = [];
 
   items.forEach(({ height, slot, data, children }) => {
-    const resultItem: Ref<InnerRecycleItem> = ref({
+    const resultItem: Ref<InnerRecycleItem<T>> = ref({
       id: innerIndex++,
       top,
       height,
+      level,
       childrenHeight: 0,
       slot,
       data,
-      level,
     });
     if (children) {
       const [childItems, newLevel] = expandChildren(
@@ -137,7 +141,7 @@ const expandChildren = (
       top += height;
     }
   });
-
+  scrollOffsets.value[currentLevel] = offsetTop;
   return [resultItems, currentLevel + 1];
 };
 
@@ -204,7 +208,7 @@ const shownFlatItemIds = computed(() => {
   const shownTop = scrollTop.value - containerHeight.value * 0.5;
   const shownBottom = scrollTop.value + containerHeight.value * 1.5;
 
-  const isShown = (item: Ref<InnerRecycleItem>) => {
+  const isShown = (item: Ref<InnerRecycleItem<T>>) => {
     const { top: itemTop, height, childrenHeight } = item.value;
     const itemBottom = itemTop + height + childrenHeight;
     return itemTop < shownBottom && shownTop < itemBottom;
@@ -274,6 +278,21 @@ watch(joinIds, () => {
   });
   addIds.forEach((id) => addPoolItem(id));
 });
+
+const scrollItemIntoView = (find: (data: T) => boolean) => {
+  const item = flatItems.value.find((item) => find(item.value.data));
+  if (item && container.value) {
+    container.value.scrollTop = item.value.top - scrollOffset.value;
+  }
+};
+
+const scrollTo = (scrollOption: ScrollToOptions) => {
+  if (container.value) {
+    container.value.scrollTo(scrollOption);
+  }
+};
+
+defineExpose({ scrollTo, scrollItemIntoView });
 </script>
 
 <style scoped></style>

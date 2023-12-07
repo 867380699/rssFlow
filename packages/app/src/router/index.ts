@@ -11,12 +11,8 @@ const routes: Array<RouteRecordRaw> = [
     component: Home,
   },
   {
-    path: '/detail/:id',
+    path: '/detail',
     component: DetailVue,
-    props(route) {
-      const { id } = route.params;
-      return { id: Number(id) };
-    },
   },
   {
     path: '/:path(.*)*',

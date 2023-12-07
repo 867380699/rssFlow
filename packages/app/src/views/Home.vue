@@ -132,6 +132,7 @@ import {
   throttleTime,
 } from 'rxjs';
 import { ComponentPublicInstance } from 'vue';
+import { ComponentExposed } from 'vue-component-type-helpers';
 
 import FeedItemList from '@/components/FeedItemList.vue';
 import { useFeed } from '@/composables';
@@ -294,7 +295,7 @@ const toggleDesc = () => {
 
 const isFabShow = ref(true);
 
-const content = ref<ComponentPublicInstance<HTMLElement> | null>(null);
+const content = ref<ComponentExposed<typeof FeedItemList> | null>(null);
 
 onMounted(() => {
   const throttleInterval = 32;
@@ -359,6 +360,26 @@ onMounted(() => {
       }
     );
 });
+
+const route = useRoute();
+const initDetailId = ref(0);
+
+watch(
+  () => [route.path, route.query],
+  ([path, query], [prevPath, prevQuery]) => {
+    console.log('vr', path, query, prevPath, prevQuery);
+    if (path === '/detail' && prevPath === '/home') {
+      initDetailId.value = parseInt(query.id);
+    } else if (path === '/home' && prevPath === '/detail') {
+      const id = parseInt(prevQuery.id);
+      if (id && id !== initDetailId.value) {
+        setTimeout(() => {
+          content.value?.scrollItemIntoView(id);
+        }, 500);
+      }
+    }
+  }
+);
 </script>
 <style>
 .ion-content-scroll-host::-webkit-scrollbar {

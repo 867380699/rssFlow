@@ -124,13 +124,13 @@ import { FeedItem } from '@/types';
 
 import { loadFeedItem, updateFeedItem } from '../service/dbService';
 
-const props = defineProps<{ id: number }>();
+const route = useRoute();
 
-const itemId = ref(props.id);
+const itemId = ref(parseInt(route.query.id?.toString() || ''));
 
 let { feedItem } = useFeedItem(itemId);
 
-feedItem.value = await loadFeedItem(props.id);
+feedItem.value = await loadFeedItem(itemId.value);
 
 const currentFeedId = computed(() => feedItem.value?.feedId || 0);
 
@@ -138,13 +138,17 @@ const { feed } = useFeed(currentFeedId);
 
 const feedStore = useFeedStore();
 
+const router = useRouter();
+
 const { homeFeedItems: cacheFeedItems, homeNextPage } = storeToRefs(feedStore);
 
 const feedItems = ref<FeedItem[]>([feedItem.value!]);
 
+const isSlideInit = ref(false);
 const afterSlideInit = (swiper: SwiperClass) => {
   setTimeout(() => {
-    updateSlide(props.id, swiper);
+    updateSlide(itemId.value, swiper);
+    isSlideInit.value = true;
   }, 400);
 };
 
@@ -191,6 +195,9 @@ const transitionEnd = async (swiper: SwiperClass) => {
       });
       itemId.value = newId;
       updateSlide(newId, swiper);
+      if (isSlideInit.value) {
+        router.replace({ query: { id: newId } });
+      }
     }
   }
 };

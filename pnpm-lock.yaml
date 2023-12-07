@@ -110,6 +110,9 @@ importers:
       vue:
         specifier: ^3.3.7
         version: 3.3.7(typescript@5.1.6)
+      vue-component-type-helpers:
+        specifier: ^1.8.24
+        version: 1.8.24
       vue-i18n:
         specifier: ^9.2.2
         version: 9.2.2(vue@3.3.7)
@@ -10492,6 +10495,10 @@ packages:
       - supports-color
       - terser
     dev: true
+
+  /vue-component-type-helpers@1.8.24:
+    resolution: {integrity: sha512-lqWs/7fdRXoSBAlbouHBX+LNuaY6gI9xWW34m/ZIz9zVPYHEyw0b2/zaCBwlKx0NtKTeF/6pOpvrxVkh7nhIYg==}
+    dev: false
 
   /vue-demi@0.14.1(vue@3.3.7):
     resolution: {integrity: sha512-rt+yuCtXvscYot9SQQj3WKZJVSriPNqVkpVBNEHPzSgBv7QIYzsS410VqVgvx8f9AAPgjg+XPKvmV3vOqqkJQQ==}

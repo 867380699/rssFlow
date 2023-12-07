@@ -32,7 +32,7 @@
         v-intersection-observer="[
           (entrys) => onElementVisibility(entrys, slotPorps.data),
           {
-            root: scroller,
+            root: scroller as MaybeElement,
             threshold: 1,
             rootMargin: '0px 0px -40px 0px',
             immediate: true,
@@ -46,7 +46,8 @@
 </template>
 <script lang="ts" setup>
 import { vIntersectionObserver } from '@vueuse/components';
-import type { ComponentPublicInstance } from 'vue';
+import { MaybeElement } from '@vueuse/core';
+import { ComponentExposed } from 'vue-component-type-helpers';
 
 import { useAllFeeds, useFeed } from '@/composables';
 import { formatRelative } from '@/composables/date';
@@ -82,8 +83,8 @@ const feedsMap = computed(() => {
 
 const now = Date.now();
 
-const recycleItems = computed<RecycleItem[]>(() => {
-  const resultItems: RecycleItem[] = [];
+const recycleItems = computed<RecycleItem<FeedItemType>[]>(() => {
+  const resultItems: RecycleItem<FeedItemType>[] = [];
   let feedId: number | undefined;
   let pubdate = 0;
   props.items.forEach((item, i) => {
@@ -134,12 +135,12 @@ const recycleItems = computed<RecycleItem[]>(() => {
   return resultItems;
 });
 
-const scroller = ref<ComponentPublicInstance | null>(null);
+const scroller = ref<ComponentExposed<typeof RecycleList<FeedItemType>> | null>(null);
 
 watch(
   () => props.feedId,
   () => {
-    (scroller.value?.$el as HTMLElement).scrollTop = 0;
+    scroller.value?.scrollTo({ top: 0 });
   }
 );
 
@@ -186,6 +187,14 @@ onUpdated(() => {
     idsToAdd.length = 0;
   }
 });
+
+const scrollItemIntoView = (id?:number) => {
+  if (scroller.value) {
+    scroller.value.scrollItemIntoView((item) => (item.id === id));
+  }
+};
+
+defineExpose({scrollItemIntoView, scrollTo: scroller.value?.scrollTo})
 </script>
 <style>
 .feed-item {

@@ -120,7 +120,7 @@ const toDetail = (id: number, $event: Event) => {
   }
 
   updateFeedItem(id, { isRead: 1, readTime: Date.now() });
-  router.push(`/detail/${id}`, (baseEl, opts) => {
+  router.push(`/detail?id=${id}`, (baseEl, opts) => {
     const detailTitleEl = baseEl.querySelector(
       `h1.detail-title-${props.item.id}`
     );
