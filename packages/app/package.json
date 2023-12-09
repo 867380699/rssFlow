@@ -7,7 +7,7 @@
     "serve": "$npm_execpath build;vite preview",
     "lint": "eslint --ext .ts,.vue --fix src",
     "test": "vitest",
-    "sync": "$npm_execpath build;cap sync",
+    "sync": "$npm_execpath build;cap sync;cap sync @capacitor-community/electron",
     "ios": "cap open ios",
     "android": "cap open android",
     "electron": "cap open @capacitor-community/electron"
