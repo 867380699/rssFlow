@@ -17,7 +17,7 @@
         {{ feedItem?.title }}
       </h1>
       <div
-        class="meta mb-3 flex justify-between border-b border-slate-400/10 py-1"
+        class="meta mx-auto mb-3 flex max-w-[800px] justify-between border-b border-slate-400/10 py-1"
         :class="`detail-meta-${feedItem.id}`"
       >
         <div class="flex items-center">
