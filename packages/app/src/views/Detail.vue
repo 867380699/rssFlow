@@ -302,7 +302,17 @@ const toggleFavorite = () => {
 
 const openLink = (feedItem?: FeedItem) => {
   if (feedItem) {
-    window.open(feedItem.link);
+    const replacementConfig = feed.value?.config?.replaceLink;
+    let link: string;
+    if (replacementConfig) {
+      link = feedItem.link.replace(
+        new RegExp(replacementConfig.from || ''),
+        replacementConfig.to || ''
+      );
+    } else {
+      link = feedItem.link;
+    }
+    window.open(link);
   }
 };
 

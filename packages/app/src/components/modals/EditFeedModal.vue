@@ -27,6 +27,31 @@
     <ion-item>
       <ion-input v-model="title" label="Title" label-placement="floating" />
     </ion-item>
+    <ion-accordion-group>
+      <ion-accordion>
+        <ion-item slot="header" color="light">
+          <ion-label>Replace Link</ion-label>
+        </ion-item>
+        <div slot="content" class="ion-padding">
+          <ion-item-group>
+            <ion-item>
+              <ion-input
+                v-model="replaceLink.from"
+                inputmode="url"
+                label="From"
+              />
+            </ion-item>
+            <ion-item>
+              <ion-textarea
+                v-model="replaceLink.to"
+                inputmode="url"
+                label="To"
+              />
+            </ion-item>
+          </ion-item-group>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
   </ion-content>
 </template>
 
@@ -44,9 +69,17 @@ const props = defineProps<{
 
 const title = ref(props.feed.title);
 
+const replaceLink = ref({
+  from: props.feed.config?.replaceLink?.from || '',
+  to: props.feed.config?.replaceLink?.to || '',
+});
+
 const save = async () => {
   if (props.feed.id) {
-    await updateFeed(props.feed.id, { title: title.value });
+    await updateFeed(props.feed.id, {
+      title: title.value,
+      config: { replaceLink: toRaw(replaceLink.value) },
+    });
   }
   emit('close');
 };

@@ -11,6 +11,12 @@ export type Feed = {
   type: 'feed' | 'group';
   parentId: number;
   rank?: string;
+  config?: {
+    replaceLink?: {
+      from?: string;
+      to?: string;
+    };
+  };
 };
 
 export type FeedItem = {
