@@ -2,7 +2,7 @@
   <ion-header>
     <ion-toolbar color="medium" class="electron:pt-4">
       <div
-        class="electron:!block absolute inset-x-0 -top-6 hidden h-6"
+        class="absolute inset-x-0 -top-6 hidden h-6 electron:!block"
         style="-webkit-app-region: drag"
       ></div>
       <ion-buttons slot="primary">
@@ -37,7 +37,7 @@
         @click="selectItem()"
       >
         <div class="flex-1 cursor-pointer">All</div>
-        <ion-badge class="from-primary to-secondary bg-gradient-to-tr from-40%">
+        <ion-badge class="bg-gradient-to-tr from-primary from-40% to-secondary">
           {{ itemCounts && itemCounts[0] }}
         </ion-badge>
       </div>

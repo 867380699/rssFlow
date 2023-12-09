@@ -9,11 +9,13 @@
 </template>
 
 <script setup lang="ts">
-import { alertController, AlertInput, popoverController } from '@ionic/vue';
+import { AlertInput, modalController, popoverController } from '@ionic/vue';
 
-import { deleteFeed, updateFeed } from '@/service/dbService';
+import { deleteFeed } from '@/service/dbService';
 import { Feed } from '@/types';
 import { useAlertConfirm } from '@/utils/alert';
+
+import EditFeedModal from './EditFeedModal.vue';
 
 const props = defineProps<{ feed: Feed }>();
 
@@ -39,7 +41,7 @@ const handleFeedAction = (action: Action, feed: Feed) => {
   console.log(action, feed);
   switch (action.key) {
     case 'edit':
-      alertEditFeed(feed);
+      showEditFeedModal(feed);
       break;
     case 'delete':
       alertDeleteFeed(feed);
@@ -59,7 +61,7 @@ const alertDeleteFeed = async (feed: Feed) => {
   });
 };
 
-const alertEditFeed = async (feed: Feed) => {
+const showEditFeedModal = async (feed: Feed) => {
   const inputs: AlertInput[] = [
     {
       name: 'title',
@@ -72,27 +74,14 @@ const alertEditFeed = async (feed: Feed) => {
       disabled: true,
     });
   }
-  const alert = await alertController.create({
-    header: t('edit'),
-    inputs,
-    buttons: [
-      {
-        text: t('cancel'),
-        role: 'cancel',
-      },
-      {
-        text: t('confirm'),
-        role: 'confirm',
-        handler: async (value) => {
-          if (feed.id && value.title) {
-            await updateFeed(feed.id, { title: value.title });
-          }
-          return true;
-        },
-      },
-    ],
+  const modal = await modalController.create({
+    component: EditFeedModal,
+    componentProps: {
+      feed: feed,
+      onClose: () => modal.dismiss(),
+    },
   });
-  await alert.present();
+  modal.present();
 };
 </script>
 
