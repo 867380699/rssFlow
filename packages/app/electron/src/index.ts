@@ -26,6 +26,7 @@ const trayMenuTemplate: (MenuItemConstructorOptions | MenuItem)[] = [
 const appMenuBarMenuTemplate: (MenuItemConstructorOptions | MenuItem)[] = [
   { role: process.platform === 'darwin' ? 'appMenu' : 'fileMenu' },
   { role: 'viewMenu' },
+  { role: 'editMenu' },
 ];
 
 // Get Config options from capacitor.config
