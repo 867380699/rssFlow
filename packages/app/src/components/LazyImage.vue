@@ -1,5 +1,5 @@
 <template>
-  <div class="relative h-full w-full rounded-sm">
+  <div class="lazy-image relative h-full w-full rounded-sm">
     <img
       class="h-full w-full rounded-sm bg-slate-400 object-cover"
       :class="{ 'opacity-0': isError }"

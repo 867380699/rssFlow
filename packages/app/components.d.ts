@@ -68,6 +68,7 @@ declare module '@vue/runtime-core' {
     RecycleTreeList: typeof import('./src/components/RecycleTreeList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ShadowHost: typeof import('./src/components/ShadowHost.vue')['default']
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
   }
 }

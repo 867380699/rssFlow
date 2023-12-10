@@ -34,12 +34,19 @@
           {{ format(feedItem.pubDate, 'yyyy-MM-dd HH:mm') }}
         </div>
       </div>
-      <FeedContentComponent :class="`detail-content-${feedItem.id}`" />
+      <ShadowHost
+        ref="shadowHost"
+        :class="`detail-content-${feedItem.id}`"
+        :custom-style="customStyle"
+      >
+        <FeedContentComponent />
+      </ShadowHost>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
+import { cssom, observe, twind } from '@twind/core';
 import { useEventListener } from '@vueuse/core';
 import format from 'date-fns/format';
 import {
@@ -51,14 +58,20 @@ import {
   textOutline,
 } from 'ionicons/icons';
 import { ComponentPublicInstance } from 'vue';
+import { ComponentExposed } from 'vue-component-type-helpers';
 
 import { scrollState } from '@/composables/scroll';
 import { parseFeedContent } from '@/service/feedService';
+import { twindConfig } from '@/service/twindService';
 import { FeedItem } from '@/types';
+
+import detailCSS from '../theme/detail.less?inline';
+import ShadowHost from './ShadowHost.vue';
 
 const props = defineProps<{
   feedItem: FeedItem;
   showIframe?: boolean;
+  customStyle?: string;
 }>();
 
 type MetaInfo = { icon: string; text: string | number };
@@ -199,4 +212,27 @@ const iframeError = ($event: Event) => {
   // won't call when the 'X-Frame-Options' set to 'sameorigin'
   console.log('iframe error', $event);
 };
+
+const detaillStyleSheet = new CSSStyleSheet();
+const tailwindStyleSheet = new CSSStyleSheet();
+const customStyleSheet = new CSSStyleSheet();
+
+detaillStyleSheet.replaceSync(detailCSS);
+customStyleSheet.replaceSync(props.customStyle || '');
+
+const shadowHost = ref<ComponentExposed<typeof ShadowHost> | null>(null);
+
+onMounted(() => {
+  if (shadowHost.value) {
+    const sheet = cssom(tailwindStyleSheet);
+    const tw = twind(twindConfig, sheet);
+    observe(tw, shadowHost.value.shadowRoot);
+  }
+});
+
+const customStyle = computed(() => [
+  detaillStyleSheet,
+  tailwindStyleSheet,
+  customStyleSheet,
+]);
 </script>
