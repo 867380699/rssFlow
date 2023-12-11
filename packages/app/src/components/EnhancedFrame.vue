@@ -129,5 +129,3 @@ const activeBubble = () => {
 
 onMounted(activeBubble);
 </script>
-
-<style scoped></style>

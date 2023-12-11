@@ -28,5 +28,3 @@ const onPlay = () => {
   }
 };
 </script>
-
-<style scoped></style>

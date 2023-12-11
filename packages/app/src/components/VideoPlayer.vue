@@ -1,7 +1,7 @@
 <template>
   <div
     ref="container"
-    class="relative mb-1 flex justify-center pb-0.5"
+    class="video-player relative mb-1 flex justify-center pb-0.5"
     @click="onVideoClick"
     @dblclick="togglePlay"
   >
@@ -413,34 +413,3 @@ watch(isFullscreen, async () => {
   }
 });
 </script>
-
-<style lang="less" scoped>
-progress::-moz-progress-bar {
-  @apply bg-blue-300;
-}
-progress::-webkit-progress-value {
-  @apply bg-blue-300;
-}
-progress {
-  @apply bg-blue-300;
-}
-
-input[type='range'] {
-  height: 4px;
-  width: calc(100% - 4px);
-  margin-left: -6px;
-  &::-webkit-slider-thumb {
-    @apply appearance-none w-3 h-3 rounded-lg bg-blue-500;
-  }
-}
-
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 500ms ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
-}
-</style>

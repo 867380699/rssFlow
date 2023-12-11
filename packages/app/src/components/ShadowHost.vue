@@ -21,11 +21,15 @@ onMounted(() => {
   }
 });
 
-watch([shadowRoot, props.customStyle], () => {
-  if (shadowRoot.value && props.customStyle) {
-    shadowRoot.value.adoptedStyleSheets = props.customStyle;
-  }
-});
+watch(
+  () => [shadowRoot, props.customStyle],
+  () => {
+    if (shadowRoot.value && props.customStyle) {
+      shadowRoot.value.adoptedStyleSheets = props.customStyle;
+    }
+  },
+  { deep: true }
+);
 
 defineExpose({
   shadowRoot,

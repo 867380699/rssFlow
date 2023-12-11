@@ -214,11 +214,17 @@ const iframeError = ($event: Event) => {
 };
 
 const detaillStyleSheet = new CSSStyleSheet();
-const tailwindStyleSheet = new CSSStyleSheet();
-const customStyleSheet = new CSSStyleSheet();
-
 detaillStyleSheet.replaceSync(detailCSS);
-customStyleSheet.replaceSync(props.customStyle || '');
+
+const customStyleSheet = computed(() => {
+  const styleSheet = new CSSStyleSheet();
+  if (props.customStyle) {
+    styleSheet.replaceSync(props.customStyle);
+  }
+  return styleSheet;
+});
+
+const tailwindStyleSheet = new CSSStyleSheet();
 
 const shadowHost = ref<ComponentExposed<typeof ShadowHost> | null>(null);
 
@@ -233,6 +239,6 @@ onMounted(() => {
 const customStyle = computed(() => [
   detaillStyleSheet,
   tailwindStyleSheet,
-  customStyleSheet,
+  customStyleSheet.value,
 ]);
 </script>

@@ -69,6 +69,7 @@
           <FeedItemContent
             :feed-item="item"
             :show-iframe="isShowIframeMap[item.id!]"
+            :custom-style="feed?.config?.customStyle"
             class="content-container h-full overflow-auto"
             :style="{
               'padding-top': `${toolbarHeight}px`,

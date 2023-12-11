@@ -12,6 +12,7 @@ export type Feed = {
   parentId: number;
   rank?: string;
   config?: {
+    customStyle?: string;
     replaceLink?: {
       from?: string;
       to?: string;
