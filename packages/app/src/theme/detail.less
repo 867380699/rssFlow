@@ -1,4 +1,6 @@
 @import "./video.less";
+@import "highlight.js/styles/github-dark.css";
+
 
 .feed-content-container {
   max-width: 800px;
@@ -57,10 +59,17 @@ hr {
   @apply opacity-70 mr-4;
 }
 pre {
-  @apply overflow-auto;
+  @apply block mx-2 my-5 p-2 overflow-auto border border-gray-500 rounded text-sm;
+  max-height: 80vh;
+
+  span, strong {
+    @apply mx-0;
+  }
 }
-code[lang] {
-  @apply block rounded p-1 overflow-auto whitespace-pre;
+p > code {
+  @apply text-red-400 bg-red-50/5 px-1 py-0.5 rounded;
+  margin-left: 0.125rem;
+  margin-right: 0.125rem;
 }
 iframe {
   height: 56vw;

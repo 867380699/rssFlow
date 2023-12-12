@@ -237,8 +237,8 @@ onMounted(() => {
 });
 
 const customStyle = computed(() => [
-  detaillStyleSheet,
   tailwindStyleSheet,
+  detaillStyleSheet,
   customStyleSheet.value,
 ]);
 </script>

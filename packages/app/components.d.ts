@@ -15,6 +15,7 @@ declare module '@vue/runtime-core' {
     Aside: typeof import('./src/components/Aside.vue')['default']
     AsideItemModal: typeof import('./src/components/modals/AsideItemModal.vue')['default']
     AudioPlayer: typeof import('./src/components/AudioPlayer.vue')['default']
+    CodeView: typeof import('./src/components/CodeView.vue')['default']
     DragDownContainer: typeof import('./src/components/DragDownContainer.vue')['default']
     EditFeedModal: typeof import('./src/components/modals/EditFeedModal.vue')['default']
     EnhancedFrame: typeof import('./src/components/EnhancedFrame.vue')['default']

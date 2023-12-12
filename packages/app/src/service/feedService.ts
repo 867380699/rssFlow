@@ -1,6 +1,7 @@
 import DOMPurify from 'dompurify';
 import { VNode } from 'vue';
 
+import CodeView from '@/components/CodeView.vue';
 import { useGallery } from '@/composables/gallery';
 import { useMinHeight } from '@/composables/image';
 import { useFeedStore } from '@/store';
@@ -322,6 +323,11 @@ const buildVNode = (
       },
       [h(component, props, children.length ? children : undefined)]
     );
+  } else if (e.tagName === 'PRE') {
+    if (e.children[0].tagName === 'CODE') {
+      component = CodeView;
+      props.code = e.children[0].textContent?.trim();
+    }
   }
 
   return h(
