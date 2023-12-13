@@ -12,7 +12,7 @@
           />
         </div>
 
-        <span class="text-sm">
+        <span class="line-clamp-1 text-sm">
           {{ feedsMap && feedsMap[slotPorps.data.feedId].title }}
         </span>
       </div>
