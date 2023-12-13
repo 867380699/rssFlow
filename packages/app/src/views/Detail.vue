@@ -126,22 +126,30 @@ import { FeedItem } from '@/types';
 import { loadFeedItem, updateFeedItem } from '../service/dbService';
 
 const route = useRoute();
+const router = useRouter();
+const feedStore = useFeedStore();
 
 const itemId = ref(parseInt(route.query.id?.toString() || ''));
 
-let { feedItem } = useFeedItem(itemId);
+const { homeFeedItems: cacheFeedItems, homeNextPage } = storeToRefs(feedStore);
 
-feedItem.value = await loadFeedItem(itemId.value);
+let { feedItem } = useFeedItem(itemId); // live query
+
+// feedItem initial value before the live query returns
+if (cacheFeedItems.value) {
+  const cachedFeedItem = cacheFeedItems.value.find(
+    (item) => item.id === itemId.value
+  );
+  if (cachedFeedItem) {
+    feedItem.value = cachedFeedItem;
+  } else {
+    feedItem.value = await loadFeedItem(itemId.value);
+  }
+}
 
 const currentFeedId = computed(() => feedItem.value?.feedId || 0);
 
 const { feed } = useFeed(currentFeedId);
-
-const feedStore = useFeedStore();
-
-const router = useRouter();
-
-const { homeFeedItems: cacheFeedItems, homeNextPage } = storeToRefs(feedStore);
 
 const feedItems = ref<FeedItem[]>([feedItem.value!]);
 
