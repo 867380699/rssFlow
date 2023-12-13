@@ -1,8 +1,8 @@
 <template>
-  <div class="lazy-image relative h-full w-full rounded-sm">
+  <div class="lazy-image">
     <img
-      class="h-full w-full rounded-sm bg-slate-400 object-cover"
-      :class="{ 'opacity-0': isError }"
+      class="main-image"
+      :class="{ 'is-error': isError }"
       :style="minStyle"
       :crossorigin="crossorigin"
       :loading="loading"
@@ -12,20 +12,14 @@
     />
     <img
       :class="{
-        'opacity-0': !(isLoading || isError),
-        transition: !(isLoading || isError),
-        'bg-transparent': !(isLoading || isError),
-        'animate-brightness': isLoading && !isError,
+        'is-loading': isLoading,
+        'is-error': isError,
       }"
       :style="minStyle"
-      class="pointer-events-none absolute top-0 h-full w-full rounded-sm bg-slate-500 object-cover"
+      class="error-image"
       :src="dummySrc"
     />
-    <ion-icon
-      v-show="isError"
-      :icon="alertOutline"
-      class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-200"
-    />
+    <ion-icon v-show="isError" :icon="alertOutline" class="error-icon" />
   </div>
 </template>
 
@@ -73,3 +67,6 @@ const onError = () => {
   isError.value = true;
 };
 </script>
+<style lang="less">
+@import '../theme/image.less';
+</style>

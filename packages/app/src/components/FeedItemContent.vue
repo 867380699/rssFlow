@@ -46,7 +46,6 @@
 </template>
 
 <script setup lang="ts">
-import { cssom, observe, twind } from '@twind/core';
 import { useEventListener } from '@vueuse/core';
 import format from 'date-fns/format';
 import {
@@ -62,7 +61,6 @@ import { ComponentExposed } from 'vue-component-type-helpers';
 
 import { scrollState } from '@/composables/scroll';
 import { parseFeedContent } from '@/service/feedService';
-import { twindConfig } from '@/service/twindService';
 import { FeedItem } from '@/types';
 
 import detailCSS from '../theme/detail.less?inline';
@@ -224,21 +222,7 @@ const customStyleSheet = computed(() => {
   return styleSheet;
 });
 
-const tailwindStyleSheet = new CSSStyleSheet();
-
 const shadowHost = ref<ComponentExposed<typeof ShadowHost> | null>(null);
 
-onMounted(() => {
-  if (shadowHost.value) {
-    const sheet = cssom(tailwindStyleSheet);
-    const tw = twind(twindConfig, sheet);
-    observe(tw, shadowHost.value.shadowRoot);
-  }
-});
-
-const customStyle = computed(() => [
-  tailwindStyleSheet,
-  detaillStyleSheet,
-  customStyleSheet.value,
-]);
+const customStyle = computed(() => [detaillStyleSheet, customStyleSheet.value]);
 </script>
