@@ -24,7 +24,11 @@
       >
         <LazyImage :src="imageSrc" crossorigin="anonymous" />
         <div
-          v-if="item.meta?.videoCount || item.meta?.audioCount"
+          v-if="
+            item.meta?.videoCount ||
+            item.meta?.audioCount ||
+            item.meta?.frameCount
+          "
           class="media-badge absolute bottom-0 right-0 rounded-tl bg-black px-1 py-0.5 text-white opacity-60"
         >
           <ion-icon
@@ -35,6 +39,11 @@
           <ion-icon
             v-else-if="item.meta.audioCount"
             :icon="musicalNotesOutline"
+            class="block text-xs"
+          ></ion-icon>
+          <ion-icon
+            v-else-if="item.meta.frameCount"
+            :icon="browsersOutline"
             class="block text-xs"
           ></ion-icon>
         </div>
@@ -71,6 +80,7 @@ import {
   useIonRouter,
 } from '@ionic/vue';
 import {
+  browsersOutline,
   musicalNotesOutline,
   trashOutline,
   videocamOutline,
