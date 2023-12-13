@@ -19,7 +19,11 @@
       class="error-image"
       :src="dummySrc"
     />
-    <ion-icon v-show="isError" :icon="alertOutline" class="error-icon" />
+    <div v-show="isError" class="error-icon">
+      <slot name="error-icon">
+        <ion-icon :icon="alertOutline" />
+      </slot>
+    </div>
   </div>
 </template>
 

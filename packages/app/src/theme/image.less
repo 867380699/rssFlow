@@ -1,7 +1,11 @@
 .lazy-image {
   @apply relative h-full w-full rounded-sm;
   .main-image {
-    @apply h-full w-full rounded-sm bg-slate-400 object-cover;
+    @apply h-full w-full rounded-sm object-cover;
+
+    &.is-loading {
+      @apply bg-slate-400;
+    }
 
     &.is-error {
       @apply opacity-0;
@@ -18,6 +22,6 @@
     }
   }
   .error-icon {
-    @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-200;
+    @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-200 flex items-center justify-center;
   }
 }

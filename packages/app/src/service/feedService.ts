@@ -62,7 +62,11 @@ const parseAtomFeed = (nodeTree: Document, source: string): Feed => {
   const imageUrl =
     nodeTree
       .querySelector('feed > image > url')
-      ?.textContent?.replace(/^https?/, 'https') || '';
+      ?.textContent?.replace(/^https?/, 'https') ||
+    nodeTree
+      .querySelector('feed > logo')
+      ?.textContent?.replace(/^https?/, 'https') ||
+    '';
   const items = parseAtomFeedItems(nodeTree);
   return {
     type: 'feed',

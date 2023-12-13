@@ -7,12 +7,20 @@
         </ion-buttons>
         <div class="ml-1 flex items-center">
           <ion-thumbnail
-            class="overflow-hidden rounded-full"
+            class="shrink-0 overflow-hidden rounded-full"
             style="--size: 32px"
           >
-            <LazyImage :src="feed?.imageUrl" min-height="32" />
+            <LazyImage :src="feed?.imageUrl" min-height="32">
+              <template v-if="feed?.title" #error-icon>
+                <div class="uppercase">
+                  {{ feed.title.slice(0, 1) }}
+                </div>
+              </template>
+            </LazyImage>
           </ion-thumbnail>
-          {{ feed?.title || 'All' }}
+          <div class="line-clamp-2">
+            {{ feed?.title || 'All' }}
+          </div>
         </div>
         <ion-buttons slot="end">
           <ion-button v-show="!!newItemsCount" @click="resetHomeFeedItems">
