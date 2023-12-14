@@ -7,6 +7,7 @@
       :width="width"
       :height="height"
       :style="isFullscreen ? 'width:100%; height:100%' : ''"
+      :allowfullscreen="true"
     ></iframe>
     <div
       ref="bubble"
