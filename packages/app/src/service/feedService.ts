@@ -231,6 +231,14 @@ const isVideo = (url = '', mimeType = '') => {
 export const parseFeedContent = time((feedItem: FeedItem) => {
   DOMPurify.removeAllHooks();
   DOMPurify.addHook('afterSanitizeElements', (node) => {
+    if (node.nodeName === 'A') {
+      if (node.children.length === 1 && node.children[0].nodeName === 'IMG') {
+        node.insertAdjacentElement('beforebegin', node.children[0]);
+        if (!node.textContent?.trim()) {
+          node.textContent = node.getAttribute('href');
+        }
+      }
+    }
     if (node.nodeName === 'BR') {
       node.remove();
     }

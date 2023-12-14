@@ -12,6 +12,9 @@
 
   @apply leading-7;
 
+  .lazy-image {
+    max-width: 100vw;
+  }
 }
 
 h1,
@@ -37,7 +40,7 @@ strong {
   @apply mx-1;
 }
 a {
-  @apply text-slate-500 mx-2;
+  @apply text-slate-500 mx-1;
 }
 ol,
 ul {
@@ -74,6 +77,14 @@ p > code {
   @apply text-red-400 bg-red-50/5 px-1 py-0.5 rounded;
   margin-left: 0.125rem;
   margin-right: 0.125rem;
+}
+table, th, td {
+  @apply border border-gray-400;
+
+  a {
+    display: inline-block;
+    max-width: 90vw;
+  }
 }
 iframe {
   height: 56vw;
