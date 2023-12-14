@@ -1,5 +1,96 @@
 
 .video-player {
+  @apply ~"relative mb-1 flex justify-center pb-0.5";
+
+  .btn-play {
+    @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl text-white;
+  }
+
+  .toolbar {
+    @apply absolute inset-x-0 top-0 flex justify-between bg-gradient-to-b from-slate-900 to-transparent text-white transition-all;
+
+    &.is-fullscreen {
+      @apply pt-5;
+    }
+
+    .btn-rotate {
+      @apply p-2;
+    }
+    .btn-download {
+      @apply p-2 drop-shadow;
+    }
+  }
+
+  .control-bar {
+    @apply absolute bottom-0 w-full bg-gradient-to-t from-transparent to-transparent text-white transition-all;
+
+    .overlay {
+      @apply flex justify-between;
+
+      .left {
+        @apply select-none p-2 text-xs;
+      }
+      .right {
+        @apply flex;
+
+        .playback {
+          @apply relative;
+
+          .trigger {
+            @apply cursor-pointer select-none p-2 text-xs;
+          }
+
+          .popup {
+            @apply absolute top-0 -translate-y-full rounded-sm py-1;
+
+            .item {
+              @apply ~"cursor-pointer select-none px-2 py-0.5 text-xs";
+
+              &.selected {
+                @apply text-blue-400;
+              }
+            }
+          }
+        }
+
+        .icon-volume {
+          @apply p-2;
+        }
+
+        .icon-fullscreen {
+          @apply p-2;
+        }
+      }
+    }
+    .progress {
+      @apply relative mt-1 transition-all;
+
+      &.is-control-shown {
+        @apply px-2;
+
+        &.is-fullscreen {
+          @apply mb-3;
+        }
+      }
+      &.is-fullscreen:not(.is-landscape) {
+        @apply mb-1;
+      }
+
+      .bar {
+        @apply block w-full transition-all;
+        @apply ~"h-0.5 mt-0.5 opacity-50";
+
+        &.is-control-shown {
+          @apply h-1 mb-2;
+        }
+      }
+      
+      .seeker {
+        @apply absolute inset-x-2 top-0 appearance-none bg-transparent;
+      }
+    }
+  }
+
   progress::-moz-progress-bar {
     @apply bg-blue-300;
   }
