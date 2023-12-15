@@ -31,7 +31,13 @@
 
         <div v-if="feedItem.pubDate" class="flex items-center text-sm">
           <ion-icon :icon="calendarOutline" class="pr-1 text-sm"></ion-icon>
-          {{ format(feedItem.pubDate, 'yyyy-MM-dd HH:mm') }}
+          <span @click="toggleTimeFormat">
+            {{
+              isRelativeTime
+                ? formatRelative(feedItem.pubDate, now)
+                : format(feedItem.pubDate, 'yyyy-MM-dd HH:mm')
+            }}
+          </span>
         </div>
       </div>
       <ShadowHost
@@ -59,6 +65,7 @@ import {
 import { ComponentPublicInstance } from 'vue';
 import { ComponentExposed } from 'vue-component-type-helpers';
 
+import { formatRelative } from '@/composables/date';
 import { scrollState } from '@/composables/scroll';
 import { parseFeedContent } from '@/service/feedService';
 import { FeedItem } from '@/types';
@@ -225,4 +232,12 @@ const customStyleSheet = computed(() => {
 const shadowHost = ref<ComponentExposed<typeof ShadowHost> | null>(null);
 
 const customStyle = computed(() => [detaillStyleSheet, customStyleSheet.value]);
+
+const now = Date.now();
+
+const isRelativeTime = ref(false);
+
+const toggleTimeFormat = () => {
+  isRelativeTime.value = !isRelativeTime.value;
+};
 </script>

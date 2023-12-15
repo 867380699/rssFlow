@@ -46,7 +46,7 @@ interval(1000).subscribe(() => {
  * - <5d => N days ago
  * - others => dd/MM/YYYY
  */
-export const formatRelative = (time: number, now: number) => {
+export const formatRelative = (time = 0, now: number) => {
   const diff = now - time;
   if (diff < 1 * TimeSpan.MINUTE) {
     return t('justNow');
