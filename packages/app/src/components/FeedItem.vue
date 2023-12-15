@@ -86,6 +86,7 @@ import {
   videocamOutline,
 } from 'ionicons/icons';
 
+import cacheService from '@/service/cacheService';
 import { deleteFeedItem, updateFeedItem } from '@/service/dbService';
 import { FeedItem } from '@/types';
 import { useAlertConfirm } from '@/utils/alert';
@@ -131,17 +132,47 @@ const toDetail = (id: number, $event: Event) => {
 
   updateFeedItem(id, { isRead: 1, readTime: Date.now() });
   router.push(`/detail?id=${id}`, (baseEl, opts) => {
-    const detailTitleEl = baseEl.querySelector(
-      `h1.detail-title-${props.item.id}`
+    const t0 = Date.now();
+    const isForward = opts.direction === 'forward';
+
+    const detailContenEl = baseEl.querySelector(
+      `.detail-content-${props.item.id}`
     );
+    if (!isForward) {
+      detailContenEl.style.maxHeight = '0 !important';
+    }
+
     let detailTitleTop;
     let detailTitleFontSize = '';
-    if (detailTitleEl) {
-      ({ top: detailTitleTop } = detailTitleEl.getBoundingClientRect());
-      ({ fontSize: detailTitleFontSize } = getComputedStyle(detailTitleEl));
+    let detailTitleEl;
+
+    if (cacheService.has('detailTitleTop')) {
+      detailTitleTop = cacheService.get('detailTitleTop')?.value;
+    } else {
+      if (!detailTitleEl) {
+        detailTitleEl = baseEl.querySelector(
+          `h1.detail-title-${props.item.id}`
+        );
+      }
+      detailTitleTop = detailTitleEl.getBoundingClientRect().y; // slow
+      if (!isForward) {
+        cacheService.set('detailTitleTop', detailTitleTop);
+      }
     }
-    // console.log('push', baseEl, paddingLeft, titleTop, detailTitleTop, top);
-    const isForward = opts.direction === 'forward';
+
+    if (cacheService.has('detailTitleFontSize')) {
+      detailTitleFontSize = cacheService.get('detailTitleFontSize')?.value;
+    } else {
+      if (!detailTitleEl) {
+        detailTitleEl = baseEl.querySelector(
+          `h1.detail-title-${props.item.id}`
+        );
+      }
+      detailTitleFontSize = getComputedStyle(detailTitleEl).fontSize; // slow
+      cacheService.set('detailTitleFontSize', detailTitleFontSize);
+    }
+
+    console.log('push', detailTitleFontSize);
 
     const titleScale = parseInt(titleFontSize) / parseInt(detailTitleFontSize);
 
@@ -170,12 +201,12 @@ const toDetail = (id: number, $event: Event) => {
       .delay(isForward ? 250 : 0)
       .duration(isForward ? 200 : 0);
 
-    const detailContenEl = baseEl.querySelector(
-      `.detail-content-${props.item.id}`
-    );
-    const contentAnimation = createFadeInAnimation(detailContenEl)
-      .delay(isForward ? 300 : 0)
-      .duration(isForward ? 200 : 0);
+    const contentAnimation = isForward
+      ? createFadeInAnimation(detailContenEl).delay(300).duration(200)
+      : createNoAnimation(detailContenEl).beforeAddClass([
+          'invisible',
+          'hidden',
+        ]);
 
     const backgroundAnimation = createAnimation()
       .addElement(baseEl.querySelector(`.detail-swiper`))
@@ -212,6 +243,8 @@ const toDetail = (id: number, $event: Event) => {
     const leavingAnimation = createNoAnimation(
       isForward ? opts.leavingEl : opts.enteringEl
     );
+
+    console.log('toDetail animation cost:', Date.now() - t0);
 
     return createAnimation()
       .addAnimation([enteringAnimation, leavingAnimation])
