@@ -10,7 +10,13 @@
             class="shrink-0 overflow-hidden rounded-full"
             style="--size: 32px"
           >
-            <LazyImage :src="feed?.imageUrl" />
+            <LazyImage :src="feed?.imageUrl" loading="eager">
+              <template v-if="feed?.title" #error-icon>
+                <div class="uppercase">
+                  {{ feed.title.slice(0, 1) }}
+                </div>
+              </template>
+            </LazyImage>
           </ion-thumbnail>
           <div class="relative h-12 flex-1" @dblclick="scrollToTop">
             <div
@@ -79,11 +85,12 @@
         </swiper-slide>
       </swiper>
     </ion-content>
-    <ion-footer :class="{ 'shadow-none': !showToolbar }">
-      <ion-toolbar
-        :style="bottomToolbarStyle"
-        class="transition-all duration-200"
-      >
+    <ion-footer
+      :style="bottomToolbarStyle"
+      class="transition-all duration-200"
+      :class="{ 'shadow-none': !showToolbar }"
+    >
+      <ion-toolbar>
         <div class="flex justify-around">
           <ion-icon :icon="openOutline" @click="openLink(feedItem)" />
           <ion-icon
