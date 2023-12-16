@@ -243,7 +243,7 @@ const onItemVisible = (item: FeedItem) => {
   }
 };
 
-let undoReadAllFn: () => void;
+let undoReadAllFn: (() => void) | null;
 
 const readAll = async () => {
   console.log('read all');
@@ -252,11 +252,23 @@ const readAll = async () => {
     visibleItemIdSet.clear();
     undoReadAllFn = await readFeedItems(ids);
   }
-  (content.value?.$el as HTMLElement).scrollTo({ top: 0, behavior: 'instant' });
   if (homeFeedItems.value?.length || 0 < 20) {
     if (homeNextPage.value) {
       homeNextPage.value();
     }
+  }
+  if (feedItemFilter.value === FeedItemFilter.UNREAD) {
+    setTimeout(() => {
+      const nextUnreadItem = homeFeedItems.value?.find((item) => !item.isRead);
+      if (nextUnreadItem) {
+        content.value?.scrollItemIntoView(nextUnreadItem.id, 'instant');
+      }
+    });
+  } else {
+    (content.value?.$el as HTMLElement).scrollTo({
+      top: 0,
+      behavior: 'instant',
+    });
   }
 };
 
@@ -265,6 +277,7 @@ const undoReadAll = async () => {
   if (undoReadAllFn) {
     visibleItemIdSet.clear();
     undoReadAllFn();
+    undoReadAllFn = null;
   }
 };
 

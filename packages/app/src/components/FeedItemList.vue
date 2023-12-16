@@ -188,9 +188,9 @@ onUpdated(() => {
   }
 });
 
-const scrollItemIntoView = (id?:number) => {
+const scrollItemIntoView = (id?:number, scrollBehavior?: ScrollBehavior) => {
   if (scroller.value) {
-    scroller.value.scrollItemIntoView((item) => (item.id === id));
+    scroller.value.scrollItemIntoView((item) => (item.id === id), scrollBehavior);
   }
 };
 

@@ -279,10 +279,16 @@ watch(joinIds, () => {
   addIds.forEach((id) => addPoolItem(id));
 });
 
-const scrollItemIntoView = (find: (data: T) => boolean) => {
+const scrollItemIntoView = (
+  find: (data: T) => boolean,
+  scrollBehavior?: ScrollBehavior = 'auto'
+) => {
   const item = flatItems.value.find((item) => find(item.value.data));
   if (item && container.value) {
-    container.value.scrollTop = item.value.top - scrollOffset.value;
+    container.value.scrollTo({
+      top: item.value.top - scrollOffset.value,
+      behavior: scrollBehavior,
+    });
   }
 };
 
