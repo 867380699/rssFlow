@@ -1,10 +1,27 @@
-import hljs from 'highlight.js/lib/core';
-import css from 'highlight.js/lib/languages/css';
-import javascript from 'highlight.js/lib/languages/javascript';
-import xml from 'highlight.js/lib/languages/xml';
+import HighlightWorker from '@/worker/highlightWorker?worker';
 
-hljs.registerLanguage('xml', xml);
-hljs.registerLanguage('css', css);
-hljs.registerLanguage('javascript', javascript);
+const highlightWorker = new HighlightWorker();
 
-export default hljs;
+const resolveMap = new Map();
+
+let id = 0;
+
+highlightWorker.onmessage = (message) => {
+  const { id, result } = message.data;
+  const callback = resolveMap.get(id);
+  resolveMap.delete(id);
+  if (callback) {
+    callback(result);
+  }
+};
+
+const highlightCode = (code: string) => {
+  return new Promise<string>((resolve) => {
+    id++;
+
+    highlightWorker.postMessage({ id, code });
+    resolveMap.set(id, resolve);
+  });
+};
+
+export default { highlightCode };
