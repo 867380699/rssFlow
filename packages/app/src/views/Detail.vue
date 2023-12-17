@@ -68,6 +68,7 @@
         style="background-color: var(--ion-background-color)"
         :slides-per-view="1"
         :space-between="24"
+        :resize-observer="resizeObserverEnable"
         @transition-end="transitionEnd"
         @after-init="afterSlideInit"
       >
@@ -160,41 +161,36 @@ const { feed } = useFeed(currentFeedId);
 
 const feedItems = ref<FeedItem[]>([feedItem.value!]);
 
+const resizeObserverEnable = ref(false);
+
+onBeforeRouteLeave(() => {
+  resizeObserverEnable.value = false;
+});
+
 const isSlideInit = ref(false);
 const afterSlideInit = (swiper: SwiperClass) => {
   setTimeout(() => {
     updateSlide(itemId.value, swiper);
     isSlideInit.value = true;
+    resizeObserverEnable.value = true;
   }, 400);
 };
 
 const updateSlide = async (itemId: number, swiper: SwiperClass) => {
-  let index = 0;
-  let cacheItems: FeedItem[] = [];
   if (cacheFeedItems.value?.length) {
-    cacheItems = cacheFeedItems.value;
-  }
-  if (cacheItems.length) {
-    index = cacheItems.findIndex(({ id = 0 }) => id === itemId);
+    const index = cacheFeedItems.value.findIndex(({ id = 0 }) => id === itemId);
+    const start = Math.max(0, index - 1);
+    const end = start + 3;
+    feedItems.value = cacheFeedItems.value.slice(start, end);
 
-    if (index + 3 > cacheItems.length) {
+    const newIndex = feedItems.value.findIndex(({ id }) => id === itemId);
+    swiper.activeIndex = newIndex;
+
+    if (index + 3 > cacheFeedItems.value.length) {
       if (homeNextPage.value) {
         homeNextPage.value();
       }
     }
-
-    const start = Math.max(0, index - 1);
-    const end = start + 3;
-
-    feedItems.value = cacheItems.slice(start, end);
-
-    const newIndex = feedItems.value.findIndex(({ id }) => id === itemId);
-
-    // nextTick(() => {
-    swiper.activeIndex = newIndex;
-    // swiper.slideTo(newIndex, 0);
-    // swiper.update();
-    // });
   }
 };
 
