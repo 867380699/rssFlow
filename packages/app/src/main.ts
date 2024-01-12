@@ -25,6 +25,23 @@ import App from './App.vue';
 import router from './router';
 import Logger from './utils/log';
 
+const observer = new PerformanceObserver((list) => {
+  const entries = list.getEntries();
+  entries.forEach((entry) => {
+    if (entry.entryType === 'paint') {
+      console.info(entry.name, entry.startTime);
+    } else if (entry.entryType === 'longtask') {
+      console.warn(entry.entryType, 'duration:', entry.duration);
+    } else {
+      console.log('PerformanceObserver:', entry);
+    }
+  });
+});
+
+observer.observe({
+  entryTypes: ['paint', 'longtask'],
+});
+
 setTimeout(() => {
   SplashScreen.hide();
 }, 300);
