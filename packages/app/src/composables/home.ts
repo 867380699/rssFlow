@@ -37,6 +37,126 @@ export const useWrapLoading = () => {
   return { loading, wrapLoading };
 };
 
+export const useFeedItemTimeRange = (
+  feedIds: Ref<number[]>,
+  feedItemFilter: Ref<FeedItemFilter> = ref(FeedItemFilter.UNREAD)
+) => {
+  const timeRange = ref<IndexableType[]>([]);
+
+  let subscription: Subscription;
+  watch(
+    [feedIds, feedItemFilter],
+    () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+      let t0: number;
+      subscription = from(
+        (async () => {
+          t0 = Date.now();
+
+          let index: TypeFeedItemIndexKey;
+          let lower: IndexableType[];
+          let upper: IndexableType[];
+
+          if (feedIds.value.length === 1) {
+            const feedId = feedIds.value[0];
+            if (feedItemFilter.value === FeedItemFilter.UNREAD) {
+              index = FeedItemIndex['[feedId+isRead+pubDate]'];
+              lower = [feedId, 0, Dexie.minKey];
+              upper = [feedId, 0, Dexie.maxKey];
+            } else if (feedItemFilter.value === FeedItemFilter.FAVORITE) {
+              index = FeedItemIndex['[feedId+isFavorite+pubDate]'];
+              lower = [feedId, 1, Dexie.minKey];
+              upper = [feedId, 1, Dexie.maxKey];
+            } else {
+              index = FeedItemIndex['[feedId+pubDate]'];
+              lower = [feedId, Dexie.minKey];
+              upper = [feedId, Dexie.maxKey];
+            }
+          } else {
+            if (feedItemFilter.value === FeedItemFilter.UNREAD) {
+              index = FeedItemIndex['[isRead+pubDate]'];
+              lower = [0, Dexie.minKey];
+              upper = [0, Dexie.maxKey];
+            } else if (feedItemFilter.value === FeedItemFilter.FAVORITE) {
+              index = FeedItemIndex['[isFavorite+pubDate]'];
+              lower = [1, Dexie.minKey];
+              upper = [1, Dexie.maxKey];
+            } else {
+              index = FeedItemIndex['[pubDate+id]'];
+              lower = [Dexie.minKey];
+              upper = [Dexie.maxKey];
+            }
+          }
+
+          const query = feedDB.feedItems.where(index).between(lower, upper);
+
+          const start = await query.first();
+          const end = await query.last();
+
+          if (feedItemFilter.value === FeedItemFilter.UNREAD) {
+            const recent = Date.now() - 2 * 60 * 1000;
+            const recentQuery = feedDB.feedItems
+              .where(FeedItemIndex['readTime'])
+              .between(recent, Dexie.maxKey);
+
+            let recentStart: number = Number.MAX_SAFE_INTEGER;
+            let recentEnd: number = Number.MIN_SAFE_INTEGER;
+
+            await recentQuery.each((item) => {
+              if (feedIds.value.length === 1) {
+                if (item.feedId !== feedIds.value[0]) return;
+              }
+              if (recentStart > Number(item.pubDate)) {
+                recentStart = Number(item.pubDate);
+              }
+              if (recentEnd < Number(item.pubDate)) {
+                recentEnd = Number(item.pubDate);
+              }
+            });
+
+            if (recentStart <= recentEnd) {
+              const startTime = Math.min(
+                recentStart,
+                start?.pubDate || Dexie.minKey
+              );
+              const endTime = Math.max(
+                recentEnd,
+                end?.pubDate || Number.MAX_SAFE_INTEGER
+              );
+
+              console.log(
+                'timeRange:recent',
+                startTime,
+                endTime,
+                `${Date.now() - t0}ms`
+              );
+
+              return [startTime, endTime + 1];
+            }
+          }
+          console.log('timeRange:', Date.now() - t0);
+          console.log('timeRange:q', start?.pubDate, end?.pubDate);
+          return [
+            start?.pubDate === undefined ? Dexie.minKey : start?.pubDate,
+            end?.pubDate === undefined ? Dexie.maxKey : end?.pubDate + 1,
+          ];
+        })()
+      ).subscribe((result) => {
+        console.log('timeRange:liveQuery', result, `${Date.now() - t0}ms`);
+
+        timeRange.value = result;
+      });
+    },
+    { immediate: true }
+  );
+
+  return {
+    timeRange,
+  };
+};
+
 export const usePages = (
   indexName: TypeFeedItemIndexKey,
   reverse = false,
@@ -102,8 +222,13 @@ export const usePages = (
           IDBKeyRange.bound(defaultLower, defaultUpper),
           reverse ? 'next' : 'prev'
         );
-        if (lastIndex && lastIndex.toString() !== lastPage.value.toString()) {
-          appendPages([lastIndex as IndexableType]);
+        if (lastIndex) {
+          if (lastIndex.toString() !== lastPage.value.toString()) {
+            appendPages([lastIndex as IndexableType]);
+          } else if (pages.value.length === 1) {
+            // edge case: only one record
+            appendPages([lastIndex as IndexableType]);
+          }
         }
       }
     }
@@ -163,20 +288,23 @@ export const usePages = (
 export const useFeedItems = (
   feedIds: number[],
   feedItemFilter: FeedItemFilter = FeedItemFilter.UNREAD,
-  orderDesc: boolean
+  orderDesc: boolean,
+  timeRange: IndexableType[] = []
 ) => {
   const indexName =
     feedIds.length === 1
       ? FeedItemIndex['[feedId+pubDate+id]']
       : FeedItemIndex['[pubDate+id]'];
 
+  const timeLower = toRaw(timeRange[0]) || Dexie.minKey;
+  const timeUpper = toRaw(timeRange[1]) || Dexie.maxKey;
   const range =
     feedIds.length === 1
       ? [
-          [feedIds[0], Dexie.minKey],
-          [feedIds[0], Dexie.maxKey],
+          [feedIds[0], timeLower] as IndexableType,
+          [feedIds[0], timeUpper] as IndexableType,
         ]
-      : [Dexie.minKey, Dexie.maxKey];
+      : [[timeLower] as IndexableType, [timeUpper] as IndexableType];
 
   const reverse = orderDesc;
 
@@ -268,7 +396,7 @@ export const useFeedItems = (
     if (isFirstPage) {
       endPageIndex = (await next())?.value;
       firstPage.value = endPageIndex;
-      console.log(firstPage.value);
+      console.log('nextPage', firstPage.value);
     }
     const nextIndex = (await next())?.value;
 
@@ -434,30 +562,47 @@ export const useHomeFeedItems = (
     nextPage.value();
   }
 
+  const { timeRange } = useFeedItemTimeRange(feedIds, feedItemFilter);
+
   const reset = () => {
     console.log('reset home');
     result.value?.destory();
     result.value = useFeedItems(
       feedIds.value,
       feedItemFilter.value,
-      orderDesc.value
+      orderDesc.value,
+      timeRange.value
     );
     if (nextPage.value) {
       nextPage.value();
     }
   };
 
+  let t0 = Date.now();
   watch(
-    [feedIds, feedItemFilter, orderDesc],
+    [feedIds, feedItemFilter, orderDesc, timeRange],
     (
-      [feedIds, feedItemFilter, orderDesc],
-      [oldFeedIds, oldFeedItemFilter, oldOrderDesc]
+      [feedIds, feedItemFilter, orderDesc, currentTimeRange],
+      [oldFeedIds, oldFeedItemFilter, oldOrderDesc, oldTimeRange]
     ) => {
+      const t1 = Date.now();
+      console.log(
+        'useHomeFeedItems:timeRange',
+        toRaw(currentTimeRange),
+        t1 - t0
+      );
+      t0 = t1;
       const idChanged = feedIds.join(',') !== oldFeedIds?.join(',');
       const filterChanged = feedItemFilter !== oldFeedItemFilter;
       const orderChanged = orderDesc !== oldOrderDesc;
 
-      const shouldReset = idChanged || filterChanged || orderChanged;
+      if (idChanged || filterChanged) {
+        timeRange.value = [Dexie.minKey, Dexie.minKey];
+      }
+
+      const timeRangeReady = currentTimeRange.length || orderChanged;
+
+      const shouldReset = timeRangeReady;
 
       if (shouldReset) {
         reset();

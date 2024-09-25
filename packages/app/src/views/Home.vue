@@ -237,7 +237,7 @@ watch([feedId, isHomeFeedItemsDesc, feedItemFilter], () => {
 });
 
 const onItemVisible = (item: FeedItem) => {
-  console.log('item visible:', item.id, item.title);
+  // console.log('item visible:', item.id, item.title);
   if (item.id) {
     visibleItemIdSet.add(item.id);
   }

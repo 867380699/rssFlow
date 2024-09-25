@@ -18,11 +18,17 @@ const feedIndexes = ['++id', 'title', 'parentId', 'rank', 'type'] as const;
 const feedItemIndexes = [
   '++id',
   'feedId',
+  'readTime',
+  '[isRead+isFavorite+readTime]',
+  '[isRead+pubDate]',
+  '[isFavorite+pubDate]',
+  '[pubDate+id]',
   '[feedId+isRead]',
   '[feedId+isRead+isFavorite+readTime]',
+  '[feedId+pubDate]',
+  '[feedId+isRead+pubDate]',
+  '[feedId+isFavorite+pubDate]',
   '[feedId+isRead+isFavorite+readTime+id]',
-  '[isRead+isFavorite+readTime]',
-  '[pubDate+id]',
   '[feedId+pubDate+id]',
 ] as const;
 
@@ -52,7 +58,7 @@ export class FeedDB extends Dexie {
 
   constructor() {
     super(DB_NAME);
-    this.version(43).stores({
+    this.version(53).stores({
       feeds: feedIndexes.join(','),
       feedItems: feedItemIndexes.join(','),
     });
@@ -320,11 +326,9 @@ export const getPages = async (
     }
   });
   console.log(
-    `paging index:${tableName}${indexName}range:${JSON.stringify(
-      range
-    )} reverse:${reverse}`,
-    // keyPages,
-    performance.now() - t0
+    `paging index: feedDB.${tableName}.where('${indexName}').between([${range[0]}],[${range[1]}]) reverse:${reverse}`,
+    // JSON.stringify(keyPages),
+    `${(performance.now() - t0).toFixed(2)}ms`
   );
   return keyPages;
 };
