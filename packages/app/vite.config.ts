@@ -16,16 +16,12 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
   build: {
     minify: false,
-    rollupOptions: {
-      plugins: [
-        analyze({
-          summaryOnly: true,
-          limit: 20,
-        }),
-      ],
-    },
   },
   plugins: [
+    analyze({
+      summaryOnly: true,
+      limit: 10,
+    }),
     // basicSsl(),
     proxyTable({
       '^/rss/.*': {
