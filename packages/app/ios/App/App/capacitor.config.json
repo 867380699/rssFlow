@@ -17,5 +17,12 @@
 		"SplashScreen": {
 			"launchAutoHide": false
 		}
-	}
+	},
+	"packageClassList": [
+		"AppPlugin",
+		"FilesystemPlugin",
+		"SplashScreenPlugin",
+		"StatusBarPlugin",
+		"CDVPlugin"
+	]
 }

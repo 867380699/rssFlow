@@ -1,52 +1,52 @@
 PODS:
-  - Capacitor (5.0.1):
+  - Capacitor (6.1.2):
     - CapacitorCordova
-  - CapacitorApp (5.0.5):
+  - CapacitorApp (6.0.1):
     - Capacitor
-  - CapacitorCordova (5.0.1)
-  - CapacitorFilesystem (5.0.1):
+  - CapacitorCordova (6.1.2)
+  - CapacitorFilesystem (6.0.1):
     - Capacitor
-  - CapacitorSplashScreen (5.0.1):
+  - CapacitorSplashScreen (6.0.2):
     - Capacitor
-  - CapacitorStatusBar (5.0.5):
+  - CapacitorStatusBar (6.0.1):
     - Capacitor
-  - CordovaPlugins (5.1.1):
+  - CordovaPlugins (6.1.2):
     - CapacitorCordova
 
 DEPENDENCIES:
-  - "Capacitor (from `../../../../node_modules/.pnpm/@capacitor+ios@5.0.1_@capacitor+core@5.1.1/node_modules/@capacitor/ios`)"
-  - "CapacitorApp (from `../../../../node_modules/.pnpm/@capacitor+app@5.0.5_@capacitor+core@5.1.1/node_modules/@capacitor/app`)"
-  - "CapacitorCordova (from `../../../../node_modules/.pnpm/@capacitor+ios@5.0.1_@capacitor+core@5.1.1/node_modules/@capacitor/ios`)"
-  - "CapacitorFilesystem (from `../../../../node_modules/.pnpm/@capacitor+filesystem@5.0.1_@capacitor+core@5.1.1/node_modules/@capacitor/filesystem`)"
-  - "CapacitorSplashScreen (from `../../../../node_modules/.pnpm/@capacitor+splash-screen@5.0.1_@capacitor+core@5.1.1/node_modules/@capacitor/splash-screen`)"
-  - "CapacitorStatusBar (from `../../../../node_modules/.pnpm/@capacitor+status-bar@5.0.5_@capacitor+core@5.1.1/node_modules/@capacitor/status-bar`)"
+  - "Capacitor (from `../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios`)"
+  - "CapacitorApp (from `../../../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app`)"
+  - "CapacitorCordova (from `../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios`)"
+  - "CapacitorFilesystem (from `../../../../node_modules/.pnpm/@capacitor+filesystem@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/filesystem`)"
+  - "CapacitorSplashScreen (from `../../../../node_modules/.pnpm/@capacitor+splash-screen@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/splash-screen`)"
+  - "CapacitorStatusBar (from `../../../../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
 
 EXTERNAL SOURCES:
   Capacitor:
-    :path: "../../../../node_modules/.pnpm/@capacitor+ios@5.0.1_@capacitor+core@5.1.1/node_modules/@capacitor/ios"
+    :path: "../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios"
   CapacitorApp:
-    :path: "../../../../node_modules/.pnpm/@capacitor+app@5.0.5_@capacitor+core@5.1.1/node_modules/@capacitor/app"
+    :path: "../../../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app"
   CapacitorCordova:
-    :path: "../../../../node_modules/.pnpm/@capacitor+ios@5.0.1_@capacitor+core@5.1.1/node_modules/@capacitor/ios"
+    :path: "../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios"
   CapacitorFilesystem:
-    :path: "../../../../node_modules/.pnpm/@capacitor+filesystem@5.0.1_@capacitor+core@5.1.1/node_modules/@capacitor/filesystem"
+    :path: "../../../../node_modules/.pnpm/@capacitor+filesystem@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/filesystem"
   CapacitorSplashScreen:
-    :path: "../../../../node_modules/.pnpm/@capacitor+splash-screen@5.0.1_@capacitor+core@5.1.1/node_modules/@capacitor/splash-screen"
+    :path: "../../../../node_modules/.pnpm/@capacitor+splash-screen@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/splash-screen"
   CapacitorStatusBar:
-    :path: "../../../../node_modules/.pnpm/@capacitor+status-bar@5.0.5_@capacitor+core@5.1.1/node_modules/@capacitor/status-bar"
+    :path: "../../../../node_modules/.pnpm/@capacitor+status-bar@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/status-bar"
   CordovaPlugins:
     :path: "../capacitor-cordova-ios-plugins"
 
 SPEC CHECKSUMS:
-  Capacitor: c550a8485d00d5d92b4f91a245f43555a2230eb6
-  CapacitorApp: 9d91a5a400e4ad8cafe66a02cc9d8073c864d7bb
-  CapacitorCordova: 4f8cf089c691f0e21032d22b1014808308cbc467
-  CapacitorFilesystem: d8ea223e82008ee25dd305cf4d5ca3acba8aa172
-  CapacitorSplashScreen: b3aa7304627a561e98d894d6fb301eced671e599
-  CapacitorStatusBar: 540867ac3c63875b65bebd888f695de50a13a9a2
-  CordovaPlugins: 58818627c2be03522dc7f5d422a486cf97b30886
+  Capacitor: 679f9673fdf30597493a6362a5d5bf233d46abc2
+  CapacitorApp: 0bc633b4eae40a1f32cd2834788fad3bc42da6a1
+  CapacitorCordova: f48c89f96c319101cd2f0ce8a2b7449b5fb8b3dd
+  CapacitorFilesystem: 37fb3aa5c945b4539ab11c74a5c57925a302bf24
+  CapacitorSplashScreen: 250df9ef8014fac5c7c1fd231f0f8b1d8f0b5624
+  CapacitorStatusBar: b81d4fb5d4e0064c712018071b3ab4b810b39a63
+  CordovaPlugins: 6636f4c58f1aef4d803c6ff3e8344eb39c00ba68
 
-PODFILE CHECKSUM: 6e88e4194ace4337bea816aaa76a48fb60cc3a49
+PODFILE CHECKSUM: 958b14d296845df3c15448d957b359b688d33807
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.15.2

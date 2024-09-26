@@ -19,7 +19,7 @@
       <ion-thumbnail
         v-show="item.image || item.video"
         slot="end"
-        class="relative m-1 h-[64px] w-[64px]"
+        class="relative m-1 size-[64px]"
         :class="{ 'opacity-25': item.isRead }"
       >
         <LazyImage :src="imageSrc" crossorigin="anonymous" />
@@ -48,17 +48,16 @@
           ></ion-icon>
         </div>
       </ion-thumbnail>
-      <ion-label
-        class="m-0 h-[80px] py-1"
-        :class="{ 'opacity-25': item.isRead }"
-      >
+      <ion-label class="m-0 h-20 py-1" :class="{ 'opacity-25': item.isRead }">
         <div
-          class="line absolute left-[5.5px] block h-[72px] w-[1px] rounded bg-slate-400 opacity-20"
+          class="line absolute left-[5.5px] block h-64 w-px rounded bg-slate-400 opacity-20"
         ></div>
-        <h2 class="line-clamp-2 whitespace-normal pl-5 !text-base">
+        <h2
+          class="line-clamp-2 !overflow-hidden whitespace-normal pl-5 leading-[26px]"
+        >
           {{ item.title }}
         </h2>
-        <p class="pl-5 !text-sm font-light">
+        <p class="line-clamp-2 !overflow-hidden pl-5 !text-sm font-light">
           {{ item.shortDescription?.slice(0, 100) }}
         </p>
       </ion-label>
