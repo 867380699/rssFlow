@@ -10,7 +10,8 @@
     "sync": "$npm_execpath build;cap sync;cap sync @capacitor-community/electron",
     "ios": "cap open ios",
     "android": "cap open android",
-    "electron": "cap open @capacitor-community/electron"
+    "electron": "cap open @capacitor-community/electron",
+    "run:android": "$npm_execpath build;cap sync;cd android && ./gradlew installDebug --no-daemon && adb shell am start -n com.ll.rssflow/.MainActivity"
   },
   "dependencies": {
     "@capacitor-community/electron": "^5.0.1",
