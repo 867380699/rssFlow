@@ -13,6 +13,7 @@ import 'swiper/css';
 
 import { Capacitor, CapacitorHttp } from '@capacitor/core';
 import { SplashScreen } from '@capacitor/splash-screen';
+import { StatusBar } from '@capacitor/status-bar';
 import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
 import { useRegisterSW } from 'virtual:pwa-register/vue';
@@ -24,6 +25,15 @@ import { i18n } from '@/i18n';
 import App from './App.vue';
 import router from './router';
 import Logger from './utils/log';
+
+try {
+  StatusBar.setOverlaysWebView({ overlay: true }).then(() => {
+    console.log('setOverlaysWebView');
+    document.documentElement.classList.add('immersive');
+  });
+} catch (e) {
+  console.log(e);
+}
 
 const observer = new PerformanceObserver((list) => {
   const entries = list.getEntries();

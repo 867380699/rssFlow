@@ -14,9 +14,8 @@
 .fab-enter-from,
 .fab-leave-to {
   opacity: 0;
-  transform: translate(0, 30px) scale(0,0);
+  transform: translate(0, 30px) scale(0, 0);
 }
-
 
 .popup-enter-active,
 .popup-leave-active {
@@ -27,4 +26,13 @@
 .popup-leave-to {
   opacity: 0;
   transform: translate(0, 30px);
+}
+
+html.immersive {
+  ion-header ion-toolbar {
+    padding-top: 24px;
+  }
+  ion-footer.footer-toolbar-padding ion-toolbar:last-of-type {
+    padding-bottom: 20px;
+  }
 }
