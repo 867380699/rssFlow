@@ -60,7 +60,7 @@
       :scroll-y="false"
       :style="{
         '--padding-top': `-${toolbarHeight}px`,
-        '--padding-bottom': `-${toolbarHeight}px`,
+        '--padding-bottom': `calc(${-toolbarHeight}px - var(--safe-area-inset-bottom))`,
       }"
     >
       <swiper
@@ -279,13 +279,15 @@ from(currentScrollState, { deep: true })
 
 const topToolbarStyle = computed(() => ({
   top: `${
-    showToolbar.value ? 0 : -toolbarHeight.value + (showProgress.value ? 1 : 1)
+    showToolbar.value ? 0 : -toolbarHeight.value + (showProgress.value ? 2 : 1)
   }px`,
 }));
 
 const bottomToolbarStyle = computed(() => ({
   opacity: `${showToolbar.value ? 1 : 0}`,
-  bottom: `${showToolbar.value ? 0 : -toolbarHeight.value}px`,
+  bottom: showToolbar.value
+    ? 0
+    : `calc(${-toolbarHeight.value}px - var(--safe-area-inset-bottom))`,
 }));
 
 const showProgress = computed(() => {

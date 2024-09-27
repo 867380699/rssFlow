@@ -14,6 +14,7 @@ import 'swiper/css';
 import { Capacitor, CapacitorHttp } from '@capacitor/core';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { StatusBar } from '@capacitor/status-bar';
+import { SafeArea } from '@capacitor-community/safe-area';
 import { IonicVue } from '@ionic/vue';
 import { createPinia } from 'pinia';
 import { useRegisterSW } from 'virtual:pwa-register/vue';
@@ -34,6 +35,14 @@ try {
 } catch (e) {
   console.log(e);
 }
+
+SafeArea.enable({
+  config: {
+    customColorsForSystemBars: true,
+    statusBarColor: '#00000000',
+    navigationBarColor: '#00000000',
+  },
+});
 
 const observer = new PerformanceObserver((list) => {
   const entries = list.getEntries();
