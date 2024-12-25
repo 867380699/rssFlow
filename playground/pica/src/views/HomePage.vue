@@ -15,13 +15,13 @@
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>
-          <ion-radio-group v-model="suffix">
-            <ion-radio value="?origin">Origin</ion-radio>
-            <ion-radio value="?thumbnail">Canvas</ion-radio>
-            <ion-radio value="?pica">Pica</ion-radio>
-          </ion-radio-group>
-        </ion-title>
+        <ion-buttons slot="end">
+            <ion-select interface="popover" :value="suffix" @ionChange="onSuffixChange">
+              <ion-select-option value="?origin">Origin</ion-select-option>
+              <ion-select-option value="?thumbnail">Canvas</ion-select-option>
+              <ion-select-option value="?pica">Pica</ion-select-option>
+            </ion-select>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
@@ -31,7 +31,7 @@
       </ion-refresher>
 
       <ion-list>
-        <MessageListItem v-for="message in messages" :key="message.id" :message="message" :suffix="suffix"/>
+        <MessageListItem v-for="message in messages" :key="message.id" :message="message" :suffix="suffix" />
       </ion-list>
     </ion-content>
   </ion-page>
@@ -51,14 +51,18 @@ import {
   IonButtons,
   IonMenuButton,
   IonItem,
-  IonRadio,
-  IonRadioGroup
+  IonSelect,
+  IonSelectOption
 } from '@ionic/vue';
 import MessageListItem from '@/components/MessageListItem.vue';
 import { getMessages, Message } from '@/data/messages';
 import { ref } from 'vue';
 
 const suffix = ref('?origin');
+
+const onSuffixChange = (ev: CustomEvent) => {
+  suffix.value = ev.detail.value
+}
 
 const messages = ref<Message[]>(getMessages());
 
