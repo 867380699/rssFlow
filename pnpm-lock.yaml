@@ -33,8 +33,8 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1
       '@capacitor-community/safe-area':
-        specifier: 6.0.0-alpha.7
-        version: 6.0.0-alpha.7(@capacitor/core@6.1.2)
+        specifier: 6.0.0-alpha.8
+        version: 6.0.0-alpha.8(@capacitor/core@6.1.2)
       '@capacitor/android':
         specifier: ^6.1.2
         version: 6.1.2(@capacitor/core@6.1.2)
@@ -1085,8 +1085,8 @@ packages:
   '@capacitor-community/electron@5.0.1':
     resolution: {integrity: sha512-4/x12ycTq0Kq8JIn/BmIBdFVP5Cqw8iA6SU6YfFjmONfjW3OELwsB3zwLxOwAjLxnjyCMOBHl4ci9E5jLgZgAQ==}
 
-  '@capacitor-community/safe-area@6.0.0-alpha.7':
-    resolution: {integrity: sha512-hOPVxXGP7d76dJXm417+Wqe1hqS6/J7K8vSMcBcUooRLqy+OFQHetXpgh1DGxoUhcmIOJ+/q/0TOqk11rcW8Cw==}
+  '@capacitor-community/safe-area@6.0.0-alpha.8':
+    resolution: {integrity: sha512-/BIK5jh3CQe6A83FbvuL4Qoed7cikWf28nLAotDbvNvQwTW2rU3JkeWrnGMx/oVudUqlc0OypR+X1oELq4Zcog==}
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
@@ -6249,7 +6249,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@capacitor-community/safe-area@6.0.0-alpha.7(@capacitor/core@6.1.2)':
+  '@capacitor-community/safe-area@6.0.0-alpha.8(@capacitor/core@6.1.2)':
     dependencies:
       '@capacitor/core': 6.1.2
 

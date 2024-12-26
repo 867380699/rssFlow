@@ -11,7 +11,7 @@ install! 'cocoapods', :disable_input_output_paths => true
 def capacitor_pods
   pod 'Capacitor', :path => '../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../../../node_modules/.pnpm/@capacitor+ios@6.1.2_@capacitor+core@6.1.2/node_modules/@capacitor/ios'
-  pod 'CapacitorCommunitySafeArea', :path => '../../../../node_modules/.pnpm/@capacitor-community+safe-area@6.0.0-alpha.7_@capacitor+core@6.1.2/node_modules/@capacitor-community/safe-area'
+  pod 'CapacitorCommunitySafeArea', :path => '../../../../node_modules/.pnpm/@capacitor-community+safe-area@6.0.0-alpha.8_@capacitor+core@6.1.2/node_modules/@capacitor-community/safe-area'
   pod 'CapacitorApp', :path => '../../../../node_modules/.pnpm/@capacitor+app@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/app'
   pod 'CapacitorFilesystem', :path => '../../../../node_modules/.pnpm/@capacitor+filesystem@6.0.1_@capacitor+core@6.1.2/node_modules/@capacitor/filesystem'
   pod 'CapacitorSplashScreen', :path => '../../../../node_modules/.pnpm/@capacitor+splash-screen@6.0.2_@capacitor+core@6.1.2/node_modules/@capacitor/splash-screen'
