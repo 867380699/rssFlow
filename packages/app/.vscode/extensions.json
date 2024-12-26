@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "folke.vscode-monorepo-workspace",
+    "vue.volar",
+    "bradlc.vscode-tailwindcss",
+    "lokalise.i18n-ally"
+  ]
+}
