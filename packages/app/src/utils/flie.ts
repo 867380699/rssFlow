@@ -41,6 +41,9 @@ export const downloadFile = async (data: string, name: string) => {
     downloadLink(blobUrl, name);
 
     window.URL.revokeObjectURL(blobUrl);
+    return {
+      uri: name,
+    };
   }
 };
 
