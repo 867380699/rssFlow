@@ -2,13 +2,11 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button />
-        </ion-buttons>
-        <div class="ml-1 flex items-center">
+        <ion-buttons slot="start" class="pl-1">
           <ion-thumbnail
             class="shrink-0 overflow-hidden rounded-full"
             style="--size: 32px"
+            @click="() => toggleMenu()"
           >
             <LazyImage :src="feed?.imageUrl" min-height="32">
               <template v-if="feed?.title" #error-icon>
@@ -18,6 +16,8 @@
               </template>
             </LazyImage>
           </ion-thumbnail>
+        </ion-buttons>
+        <div class="ml-1 flex items-center">
           <div class="line-clamp-2">
             {{ feed?.title || 'All' }}
           </div>
@@ -119,6 +119,7 @@ import {
   type IonRefresher,
   type RefresherCustomEvent,
   createGesture,
+  menuController,
 } from '@ionic/vue';
 import {
   checkmarkDoneOutline,
@@ -401,6 +402,10 @@ watch(
     }
   }
 );
+
+const toggleMenu = () => {
+  menuController.toggle();
+};
 </script>
 <style>
 .ion-content-scroll-host::-webkit-scrollbar {
