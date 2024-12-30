@@ -44,6 +44,11 @@ self.addEventListener('message', (event) => {
     main = event.ports[0];
     platform = event.data.platform;
     event.ports[0].postMessage(SW_VERSION);
+  } else if (event.data.type === 'INFO') {
+    event.ports[0].postMessage({
+      version: SW_VERSION,
+      platform: platform,
+    });
   }
 });
 

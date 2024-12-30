@@ -9,5 +9,7 @@
   "daysAgo": "{n}d ago",
   "yesterday": "yesterday h a",
   "unsupportedFormant": "Unsupported formant",
-  "loading": "loading"
+  "loading": "loading",
+  "settings": "Settings",
+  "about": "About"
 }

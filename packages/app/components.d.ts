@@ -9,6 +9,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AboutModal: typeof import('./src/components/modals/AboutModal.vue')['default']
     Accordion: typeof import('./src/components/Accordion.vue')['default']
     AddFeedModal: typeof import('./src/components/modals/AddFeedModal.vue')['default']
     AddGroupModal: typeof import('./src/components/modals/AddGroupModal.vue')['default']
@@ -49,8 +50,9 @@ declare module '@vue/runtime-core' {
     IonLabel: typeof import('@ionic/vue')['IonLabel']
     IonList: typeof import('@ionic/vue')['IonList']
     IonMenu: typeof import('@ionic/vue')['IonMenu']
-    IonMenuButton: typeof import('@ionic/vue')['IonMenuButton']
+    IonNote: typeof import('@ionic/vue')['IonNote']
     IonPage: typeof import('@ionic/vue')['IonPage']
+    IonPopover: typeof import('@ionic/vue')['IonPopover']
     IonRefresher: typeof import('@ionic/vue')['IonRefresher']
     IonRefresherContent: typeof import('@ionic/vue')['IonRefresherContent']
     IonRouterOutlet: typeof import('@ionic/vue')['IonRouterOutlet']
@@ -69,6 +71,7 @@ declare module '@vue/runtime-core' {
     RecycleTreeList: typeof import('./src/components/RecycleTreeList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SettingsModal: typeof import('./src/components/modals/SettingsModal.vue')['default']
     ShadowHost: typeof import('./src/components/ShadowHost.vue')['default']
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
   }

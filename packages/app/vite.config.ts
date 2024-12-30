@@ -3,6 +3,7 @@
 import vueI18n from '@intlify/unplugin-vue-i18n/vite';
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import vue from '@vitejs/plugin-vue';
+import { execSync } from 'child_process';
 import path from 'path';
 import analyze from 'rollup-plugin-analyzer';
 import AutoImport from 'unplugin-auto-import/vite';
@@ -12,6 +13,10 @@ import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
 import proxyTable from 'vite-plugin-proxy';
 import { VitePWA } from 'vite-plugin-pwa';
+
+const gitRevisionHash = execSync('git rev-parse --short HEAD')
+  .toString()
+  .trim();
 
 export default defineConfig({
   build: {
@@ -109,6 +114,9 @@ export default defineConfig({
       },
     }),
   ],
+  define: {
+    'import.meta.env.GIT_REVISION': JSON.stringify(gitRevisionHash),
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

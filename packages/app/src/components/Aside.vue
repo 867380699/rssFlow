@@ -6,9 +6,17 @@
         style="-webkit-app-region: drag"
       ></div>
       <ion-buttons slot="primary">
-        <ion-button @click="showMoreMenu">
+        <ion-button id="more-trigger">
           <ion-icon slot="icon-only" :icon="ellipsisHorizontal"></ion-icon>
         </ion-button>
+        <ion-popover
+          trigger="more-trigger"
+          trigger-action="click"
+          alignment="end"
+          css-class="more-menu-popover"
+        >
+          <MoreMenuModal></MoreMenuModal>
+        </ion-popover>
       </ion-buttons>
       <ion-title>RSS</ion-title>
     </ion-toolbar>
@@ -27,6 +35,14 @@
         </ion-fab-button>
         <ion-fab-button @click="toggleReorder">
           <ion-icon :icon="reorderFour" />
+        </ion-fab-button>
+      </ion-fab-list>
+      <ion-fab-list side="top">
+        <ion-fab-button @click="importOPML">
+          <ion-icon :icon="enterOutline" />
+        </ion-fab-button>
+        <ion-fab-button @click="exportOPML">
+          <ion-icon :icon="exitOutline" />
         </ion-fab-button>
       </ion-fab-list>
     </ion-fab>
@@ -50,10 +66,12 @@
   </ion-content>
 </template>
 <script lang="ts" setup>
-import { modalController, popoverController } from '@ionic/vue';
+import { modalController } from '@ionic/vue';
 import {
   add,
   ellipsisHorizontal,
+  enterOutline,
+  exitOutline,
   folder,
   logoRss,
   reorderFour,
@@ -63,6 +81,7 @@ import { storeToRefs } from 'pinia';
 import FeedList from '@/components/FeedList.vue';
 import router from '@/router';
 import { useFeedStore } from '@/store';
+import { exportOPML, importOPML } from '@/utils/ompl';
 
 import AddFeedModal from './modals/AddFeedModal.vue';
 import AddGroupModal from './modals/AddGroupModal.vue';
@@ -104,14 +123,6 @@ const showAddGroupModal = async () => {
   modal.present();
 };
 
-const showMoreMenu = async (event: Event) => {
-  const popover = await popoverController.create({
-    component: MoreMenuModal,
-    event,
-  });
-  await popover.present();
-};
-
 const toggleReorder = () => {
   reorderToggle.value = !reorderToggle.value;
 };
@@ -125,5 +136,13 @@ const toggleReorder = () => {
 }
 .sortable-drag {
   opacity: 1 !important;
+}
+.more-menu-popover {
+  --width: auto;
+}
+</style>
+<style lang="less" scoped>
+ion-fab-button {
+  --border-radius: 8px;
 }
 </style>

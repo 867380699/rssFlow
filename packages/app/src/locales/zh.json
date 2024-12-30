@@ -17,5 +17,7 @@
   "today": "a h 时",
   "yesterday": "昨日 a h 时",
   "unsupportedFormant": "不支持的格式",
-  "loading": "请稍候"
+  "loading": "请稍候",
+  "about": "关于",
+  "settings": "设置"
 }

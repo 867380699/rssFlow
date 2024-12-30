@@ -52,13 +52,15 @@ export const FeedItemIndex: TypeFeedItemIndex = Object.fromEntries(
   new Map(feedItemIndexes.map((k) => [k, k]))
 ) as TypeFeedItemIndex;
 
+export const dbVersion = 53;
+
 export class FeedDB extends Dexie {
   feeds!: Table<Feed>;
   feedItems!: Table<FeedItem>;
 
   constructor() {
     super(DB_NAME);
-    this.version(53).stores({
+    this.version(dbVersion).stores({
       feeds: feedIndexes.join(','),
       feedItems: feedItemIndexes.join(','),
     });
