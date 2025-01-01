@@ -65,6 +65,31 @@
             </template>
           </ion-card-content>
         </ion-card>
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>FeedItems</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item>
+              <ion-label>Total</ion-label>
+              <ion-note slot="end">
+                {{ feedItemStatistic?.total }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              <ion-label>Unread</ion-label>
+              <ion-note slot="end">
+                {{ feedItemStatistic?.unread }}
+              </ion-note>
+            </ion-item>
+            <ion-item>
+              <ion-label>Favorite</ion-label>
+              <ion-note slot="end">
+                {{ feedItemStatistic?.favorite }}
+              </ion-note>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
       </ion-list>
     </div>
   </ion-content>
@@ -74,6 +99,7 @@
 import { Capacitor } from '@capacitor/core';
 import { closeOutline } from 'ionicons/icons';
 
+import { useAllFeedItemStatistic } from '@/composables';
 import { dbVersion } from '@/service/dbService';
 
 import { version } from '../../../package.json';
@@ -117,4 +143,6 @@ const formatBytes = (bytes: number) => {
   }
   return `${bytes} B`;
 };
+
+const { feedItemStatistic } = useAllFeedItemStatistic();
 </script>

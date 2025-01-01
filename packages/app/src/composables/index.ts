@@ -48,6 +48,36 @@ export const useAllFeeds = () => {
   };
 };
 
+export const useAllFeedItemStatistic = () => {
+  const feedItemStatistic = useObservable<{
+    total: number;
+    unread: number;
+    favorite: number;
+  }>(
+    liveQuery(async () => {
+      const [total, unread, favorite] = await Promise.all([
+        feedDB.feedItems.count(),
+        feedDB.feedItems
+          .where('[isRead+pubDate]')
+          .between([0, Dexie.minKey], [0, Dexie.maxKey])
+          .count(),
+        feedDB.feedItems
+          .where('[isFavorite+pubDate]')
+          .between([1, Dexie.minKey], [1, Dexie.maxKey])
+          .count(),
+      ]);
+      return {
+        total,
+        unread,
+        favorite,
+      };
+    }) as any
+  );
+  return {
+    feedItemStatistic,
+  };
+};
+
 export const useChildFeeds = (parentId: Ref<number>) => {
   const feeds = ref<Feed[]>([]);
   let subscription: Subscription;
