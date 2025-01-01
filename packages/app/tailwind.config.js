@@ -9,6 +9,7 @@ module.exports = {
         primary: '#3880ff',
         secondary: '#3dc2ff',
         tertiary: '#5260ff',
+        'ion-toolbar-background': 'var(--ion-toolbar-background)',
       },
       keyframes: {
         brightness: {

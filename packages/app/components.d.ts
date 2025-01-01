@@ -56,8 +56,6 @@ declare module '@vue/runtime-core' {
     IonRefresher: typeof import('@ionic/vue')['IonRefresher']
     IonRefresherContent: typeof import('@ionic/vue')['IonRefresherContent']
     IonRouterOutlet: typeof import('@ionic/vue')['IonRouterOutlet']
-    IonSegment: typeof import('@ionic/vue')['IonSegment']
-    IonSegmentButton: typeof import('@ionic/vue')['IonSegmentButton']
     IonSpinner: typeof import('@ionic/vue')['IonSpinner']
     IonSplitPane: typeof import('@ionic/vue')['IonSplitPane']
     IonTextarea: typeof import('@ionic/vue')['IonTextarea']

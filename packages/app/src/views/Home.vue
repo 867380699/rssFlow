@@ -21,16 +21,33 @@
           <div class="line-clamp-2">
             {{ feed?.title || 'All' }}
           </div>
+          <div
+            v-show="!!newItemsCount"
+            class="ml-2 flex items-center space-x-1 rounded-full bg-primary px-2 py-1"
+            @click="resetHomeFeedItems"
+          >
+            <span class="text-xs leading-none">{{ newItemsCount }}</span>
+            <ion-icon class="text-xs leading-none" :icon="sparklesOutline" />
+          </div>
         </div>
         <ion-buttons slot="end">
-          <ion-button v-show="!!newItemsCount" @click="resetHomeFeedItems">
-            <ion-icon slot="icon-only" :icon="sparklesOutline" />
-            <span
-              class="absolute bottom-[-4px] right-[-8px] p-0.5 text-[10px] leading-none"
-              >{{ Math.min(newItemsCount || 0, 99) }}</span
+          <ion-buttons class="bg-ion-toolbar-background">
+            <ion-button
+              v-for="tab in tabs"
+              :key="tab.key"
+              :value="tab.key"
+              class="transition-all"
+              :class="{
+                'max-w-0': !isTabActive,
+                '!m-0': true,
+                'text-primary': feedItemFilter === tab.key,
+                'max-w-20': isTabActive || feedItemFilter === tab.key,
+              }"
+              @click="() => selectTab(tab)"
             >
-          </ion-button>
-
+              <ion-icon class="text-2xl" :icon="tab.icon"></ion-icon>
+            </ion-button>
+          </ion-buttons>
           <ion-button
             v-bind="{ color: isHomeFeedItemsDesc ? 'medium' : 'primary' }"
             @click="toggleDesc"
@@ -87,30 +104,6 @@
         </ion-fab>
       </Transition>
     </ion-content>
-    <ion-footer>
-      <ion-toolbar>
-        <progress-bar
-          v-if="false"
-          class="absolute inset-x-0 top-0"
-          :progress="homeLoading ? 1 : 0"
-          :loading="homeLoading"
-        ></progress-bar>
-        <ion-segment
-          class="flex-1"
-          :value="feedItemFilter"
-          @ion-change="segmentChanged($event)"
-        >
-          <ion-segment-button
-            v-for="tab in tabs"
-            :key="tab.key"
-            :value="tab.key"
-          >
-            <ion-label>{{ '' }}</ion-label>
-            <ion-icon :icon="tab.icon"></ion-icon>
-          </ion-segment-button>
-        </ion-segment>
-      </ion-toolbar>
-    </ion-footer>
   </ion-page>
 </template>
 
@@ -177,9 +170,16 @@ const tabs = [
   { key: FeedItemFilter.FAVORITE, label: t('favorite'), icon: starOutline },
 ];
 
-const segmentChanged = async ($event: CustomEvent) => {
-  feedItemFilter.value = $event.detail.value;
-  ionRouter.replace(`/home?type=${$event.detail.value}&id=${feedId.value}`);
+const isTabActive = ref(false);
+
+const selectTab = async (tab: { key: FeedItemFilter; label: string }) => {
+  if (!isTabActive.value) {
+    isTabActive.value = true;
+    return;
+  }
+  feedItemFilter.value = tab.key;
+  ionRouter.replace(`/home?type=${tab.key}&id=${feedId.value}`);
+  isTabActive.value = false;
 };
 
 const { feed } = useFeed(feedId);
