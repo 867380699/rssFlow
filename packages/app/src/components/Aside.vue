@@ -129,13 +129,18 @@ const toggleReorder = () => {
 </script>
 <style lang="less">
 .sortable-ghost {
-  opacity: 0;
-}
-.sortable-chosen {
-  font-weight: bold;
+  opacity: 0.2;
+  outline: 1px dashed #ccc;
+  outline-offset: -1px;
+  color: transparent !important;
+
+  [data-id] {
+    outline: 1px dashed #ccc;
+    outline-offset: -1px;
+  }
 }
 .sortable-drag {
-  opacity: 1 !important;
+  opacity: 0 !important;
 }
 .more-menu-popover {
   --width: auto;

@@ -1,25 +1,32 @@
 <template>
-  <div ref="listRef" class="pb-1" :data-parent-id="parentId">
+  <div
+    ref="listRef"
+    :data-parent-id="parentId"
+    :class="{
+      'space-y-4 py-2': reorderToggle,
+      'px-2': reorderToggle && !parentId,
+      'pb-0 pt-4': reorderToggle && parentId,
+    }"
+  >
     <template v-for="feed in feeds" :key="feed.id">
       <div
         v-if="feed.type === 'feed'"
         :key="feed.id"
         :data-id="feed.id"
-        class="flex h-12 items-center py-2 pr-2"
-        :class="{ 'pl-2': !reorderToggle }"
+        class="flex items-center border-0 border-dashed border-transparent"
+        :class="{ 'h-12 p-2': !reorderToggle, 'h-8': reorderToggle }"
         @click="selectItem(feed.id)"
         @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
       >
+        <div class="flex-1 cursor-pointer truncate">
+          {{ feed.title }}
+        </div>
         <ion-icon
           v-if="reorderToggle"
           :icon="reorderThree"
           class="reorder-icon cursor-move p-2 text-lg"
         />
-        <div class="flex-1 cursor-pointer truncate">
-          {{ feed.title }}
-        </div>
-
-        <ion-badge>
+        <ion-badge v-show="!reorderToggle">
           {{ itemCounts && itemCounts[feed.id || 0] }}
         </ion-badge>
       </div>
@@ -30,26 +37,31 @@
       >
         <accordion>
           <template #header="{ isExpand }">
-            <div class="flex h-12 items-center py-2 pr-2">
+            <div
+              class="flex items-center"
+              :class="{
+                'h-12 py-2 pr-2': !reorderToggle,
+                '-ml-2 h-8': reorderToggle,
+              }"
+            >
               <ion-icon
-                v-if="reorderToggle"
-                :icon="reorderThree"
-                class="reorder-icon cursor-move p-2 text-lg"
-              />
-              <ion-icon
-                v-else
                 :icon="chevronDownOutline"
                 class="p-2 text-lg transition"
                 :class="{ '-rotate-90': !isExpand }"
               />
               <div
-                class="flex-1 cursor-pointer"
+                class="flex-1 cursor-pointer transition-all"
                 @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
                 @click.prevent.stop="selectItem(feed.id)"
               >
                 {{ feed.title }}
               </div>
-              <ion-badge>
+              <ion-icon
+                v-if="reorderToggle"
+                :icon="reorderThree"
+                class="reorder-icon cursor-move p-2 text-lg transition-all"
+              />
+              <ion-badge v-show="!reorderToggle">
                 {{ itemCounts && itemCounts[feed.id || 0] }}
               </ion-badge>
             </div>
@@ -135,6 +147,9 @@ const selectItem = (id?: number) => {
 };
 
 const showContextMenu = async (event: Event, feed: Feed) => {
+  if (props.reorderToggle) {
+    return;
+  }
   const popover = await popoverController.create({
     component: AsideItemModal,
     componentProps: { feed },
