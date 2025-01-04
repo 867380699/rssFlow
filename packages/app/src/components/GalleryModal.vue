@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-full" @click="() => close()">
+  <div class="size-full" @click="() => close()">
     <swiper
       class="h-full overflow-auto"
       :modules="[Virtual, Zoom, Pagination]"
@@ -33,7 +33,8 @@ import 'swiper/css/zoom';
 import 'swiper/css/pagination';
 
 import { createAnimation, GestureDetail, modalController } from '@ionic/vue';
-import { Pagination, Swiper as SwiperClass, Virtual, Zoom } from 'swiper';
+import { Swiper as SwiperClass } from 'swiper';
+import { Pagination, Virtual, Zoom } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 
 import DragDownContainer from './DragDownContainer.vue';
