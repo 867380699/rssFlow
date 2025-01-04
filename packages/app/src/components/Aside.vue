@@ -128,7 +128,15 @@ const toggleReorder = () => {
 };
 </script>
 <style lang="less">
-.sortable-ghost {
+.more-menu-popover {
+  --width: auto;
+}
+</style>
+<style lang="less" scoped>
+ion-fab-button {
+  --border-radius: 8px;
+}
+::v-deep(.sortable-ghost) {
   opacity: 0.2;
   outline: 1px dashed #ccc;
   outline-offset: -1px;
@@ -139,15 +147,7 @@ const toggleReorder = () => {
     outline-offset: -1px;
   }
 }
-.sortable-drag {
+::v-deep(.sortable-drag) {
   opacity: 0 !important;
-}
-.more-menu-popover {
-  --width: auto;
-}
-</style>
-<style lang="less" scoped>
-ion-fab-button {
-  --border-radius: 8px;
 }
 </style>

@@ -17,7 +17,9 @@
         label-placement="floating"
       />
     </ion-item>
-    <ion-button @click="addGroup"> Add </ion-button>
+    <div class="p-2">
+      <ion-button expand="block" @click="addGroup"> Add </ion-button>
+    </div>
   </ion-content>
 </template>
 
