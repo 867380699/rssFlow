@@ -11,6 +11,7 @@ import { VueUseComponentsResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
+import { analyzer } from 'vite-bundle-analyzer';
 import proxyTable from 'vite-plugin-proxy';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -23,6 +24,7 @@ export default defineConfig({
     minify: false,
   },
   plugins: [
+    // analyzer({}),
     analyze({
       summaryOnly: true,
       limit: 10,
