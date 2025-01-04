@@ -4,7 +4,7 @@
       v-if="showIframe"
       ref="frame"
       :src="feedItem.link"
-      class="h-full w-full"
+      class="size-full"
       @load="iframeLoad"
       @error="iframeError"
     />
