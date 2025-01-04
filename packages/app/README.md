@@ -1,20 +1,22 @@
-# Ionic
+# Notes
 
-##  Vue Template
+## Ionic
+
+### Vue Template
 
 ><https://github.com/aaronksaunders/ionicv6-beta-vue-vite-project>
 
-## Native HTTP
+### Native HTTP
 
 > <https://capacitorjs.com/docs/apis/http>
 
-## Splash
+### Splash
 
 > <https://forum.ionicframework.com/t/white-screen-after-splash-and-before-my-home-screen-capacitor-ionic/202724>
 
-# Dexie
+## Dexie
 
-## Schema
+### Schema
 
 |         |                               |
 |---------|-------------------------------|
@@ -23,7 +25,7 @@
 | `*`     | Multi-entry index             |
 | `[A+B]` | Compound index or primary key |
 
-# Decorator
+## Decorator
 
 ```json
 {
@@ -57,7 +59,7 @@ class Person {
 }
 ```
 
-# Web Workers
+## Web Workers
 
 Data is sent between workers and the main thread via a system of messages.
 
@@ -66,9 +68,9 @@ Data is sent between workers and the main thread via a system of messages.
 
 The data is copied rather than shared.
 
-## MessageChannel
+### MessageChannel
 
-## Workbox
+### Workbox
 
 ```js
 class CacheFirst {
@@ -120,7 +122,7 @@ class StrategyHandler {
 }
 ```
 
-# B64 to Blob
+## B64 to Blob
 
 ```js
 const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
@@ -144,7 +146,7 @@ const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
 }
 ```
 
-# CacheStorage
+## CacheStorage
 
 ```js
 const cache = await caches.open(cacheName);
@@ -153,7 +155,7 @@ await cache.put(request, resp);
 const cacheResponse = await cache.match(url);
 ```
 
-# Animation
+## Animation
 
 ```js
 document.getElementById("alice").animate(
@@ -169,15 +171,15 @@ document.getElementById("alice").animate(
 
 ```
 
-# CSS
+## CSS
 
-## clip-path
+### clip-path
 
 ```css
 clip-path: inset(1rem 3rem 3rem calc(10vw - 5px));
 ```
 
-# vue
+## vue
 
 ```js
 h('strong', 'Foo')
@@ -185,31 +187,13 @@ h('strong', 'Foo')
 createVNode('strong', null, 'Foo')
 ```
 
-
 ```js
 export interface Events {
   onContextmenu: MouseEvent
 }
 ```
 
-
-# Lodash
-
-```yml
-bundle size:    3.29 MB
-original size:  5.155 MB
-code reduction: 36.17 %
-module count:   402
-
---- export * as _ from 'lodash-es'
-
-bundle size:    3.309 MB
-original size:  5.176 MB
-code reduction: 36.06 %
-module count:   435
-```
-
-# OPML
+## OPML
 
 Outline Processor Markup Language
 
@@ -233,5 +217,5 @@ Outline Processor Markup Language
 </opml>
 ```
 
-- `<outline>` 
-  + `text` - required attribute
+- `<outline>`
+  - `text` - required attribute
