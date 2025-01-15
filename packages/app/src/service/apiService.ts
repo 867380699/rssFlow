@@ -5,23 +5,26 @@ const platform = Capacitor.getPlatform();
 export const getFeeds = async (url: string) => {
   const match = /^(.*?:\/\/)?(.*)$/.exec(url);
   if (match) {
-    const [, protocol, rest] = match;
+    const [, protocol = 'http://', rest] = match;
+    const targetUrl = protocol + rest;
     if (platform === 'web') {
       const host = import.meta.env.VITE_PROXY_HOST || '/rss/?url=';
-      const origin = (protocol || 'http://') + rest;
-      const resp = await fetch(host + origin);
+      const resp = await fetch(host + targetUrl);
       if (resp.status !== 200) {
         throw new Error(resp.statusText);
       }
       const feedText = await resp.text();
       return feedText;
     } else if (platform === 'electron') {
-      const feedText = await electronAPI.fetchRSS(url);
+      const feedText = await electronAPI.fetchRSS(targetUrl);
       return feedText;
     } else {
-      const resp = await CapacitorHttp.get({
-        url: (protocol || 'http://') + rest,
-      });
+      let resp = await CapacitorHttp.get({ url: targetUrl });
+      if (resp.status === 301) {
+        const redirectedUrl = resp.headers['Location'];
+        console.log('[301] redirected to: ', redirectedUrl);
+        resp = await CapacitorHttp.get({ url: redirectedUrl });
+      }
       return resp.data;
     }
   } else {
