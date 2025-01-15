@@ -143,12 +143,22 @@ export const useFeedItemCounts = () => {
         )
       );
 
+      const feedMap = feeds.reduce((o, f) => {
+        if (f.id) {
+          o[f.id] = f;
+        }
+        return o;
+      }, {} as Record<number, Feed>);
+
       return feeds.reduce(
         (o, v, i) => {
           if (v.type === 'feed') {
             o[v.id || -1] = counts[i];
-            if (v.parentId !== 0) {
-              o[v.parentId] = (o[v.parentId] || 0) + counts[i]; // Group
+
+            let currentParentId = v.parentId;
+            while (currentParentId) {
+              o[currentParentId] = (o[currentParentId] || 0) + counts[i];
+              currentParentId = feedMap[currentParentId]?.parentId || 0;
             }
             o[0] += counts[i]; // All
           }
