@@ -33,7 +33,7 @@
               <ion-note slot="end">{{ platform }}</ion-note>
             </ion-item>
             <ion-item>
-              <ion-label>Service Wroker</ion-label>
+              <ion-label>Service Worker</ion-label>
               <ion-note slot="end">{{ swInfo }}</ion-note>
             </ion-item>
           </ion-card-content>
@@ -54,6 +54,18 @@
                 <ion-label>Cache</ion-label>
                 <ion-note slot="end">
                   {{ formatBytes(storageInfo.usageDetails.caches || 0) }}
+                </ion-note>
+              </ion-item>
+              <ion-item>
+                <ion-note slot="start">Images</ion-note>
+                <ion-note slot="end">
+                  {{ imageCount }}
+                </ion-note>
+              </ion-item>
+              <ion-item>
+                <ion-note slot="start">Thumbnails</ion-note>
+                <ion-note slot="end">
+                  {{ thumbnailCount }}
                 </ion-note>
               </ion-item>
               <ion-item>
@@ -145,4 +157,18 @@ const formatBytes = (bytes: number) => {
 };
 
 const { feedItemStatistic } = useAllFeedItemStatistic();
+
+const imageCount = ref(0);
+const thumbnailCount = ref(0);
+
+caches.open('images').then((cache) => {
+  cache.keys().then((keys) => {
+    imageCount.value = keys.length;
+  });
+});
+caches.open('thumbnail').then((cache) => {
+  cache.keys().then((keys) => {
+    thumbnailCount.value = keys.length;
+  });
+});
 </script>
