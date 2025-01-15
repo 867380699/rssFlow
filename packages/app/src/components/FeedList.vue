@@ -27,7 +27,7 @@
           class="reorder-icon cursor-move p-2 text-lg"
         />
         <ion-badge v-show="!reorderToggle">
-          {{ itemCounts && itemCounts[feed.id || 0] }}
+          {{ itemCounts?.[feed.id || 0] || 0 }}
         </ion-badge>
       </div>
       <div
@@ -62,7 +62,7 @@
                 class="reorder-icon cursor-move p-2 text-lg transition-all"
               />
               <ion-badge v-show="!reorderToggle">
-                {{ itemCounts && itemCounts[feed.id || 0] }}
+                {{ itemCounts?.[feed.id || 0] || 0 }}
               </ion-badge>
             </div>
           </template>
@@ -82,7 +82,7 @@
 </template>
 
 <script lang="ts" setup>
-import { IonBadge, IonIcon, popoverController } from '@ionic/vue';
+import { popoverController } from '@ionic/vue';
 import { chevronDownOutline, reorderThree } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 import Sortable from 'sortablejs';
@@ -105,7 +105,7 @@ const { feeds } = useChildFeeds(toRef(props, 'parentId'));
 const feedStore = useFeedStore();
 const { feedItemCounts: itemCounts } = storeToRefs(feedStore);
 
-const listRef = ref<HTMLElement | null>(null);
+const listRef = useTemplateRef<HTMLElement>('listRef');
 
 onMounted(() => {
   if (listRef.value) {
