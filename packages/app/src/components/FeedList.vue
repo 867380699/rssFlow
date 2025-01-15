@@ -138,6 +138,9 @@ onMounted(() => {
 const { setFeedId } = useFeedStore();
 
 const selectItem = (id?: number) => {
+  if (props.reorderToggle) {
+    return;
+  }
   setFeedId(id || 0);
   emit('itemSelected', id);
   router.replace({
