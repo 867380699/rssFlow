@@ -8,8 +8,8 @@
 
     <ion-content :fullscreen="true">
       <ion-list>
-        <ion-item>
-          Browser
+        <ion-item v-for="menu in menus" :key="menu.name" :router-link="menu.link">
+          {{ menu.name }}
         </ion-item>
       </ion-list>
     </ion-content>
@@ -26,5 +26,16 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/vue';
+
+const menus = [
+  {
+    name: 'Browser',
+    link: '/browser',
+  },
+  {
+    name: 'InAppBrowser',
+    link: '/in-app-browser',
+  },
+];
 
 </script>
