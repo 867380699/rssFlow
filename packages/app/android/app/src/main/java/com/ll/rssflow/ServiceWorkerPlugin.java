@@ -10,14 +10,9 @@ import android.webkit.WebResourceResponse;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.webkit.ServiceWorkerClientCompat;
-import androidx.webkit.ServiceWorkerControllerCompat;
 
 import com.getcapacitor.Plugin;
 import com.getcapacitor.annotation.CapacitorPlugin;
-
-import java.net.URI;
-import java.util.Map;
 
 @CapacitorPlugin
 public class ServiceWorkerPlugin extends Plugin {
@@ -26,9 +21,9 @@ public class ServiceWorkerPlugin extends Plugin {
     @Override
     public void load() {
         
-        ServiceWorkerControllerCompat swController = ServiceWorkerControllerCompat.getInstance();
+        ServiceWorkerController swController = ServiceWorkerController.getInstance();
 
-        swController.setServiceWorkerClient(new ServiceWorkerClientCompat() {
+        swController.setServiceWorkerClient(new ServiceWorkerClient() {
             @Override
             public WebResourceResponse shouldInterceptRequest(@NonNull WebResourceRequest request) {
                 Uri url = request.getUrl();
@@ -39,5 +34,4 @@ public class ServiceWorkerPlugin extends Plugin {
             }
         });
     }
-
 }
