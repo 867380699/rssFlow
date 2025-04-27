@@ -78,14 +78,29 @@ p > code {
   margin-left: 0.125rem;
   margin-right: 0.125rem;
 }
-table, th, td {
-  @apply border border-gray-400;
 
-  a {
-    display: inline-block;
-    max-width: 90vw;
+.table-view {
+  @apply w-full overflow-x-auto;
+
+  table {
+    @apply w-full text-center;
+
+    th,
+    td {
+      @apply border border-gray-400 p-1;
+
+      a {
+        display: inline-block;
+        max-width: 90vw;
+      }
+    }
+
+    th {
+      @apply whitespace-nowrap;
+    }
   }
 }
+
 iframe {
   height: 56vw;
   @apply w-full mb-2;

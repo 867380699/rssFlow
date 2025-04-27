@@ -2,6 +2,7 @@ import DOMPurify from 'dompurify';
 import { VNode } from 'vue';
 
 import CodeView from '@/components/CodeView.vue';
+import TableView from '@/components/TableView.vue';
 import { useGallery } from '@/composables/gallery';
 import { useMinHeight } from '@/composables/image';
 import { useFeedStore } from '@/store';
@@ -330,14 +331,7 @@ const buildVNode = (
   } else if (e.tagName === 'IFRAME') {
     component = EnhancedFrame;
   } else if (e.tagName === 'TABLE') {
-    return h(
-      'div',
-      {
-        style: 'overflow: scroll; max-width: 100%;',
-        class: 'ignoreTouchClass',
-      },
-      [h(component, props, children.length ? children : undefined)]
-    );
+    component = TableView;
   } else if (e.tagName === 'PRE') {
     if (e.children[0].tagName === 'CODE') {
       component = CodeView;

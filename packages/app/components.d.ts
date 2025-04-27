@@ -69,6 +69,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SettingsModal: typeof import('./src/components/modals/SettingsModal.vue')['default']
     ShadowHost: typeof import('./src/components/ShadowHost.vue')['default']
+    TableView: typeof import('./src/components/TableView.vue')['default']
     VideoPlayer: typeof import('./src/components/VideoPlayer.vue')['default']
   }
 }
