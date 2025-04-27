@@ -4,11 +4,15 @@
       <ion-toolbar>
         <ion-buttons slot="start" class="pl-1">
           <ion-thumbnail
-            class="shrink-0 overflow-hidden rounded-full"
+            class="shrink-0"
             style="--size: 32px"
             @click="() => toggleMenu()"
           >
-            <LazyImage :src="feed?.imageUrl" min-height="32">
+            <LazyImage
+              class="overflow-hidden !rounded-full"
+              :src="feed?.imageUrl"
+              min-height="32"
+            >
               <template v-if="feed?.title" #error-icon>
                 <div class="uppercase">
                   {{ feed.title.slice(0, 1) }}

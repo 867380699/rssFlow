@@ -1,8 +1,13 @@
 <template>
-  <div class="lazy-image">
+  <div
+    class="lazy-image"
+    :class="{
+      'is-loading': isLoading,
+      'is-error': isError,
+    }"
+  >
     <img
       class="main-image"
-      :class="{ 'is-error': isError }"
       :style="minStyle"
       :crossorigin="crossorigin"
       :loading="loading"
@@ -10,15 +15,7 @@
       :onload="onLoad"
       :onerror="onError"
     />
-    <img
-      :class="{
-        'is-loading': isLoading,
-        'is-error': isError,
-      }"
-      :style="minStyle"
-      class="error-image"
-      :src="dummySrc"
-    />
+    <img :style="minStyle" class="error-image" :src="dummySrc" />
     <div v-show="isError" class="error-icon">
       <slot name="error-icon">
         <ion-icon :icon="alertOutline" />
@@ -46,14 +43,15 @@ const props = withDefaults(
 );
 
 const isError = ref(false);
-const isLoading = ref(true);
+const isLoading = ref(false);
 
 watch(
   () => props.src,
   () => {
     isError.value = false;
-    isLoading.value = true;
-  }
+    isLoading.value = !!props.src;
+  },
+  { immediate: true }
 );
 
 const dummySrc =
@@ -72,5 +70,5 @@ const onError = () => {
 };
 </script>
 <style lang="less">
-@import '../theme/image.less';
+@import '../theme/image.less'; // The component will be used in a ShadowHost
 </style>

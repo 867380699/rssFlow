@@ -1,27 +1,66 @@
+@property --bg-angle {
+  inherits: false;
+  initial-value: 0deg;
+  syntax: '<angle>';
+}
+@property --bg-shift {
+  inherits: false;
+  initial-value: 0%;
+  syntax: '<percentage>';
+}
+@keyframes spin {
+  to {
+    --bg-angle: 360deg;
+  }
+}
+@keyframes shift {
+  to {
+    --bg-shift: 100%;
+  }
+}
+
 .lazy-image {
   @apply relative h-full w-full rounded-sm;
   .main-image {
     @apply h-full w-full rounded-sm object-cover;
-
-    &.is-loading {
-      @apply bg-slate-400;
-    }
-
-    &.is-error {
-      @apply opacity-0;
-    }
   }
   .error-image {
     @apply opacity-0 bg-transparent transition pointer-events-none absolute top-0 left-0 h-full w-full rounded-sm object-cover;
-    &.is-loading,
-    &.is-error {
-      @apply opacity-100 bg-slate-500;
-    }
-    &.is-loading {
-      @apply animate-brightness;
-    }
   }
   .error-icon {
     @apply absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-slate-200 flex items-center justify-center;
+  }
+  &.is-loading {
+    border: 2px solid transparent;
+    background: linear-gradient(
+        var(--bg-angle),
+        rgb(100 116 139) 0 40%,
+        rgb(61 194 255),
+        rgb(100 116 139) 60%
+      )
+      border-box;
+    animation: spin 10s infinite linear;
+
+    .main-image {
+      @apply bg-slate-400;
+    }
+    .error-image {
+      @apply opacity-100 bg-slate-500;
+      background-image: linear-gradient(
+        90deg,
+        rgb(100 116 139) 0%,
+        rgb(128 133 154) var(--bg-shift),
+        rgb(100 116 139) 100%
+      );
+      animation: shift 5s linear infinite alternate;
+    }
+  }
+  &.is-error {
+    .main-image {
+      @apply opacity-0;
+    }
+    .error-image {
+      @apply opacity-100 bg-slate-500;
+    }
   }
 }
