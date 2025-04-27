@@ -8,12 +8,16 @@ PODS:
   - CapacitorCordova (7.2.0)
   - CapacitorFilesystem (7.0.1):
     - Capacitor
+  - CapacitorInappbrowser (2.1.0):
+    - Capacitor
+    - OSInAppBrowserLib (~> 2.0)
   - CapacitorSplashScreen (7.0.1):
     - Capacitor
   - CapacitorStatusBar (7.0.1):
     - Capacitor
   - CordovaPlugins (7.2.0):
     - CapacitorCordova
+  - OSInAppBrowserLib (2.0.0)
 
 DEPENDENCIES:
   - "Capacitor (from `../../../../node_modules/.pnpm/@capacitor+ios@7.2.0_@capacitor+core@7.2.0/node_modules/@capacitor/ios`)"
@@ -21,9 +25,14 @@ DEPENDENCIES:
   - "CapacitorCommunitySafeArea (from `../../../../node_modules/.pnpm/@capacitor-community+safe-area@7.0.0-alpha.1_@capacitor+core@7.2.0/node_modules/@capacitor-community/safe-area`)"
   - "CapacitorCordova (from `../../../../node_modules/.pnpm/@capacitor+ios@7.2.0_@capacitor+core@7.2.0/node_modules/@capacitor/ios`)"
   - "CapacitorFilesystem (from `../../../../node_modules/.pnpm/@capacitor+filesystem@7.0.1_@capacitor+core@7.2.0/node_modules/@capacitor/filesystem`)"
+  - "CapacitorInappbrowser (from `../../../../node_modules/.pnpm/@capacitor+inappbrowser@2.1.0_@capacitor+core@7.2.0/node_modules/@capacitor/inappbrowser`)"
   - "CapacitorSplashScreen (from `../../../../node_modules/.pnpm/@capacitor+splash-screen@7.0.1_@capacitor+core@7.2.0/node_modules/@capacitor/splash-screen`)"
   - "CapacitorStatusBar (from `../../../../node_modules/.pnpm/@capacitor+status-bar@7.0.1_@capacitor+core@7.2.0/node_modules/@capacitor/status-bar`)"
   - CordovaPlugins (from `../capacitor-cordova-ios-plugins`)
+
+SPEC REPOS:
+  trunk:
+    - OSInAppBrowserLib
 
 EXTERNAL SOURCES:
   Capacitor:
@@ -36,6 +45,8 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/.pnpm/@capacitor+ios@7.2.0_@capacitor+core@7.2.0/node_modules/@capacitor/ios"
   CapacitorFilesystem:
     :path: "../../../../node_modules/.pnpm/@capacitor+filesystem@7.0.1_@capacitor+core@7.2.0/node_modules/@capacitor/filesystem"
+  CapacitorInappbrowser:
+    :path: "../../../../node_modules/.pnpm/@capacitor+inappbrowser@2.1.0_@capacitor+core@7.2.0/node_modules/@capacitor/inappbrowser"
   CapacitorSplashScreen:
     :path: "../../../../node_modules/.pnpm/@capacitor+splash-screen@7.0.1_@capacitor+core@7.2.0/node_modules/@capacitor/splash-screen"
   CapacitorStatusBar:
@@ -49,10 +60,12 @@ SPEC CHECKSUMS:
   CapacitorCommunitySafeArea: 3f049619072ab5d0da2529bcb05b358ff6c13dc1
   CapacitorCordova: 5967b9ba03915ef1d585469d6e31f31dc49be96f
   CapacitorFilesystem: e6261c410436f54908c11f94336c5b58286b1db0
+  CapacitorInappbrowser: b9b366f37561bf92da226df6353631ac01cc5b92
   CapacitorSplashScreen: 1d67815a422a9b61539c94f283c08ed56667c0fc
   CapacitorStatusBar: 6e7af040d8fc4dd655999819625cae9c2d74c36f
   CordovaPlugins: 3d8c01e506daab8bcb69d32b39992a62b95679fa
+  OSInAppBrowserLib: 232c74691cffb9959aa07b1d5ff57d96fca2af7f
 
-PODFILE CHECKSUM: 0a33477a70d6790019f96b2ae63787127c99e2c2
+PODFILE CHECKSUM: e22b88ca93970d2849d20329ae2e7d32be563402
 
 COCOAPODS: 1.16.2

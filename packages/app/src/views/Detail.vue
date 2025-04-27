@@ -109,6 +109,10 @@
 </template>
 
 <script lang="ts" setup>
+import {
+  DefaultSystemBrowserOptions,
+  InAppBrowser,
+} from '@capacitor/inappbrowser';
 import { from } from '@vueuse/rxjs';
 import {
   ellipse,
@@ -326,7 +330,14 @@ const openLink = (feedItem?: FeedItem) => {
     } else {
       link = feedItem.link;
     }
-    window.open(link);
+
+    InAppBrowser.openInSystemBrowser({
+      url: link,
+      options: DefaultSystemBrowserOptions,
+    }).catch((e) => {
+      console.log(e);
+      window.open(link);
+    });
   }
 };
 

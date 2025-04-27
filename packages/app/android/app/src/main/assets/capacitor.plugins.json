@@ -12,6 +12,10 @@
 		"classpath": "com.capacitorjs.plugins.filesystem.FilesystemPlugin"
 	},
 	{
+		"pkg": "@capacitor/inappbrowser",
+		"classpath": "com.capacitorjs.osinappbrowser.InAppBrowserPlugin"
+	},
+	{
 		"pkg": "@capacitor/splash-screen",
 		"classpath": "com.capacitorjs.plugins.splashscreen.SplashScreenPlugin"
 	},

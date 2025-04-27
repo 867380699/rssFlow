@@ -47,6 +47,9 @@ importers:
       '@capacitor/filesystem':
         specifier: ^7.0.1
         version: 7.0.1(@capacitor/core@7.2.0)
+      '@capacitor/inappbrowser':
+        specifier: ^2.1.0
+        version: 2.1.0(@capacitor/core@7.2.0)
       '@capacitor/ios':
         specifier: ^7.2.0
         version: 7.2.0(@capacitor/core@7.2.0)
