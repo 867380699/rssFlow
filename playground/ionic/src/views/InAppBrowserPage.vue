@@ -9,6 +9,7 @@
       <IonList>
         <IonItem @click="openInWebView">openInWebView</IonItem>
         <IonItem @click="openInSystemBrowser">openInSystemBrowser</IonItem>
+        <IonItem @click="openInSystemBrowserBottomSheet">openInSystemBrowserBottomSheet</IonItem>
         <IonItem @click="openInExternalBrowser">openInExternalBrowser</IonItem>
       </IonList>
     </IonContent>
@@ -33,9 +34,11 @@ defineOptions({
 })
 
 
+const url = "https://www.v2ex.com";
+
 const openInWebView = async () => {
   await InAppBrowser.openInWebView({
-    url: "https://www.v2ex.com",
+    url,
     options: {
       ...DefaultWebViewOptions,
     }
@@ -44,16 +47,34 @@ const openInWebView = async () => {
 
 const openInSystemBrowser = async () => {
   await InAppBrowser.openInSystemBrowser({
-    url: "https://www.v2ex.com",
+    url,
     options: {
       ...DefaultSystemBrowserOptions
+    }
+  });
+}
+const openInSystemBrowserBottomSheet = async () => {
+  await InAppBrowser.openInSystemBrowser({
+    url,
+    options: {
+      android: {
+        ...DefaultSystemBrowserOptions.android,
+        viewStyle: 0,
+        bottomSheetOptions: {
+          height: 400,
+          isFixed: false
+        }
+      },
+      iOS: {
+        ...DefaultSystemBrowserOptions.iOS
+      }
     }
   });
 }
 
 const openInExternalBrowser = async () => {
   await InAppBrowser.openInExternalBrowser({
-    url: "https://www.v2ex.com"
+    url
   });
 }
 
