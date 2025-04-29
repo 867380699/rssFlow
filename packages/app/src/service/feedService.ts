@@ -240,10 +240,7 @@ export const parseFeedContent = time((feedItem: FeedItem) => {
         }
       }
     }
-    if (
-      node.nodeName === 'BR' &&
-      node.previousElementSibling?.nodeName === 'BR'
-    ) {
+    if (node.nodeName === 'BR' && node.previousSibling?.nodeName === 'BR') {
       node.remove();
     }
     if (node.nodeName === 'P' && !node.textContent && !node.childNodes.length) {
