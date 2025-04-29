@@ -6,7 +6,15 @@ import Dexie, {
   Observable as DexieObservable,
   Subscription,
 } from 'dexie';
-import { combineLatest, from, Observable, Subject, switchMap } from 'rxjs';
+import {
+  combineLatest,
+  combineLatestWith,
+  from,
+  map,
+  Observable,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { Ref } from 'vue';
 
 import { FeedItemFilter } from '@/enums';
@@ -130,45 +138,57 @@ export const useAllFeedItems = () => {
 };
 
 export const useFeedItemCounts = () => {
+  const feeds$ = from(liveQuery(() => feedDB.feeds.orderBy('id').toArray()));
   const counts = useObservable<Record<number, number>>(
-    liveQuery(async () => {
-      const feeds = await feedDB.feeds.orderBy('id').toArray();
-
-      const counts = await Promise.all(
-        feeds.map(({ id: feedId }) =>
-          feedDB.feedItems
-            .where('[feedId+isRead+isFavorite]')
-            .between([feedId, 0, 0], [feedId, 0, 1])
-            .count()
+    feeds$.pipe(
+      map((feeds) =>
+        combineLatest(
+          feeds.map(({ id: feedId }) =>
+            liveQuery(async () => {
+              const count = await feedDB.feedItems
+                .where('[feedId+isRead+isFavorite]')
+                .between([feedId, 0, 0], [feedId, 0, 1])
+                .count();
+              return [feedId, count];
+            })
+          )
         )
-      );
+      ),
+      switchMap((_) => _),
+      map((res) =>
+        res.reduce(
+          (o, [id, c]) => {
+            o[id] = c;
+            return o;
+          },
+          { 0: 0 } as Record<number, number>
+        )
+      ),
+      combineLatestWith(feeds$),
+      map(([cm, feeds]) => {
+        const feedMap = feeds.reduce((o, f) => {
+          if (f.id) {
+            o[f.id] = f;
+          }
+          return o;
+        }, {} as Record<number, Feed>);
 
-      const feedMap = feeds.reduce((o, f) => {
-        if (f.id) {
-          o[f.id] = f;
-        }
-        return o;
-      }, {} as Record<number, Feed>);
-
-      return feeds.reduce(
-        (o, v, i) => {
-          if (v.type === 'feed') {
-            o[v.id || -1] = counts[i];
-
-            let currentParentId = v.parentId;
+        feeds.map((feed) => {
+          if (feed.type === 'feed') {
+            const currentCount = cm[feed.id];
+            let currentParentId = feed.parentId;
             while (currentParentId) {
-              o[currentParentId] = (o[currentParentId] || 0) + counts[i];
+              cm[currentParentId] = (cm[currentParentId] || 0) + currentCount;
               currentParentId = feedMap[currentParentId]?.parentId || 0;
             }
-            o[0] += counts[i]; // All
+            cm[0] += currentCount; // All
           }
-
-          return o;
-        },
-        { 0: 0 } as Record<number, number>
-      );
-    }) as any
+        });
+        return cm;
+      })
+    )
   );
+
   return {
     counts,
   };
