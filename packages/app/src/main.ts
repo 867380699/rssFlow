@@ -27,6 +27,8 @@ import App from './App.vue';
 import router from './router';
 import Logger from './utils/log';
 
+console.time('start');
+
 try {
   StatusBar.setOverlaysWebView({ overlay: true }).then(() => {
     console.log('setOverlaysWebView');
@@ -61,10 +63,6 @@ observer.observe({
   entryTypes: ['paint', 'longtask'],
 });
 
-setTimeout(() => {
-  SplashScreen.hide();
-}, 300);
-
 const app = createApp(App)
   .use(IonicVue)
   .use(router)
@@ -72,8 +70,9 @@ const app = createApp(App)
   .use(createPinia())
   .use(VueVirtualScroller);
 
-router.isReady().then(() => {
+Promise.all([router.isReady(), SplashScreen.hide()]).then(() => {
   app.mount('#app');
+  console.timeEnd('start');
 });
 
 Logger.log('Platform', Capacitor.getPlatform());
