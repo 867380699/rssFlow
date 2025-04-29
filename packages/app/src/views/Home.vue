@@ -1,7 +1,7 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
+    <ion-header class="transition-all" :class="{ '-mt-14': !isFabShow }">
+      <ion-toolbar class="transition" :class="{ 'opacity-0': !isFabShow }">
         <ion-buttons slot="start" class="pl-1">
           <ion-thumbnail
             class="shrink-0"
