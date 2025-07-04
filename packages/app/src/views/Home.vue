@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header class="transition-all" :class="{ '-mt-14': !isFabShow }">
-      <ion-toolbar class="transition" :class="{ 'opacity-0': !isFabShow }">
+      <ion-toolbar class="" :class="{ 'opacity-0': !isFabShow }">
         <ion-buttons slot="start" class="pl-1">
           <ion-thumbnail
             class="shrink-0"
@@ -128,10 +128,12 @@ import {
 } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 import {
+  animationFrameScheduler,
   debounceTime,
   fromEvent,
   map,
   mergeWith,
+  observeOn,
   pairwise,
   share,
   tap,
@@ -326,9 +328,9 @@ const content = ref<ComponentExposed<typeof FeedItemList> | null>(null);
 onMounted(() => {
   const throttleInterval = 32;
 
-  const scrollShare$ = fromEvent<Event>(content.value?.$el, 'scroll').pipe(
-    share()
-  );
+  const scrollShare$ = fromEvent<Event>(content.value?.$el, 'scroll', {
+    passive: true,
+  }).pipe(share());
 
   const scrollEnd$ = scrollShare$.pipe(debounceTime(throttleInterval * 2));
 
@@ -339,6 +341,7 @@ onMounted(() => {
   scroll$
     .pipe(
       throttleTime(throttleInterval),
+      observeOn(animationFrameScheduler),
       // tap((e) => console.log(e.type)),
       map((e) => {
         const el = e.target as HTMLElement;

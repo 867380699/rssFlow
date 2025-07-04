@@ -58,8 +58,7 @@
 </template>
 
 <script setup lang="ts" generic="T">
-import { useElementSize, useEventListener } from '@vueuse/core';
-import { throttle } from 'lodash-es';
+import { useElementSize, useEventListener, useThrottleFn } from '@vueuse/core';
 
 export type RecycleItem<T> = {
   height: number;
@@ -194,51 +193,62 @@ const addPoolItem = (id: number) => {
 };
 
 const scrollTop = ref(0);
+let rafId: number | null = null;
 
 useEventListener(
   container,
   'scroll',
-  throttle((e) => {
-    scrollTop.value = (e.target as HTMLElement).scrollTop;
-  }, 10)
+  useThrottleFn((e: Event) => {
+    if (rafId !== null) return;
+    rafId = requestAnimationFrame(() => {
+      scrollTop.value = (e.target as HTMLElement).scrollTop;
+      rafId = null;
+    });
+  }, 10),
+  { passive: true }
 );
+
+const isShown = (
+  item: Ref<InnerRecycleItem<T>>,
+  shownTop: number,
+  shownBottom: number
+) => {
+  const { top: itemTop, height, childrenHeight } = item.value;
+  const itemBottom = itemTop + height + childrenHeight;
+  return itemTop < shownBottom && shownTop < itemBottom;
+};
+
+// find the biggest itemTop less then shownTop
+const findStartIndex = (ids: number[], shownTop: number) => {
+  let a = 0;
+  let b = ids.length;
+  let i = ~~((a + b) / 2);
+
+  do {
+    const item = flatItems.value[ids[i]];
+    if (item.value.top >= shownTop) {
+      b = i;
+    } else {
+      a = i;
+    }
+    i = ~~((a + b) / 2);
+  } while (i !== a);
+
+  return i;
+};
 
 const shownFlatItemIds = computed(() => {
   // const t0 = performance.now();
   const shownTop = scrollTop.value - containerHeight.value * 0.5;
   const shownBottom = scrollTop.value + containerHeight.value * 1.5;
 
-  const isShown = (item: Ref<InnerRecycleItem<T>>) => {
-    const { top: itemTop, height, childrenHeight } = item.value;
-    const itemBottom = itemTop + height + childrenHeight;
-    return itemTop < shownBottom && shownTop < itemBottom;
-  };
-  // find the biggest itemTop less then shownTop
-  const findStartIndex = (ids: number[]) => {
-    let a = 0;
-    let b = ids.length;
-    let i = ~~((a + b) / 2);
-
-    do {
-      const item = flatItems.value[ids[i]];
-      if (item.value.top >= shownTop) {
-        b = i;
-      } else {
-        a = i;
-      }
-      i = ~~((a + b) / 2);
-    } while (i !== a);
-
-    return i;
-  };
-
   const shownIds: number[] = [];
   for (let i = 0; i < flatItemLevelIndex.value.length; i++) {
     const ids = flatItemLevelIndex.value[i];
-    const start = findStartIndex(ids);
+    const start = findStartIndex(ids, shownTop);
     for (let j = start; j < ids.length; j++) {
       const item = flatItems.value[ids[j]];
-      if (isShown(item)) {
+      if (isShown(item, shownTop, shownBottom)) {
         shownIds.push(item.value.id);
       } else if (j > start) {
         break;
@@ -281,7 +291,7 @@ watch(joinIds, () => {
 
 const scrollItemIntoView = (
   find: (data: T) => boolean,
-  scrollBehavior?: ScrollBehavior = 'auto'
+  scrollBehavior: ScrollBehavior = 'auto'
 ) => {
   const item = flatItems.value.find((item) => find(item.value.data));
   if (item && container.value) {
