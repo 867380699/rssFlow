@@ -381,3 +381,45 @@ export const useLoading = <T, P extends any[]>(
 
   return [isLoading, wrappedFn];
 };
+
+export const useTrapSwipe = (container: Ref<HTMLElement | null>) => {
+  let isHorizontalScrollable = false;
+  let touchStartX = 0;
+  let isReachStart = true;
+  let isReachEnd = false;
+
+  const onToutchStart = (ev: TouchEvent) => {
+    if (container.value) {
+      const { scrollWidth, offsetWidth, scrollLeft } = container.value;
+      isHorizontalScrollable = scrollWidth > offsetWidth;
+      isReachStart = scrollLeft === 0;
+      isReachEnd = scrollLeft + 1 > scrollWidth - offsetWidth;
+    }
+    touchStartX = ev.touches[0].clientX;
+  };
+
+  const onTouchMove = (ev: TouchEvent) => {
+    if (isHorizontalScrollable) {
+      const deltaX = ev.touches[0].clientX - touchStartX;
+      if (!isReachStart && deltaX > 0) {
+        ev.stopPropagation();
+      } else if (!isReachEnd && deltaX < 0) {
+        ev.stopPropagation();
+      }
+    }
+  };
+
+  onMounted(() => {
+    container.value?.addEventListener('touchstart', onToutchStart, {
+      passive: false,
+    });
+    container.value?.addEventListener('touchmove', onTouchMove, {
+      passive: false,
+    });
+  });
+
+  onBeforeUnmount(() => {
+    container.value?.removeEventListener('touchstart', onToutchStart);
+    container.value?.removeEventListener('touchmove', onTouchMove);
+  });
+};
