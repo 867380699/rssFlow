@@ -237,29 +237,27 @@ const findStartIndex = (ids: number[], shownTop: number) => {
   return i;
 };
 
-const shownFlatItemIds = computed(() => {
-  // const t0 = performance.now();
-  const shownTop = scrollTop.value - containerHeight.value * 0.5;
-  const shownBottom = scrollTop.value + containerHeight.value * 1.5;
-
-  const shownIds: number[] = [];
+const retriveShownItems = (shownTop: number, shownBottom: number) => {
+  const shownItems: InnerRecycleItem<T>[] = [];
   for (let i = 0; i < flatItemLevelIndex.value.length; i++) {
     const ids = flatItemLevelIndex.value[i];
     const start = findStartIndex(ids, shownTop);
     for (let j = start; j < ids.length; j++) {
       const item = flatItems.value[ids[j]];
       if (isShown(item, shownTop, shownBottom)) {
-        shownIds.push(item.value.id);
+        shownItems.push(item.value);
       } else if (j > start) {
         break;
       }
     }
   }
+  return shownItems;
+};
 
-  // const shownIds = flatItems.value.filter(isShown).map((item) => item.value.id);
-  // const t1 = performance.now();
-  // console.log(`flat:${shownIds.length}/${flatItems.value.length}`, t1 - t0);
-  return shownIds;
+const shownFlatItemIds = computed(() => {
+  const shownTop = scrollTop.value - containerHeight.value * 0.5;
+  const shownBottom = scrollTop.value + containerHeight.value * 1.5;
+  return retriveShownItems(shownTop, shownBottom).map((item) => item.id);
 });
 
 const joinIds = computed(() => shownFlatItemIds.value.join(','));
@@ -308,7 +306,16 @@ const scrollTo = (scrollOption: ScrollToOptions) => {
   }
 };
 
-defineExpose({ scrollTo, scrollItemIntoView });
+const getVisualItems = (
+  topOffst: (h: number) => number = () => 0,
+  bottomOffst: (h: number) => number = (h) => h
+) => {
+  const shownTop = scrollTop.value + topOffst(containerHeight.value);
+  const shownBottom = scrollTop.value + bottomOffst(containerHeight.value);
+  return retriveShownItems(shownTop, shownBottom);
+};
+
+defineExpose({ scrollTo, scrollItemIntoView, getVisualItems });
 </script>
 
 <style scoped></style>

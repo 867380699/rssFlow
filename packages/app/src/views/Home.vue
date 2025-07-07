@@ -27,7 +27,7 @@
           </div>
           <div
             v-show="!!newItemsCount"
-            class="ml-2 flex items-center space-x-1 rounded-full bg-primary px-2 py-1"
+            class="bg-primary ml-2 flex items-center space-x-1 rounded-full px-2 py-1"
             @click="resetHomeFeedItems"
           >
             <span class="text-xs leading-none">{{ newItemsCount }}</span>
@@ -92,7 +92,6 @@
           'after:h-16': homeFeedItems?.length,
         }"
         style="background-color: var(--ion-item-background)"
-        @item-visible="onItemVisible"
       />
       <!-- Read All Fab -->
       <Transition name="fab">
@@ -236,53 +235,77 @@ const handleRefresh = (event: RefresherCustomEvent) => {
   }
 };
 
-const visibleItemIdSet = new Set<number>();
-
-watch([feedId, isHomeFeedItemsDesc, feedItemFilter], () => {
-  console.log('visible reset');
-  visibleItemIdSet.clear();
-});
-
-const onItemVisible = (item: FeedItem) => {
-  // console.log('item visible:', item.id, item.title);
-  if (item.id) {
-    visibleItemIdSet.add(item.id);
-  }
-};
-
 let undoReadAllFn: (() => void) | null;
 
 const readAll = async () => {
-  console.log('read all');
-  const ids: number[] = [...visibleItemIdSet];
-  if (ids.length) {
-    visibleItemIdSet.clear();
-    undoReadAllFn = await readFeedItems(ids);
-  }
-  if (homeFeedItems.value?.length || 0 < 20) {
-    if (homeNextPage.value) {
-      homeNextPage.value();
+  if (homeFeedItems.value) {
+    const viewportItemIds =
+      content.value
+        ?.getVisualItems(undefined, (h) => h)
+        ?.filter((item) => item.level === 1)
+        .map((item) => item.data.id) || [];
+
+    const nextItemIds =
+      content.value
+        ?.getVisualItems(
+          (h) => h,
+          (h) => 2 * h
+        )
+        ?.filter((item) => item.level === 1)
+        .map((item) => item.data.id) || [];
+
+    if (nextItemIds[0] === viewportItemIds[viewportItemIds.length - 1]) {
+      viewportItemIds.splice(viewportItemIds.length - 1, 1);
     }
-  }
-  if (feedItemFilter.value === FeedItemFilter.UNREAD) {
-    setTimeout(() => {
-      const nextUnreadItem = homeFeedItems.value?.find((item) => !item.isRead);
-      if (nextUnreadItem) {
-        content.value?.scrollItemIntoView(nextUnreadItem.id, 'instant');
+
+    console.log(viewportItemIds, nextItemIds);
+
+    const targetFeedItemId = viewportItemIds[viewportItemIds.length - 1];
+
+    console.log('read all', viewportItemIds, nextItemIds);
+
+    const ids: number[] = [];
+
+    for (let i = 0; i < homeFeedItems.value.length; i++) {
+      if (homeFeedItems.value[i].id !== targetFeedItemId) {
+        ids.push(homeFeedItems.value[i].id as number);
+      } else {
+        if (!nextItemIds.length) {
+          ids.push(homeFeedItems.value[i].id as number);
+        }
+        break;
       }
-    });
-  } else {
-    (content.value?.$el as HTMLElement).scrollTo({
-      top: 0,
-      behavior: 'instant',
-    });
+    }
+
+    if (ids.length) {
+      await readFeedItems(ids);
+    }
+    if (homeFeedItems.value?.length || 0 < 20) {
+      if (homeNextPage.value) {
+        homeNextPage.value();
+      }
+    }
+    if (feedItemFilter.value === FeedItemFilter.UNREAD) {
+      setTimeout(() => {
+        const nextUnreadItem = homeFeedItems.value?.find(
+          (item) => !item.isRead
+        );
+        if (nextUnreadItem) {
+          content.value?.scrollItemIntoView(nextUnreadItem.id, 'instant');
+        }
+      });
+    } else {
+      (content.value?.$el as HTMLElement).scrollTo({
+        top: 0,
+        behavior: 'instant',
+      });
+    }
   }
 };
 
 const undoReadAll = async () => {
   console.log('undo read all');
   if (undoReadAllFn) {
-    visibleItemIdSet.clear();
     undoReadAllFn();
     undoReadAllFn = null;
   }
