@@ -38,14 +38,7 @@
             </Transition>
           </div>
         </div>
-        <ion-buttons slot="end">
-          <ion-button
-            v-bind="{color: isShowIframeMap[feedItem?.id!] ? 'primary':''}"
-            @click="toggleIframe"
-          >
-            <ion-icon slot="icon-only" :icon="swapHorizontalOutline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
+        <ion-buttons slot="end"> </ion-buttons>
         <progress-bar
           v-show="showProgress"
           class="absolute inset-x-0 bottom-0 transition-none"
@@ -75,7 +68,6 @@
         <swiper-slide v-for="item in feedItems" :key="item && item.id">
           <FeedItemContent
             :feed-item="item"
-            :show-iframe="isShowIframeMap[item.id!]"
             :custom-style="feed?.config?.customStyle"
             class="content-container h-full overflow-auto"
             :style="{
@@ -215,15 +207,6 @@ const transitionEnd = async (swiper: SwiperClass) => {
         router.replace({ query: { id: newId } });
       }
     }
-  }
-};
-
-const isShowIframeMap = ref<Record<number, boolean>>({});
-
-const toggleIframe = () => {
-  if (feedItem.value && feedItem.value.id) {
-    isShowIframeMap.value[feedItem.value.id] =
-      !isShowIframeMap.value[feedItem.value.id];
   }
 };
 

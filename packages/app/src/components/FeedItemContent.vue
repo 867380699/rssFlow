@@ -1,53 +1,43 @@
 <template>
-  <div ref="content" class="scroll-smooth" :class="{ 'p-2': !showIframe }">
-    <iframe
-      v-if="showIframe"
-      ref="frame"
-      :src="feedItem.link"
-      class="size-full"
-      @load="iframeLoad"
-      @error="iframeError"
-    />
-    <template v-else>
-      <h1
-        ref="feedItemTitle"
-        class="mx-auto my-4 max-w-[800px] text-xl font-bold"
-        :class="`detail-title-${feedItem.id}`"
-      >
-        {{ feedItem?.title }}
-      </h1>
-      <div
-        class="meta mx-auto mb-3 flex max-w-[800px] justify-between border-b border-slate-400/10 py-1"
-        :class="`detail-meta-${feedItem.id}`"
-      >
-        <div class="flex items-center">
-          <template v-for="(info, i) in metaInfo" :key="i">
-            <div class="mr-2 flex items-center">
-              <ion-icon :icon="info.icon" class="text-sm"></ion-icon>
-              <span class="ml-1 text-sm">{{ info.text }}</span>
-            </div>
-          </template>
-        </div>
-
-        <div v-if="feedItem.pubDate" class="flex items-center text-sm">
-          <ion-icon :icon="calendarOutline" class="pr-1 text-sm"></ion-icon>
-          <span @click="toggleTimeFormat">
-            {{
-              isRelativeTime
-                ? formatRelative(feedItem.pubDate, now)
-                : format(feedItem.pubDate, 'yyyy-MM-dd HH:mm')
-            }}
-          </span>
-        </div>
+  <div ref="content" class="scroll-smooth" :class="{ 'p-2': true }">
+    <h1
+      ref="feedItemTitle"
+      class="mx-auto my-4 max-w-[800px] text-xl font-bold"
+      :class="`detail-title-${feedItem.id}`"
+    >
+      {{ feedItem?.title }}
+    </h1>
+    <div
+      class="meta mx-auto mb-3 flex max-w-[800px] justify-between border-b border-slate-400/10 py-1"
+      :class="`detail-meta-${feedItem.id}`"
+    >
+      <div class="flex items-center">
+        <template v-for="(info, i) in metaInfo" :key="i">
+          <div class="mr-2 flex items-center">
+            <ion-icon :icon="info.icon" class="text-sm"></ion-icon>
+            <span class="ml-1 text-sm">{{ info.text }}</span>
+          </div>
+        </template>
       </div>
-      <ShadowHost
-        ref="shadowHost"
-        :class="`detail-content-${feedItem.id}`"
-        :custom-style="customStyle"
-      >
-        <FeedContentComponent />
-      </ShadowHost>
-    </template>
+
+      <div v-if="feedItem.pubDate" class="flex items-center text-sm">
+        <ion-icon :icon="calendarOutline" class="pr-1 text-sm"></ion-icon>
+        <span @click="toggleTimeFormat">
+          {{
+            isRelativeTime
+              ? formatRelative(feedItem.pubDate, now)
+              : format(feedItem.pubDate, 'yyyy-MM-dd HH:mm')
+          }}
+        </span>
+      </div>
+    </div>
+    <ShadowHost
+      ref="shadowHost"
+      :class="`detail-content-${feedItem.id}`"
+      :custom-style="detailCustomStyle"
+    >
+      <FeedContentComponent />
+    </ShadowHost>
   </div>
 </template>
 
@@ -75,7 +65,6 @@ import ShadowHost from './ShadowHost.vue';
 
 const props = defineProps<{
   feedItem: FeedItem;
-  showIframe?: boolean;
   customStyle?: string;
 }>();
 
@@ -210,14 +199,6 @@ onBeforeUnmount(() => {
   delete scrollState[`detail-${props.feedItem.id}`];
 });
 
-const iframeLoad = ($event: Event) => {
-  console.log('iframe load', $event);
-};
-const iframeError = ($event: Event) => {
-  // won't call when the 'X-Frame-Options' set to 'sameorigin'
-  console.log('iframe error', $event);
-};
-
 const detaillStyleSheet = new CSSStyleSheet();
 detaillStyleSheet.replaceSync(detailCSS);
 
@@ -231,7 +212,10 @@ const customStyleSheet = computed(() => {
 
 const shadowHost = ref<ComponentExposed<typeof ShadowHost> | null>(null);
 
-const customStyle = computed(() => [detaillStyleSheet, customStyleSheet.value]);
+const detailCustomStyle = computed(() => [
+  detaillStyleSheet,
+  customStyleSheet.value,
+]);
 
 const now = Date.now();
 
