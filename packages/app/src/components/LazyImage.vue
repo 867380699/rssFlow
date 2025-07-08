@@ -18,15 +18,13 @@
     <img :style="minStyle" class="error-image" :src="dummySrc" />
     <div v-show="isError" class="error-icon">
       <slot name="error-icon">
-        <ion-icon :icon="alertOutline" />
+        <i-ion-alert-outline />
       </slot>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { alertOutline } from 'ionicons/icons';
-
 const props = withDefaults(
   defineProps<{
     src?: string;

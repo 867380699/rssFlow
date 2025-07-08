@@ -21,10 +21,9 @@
         <div class="flex-1 cursor-pointer truncate">
           {{ feed.title }}
         </div>
-        <ion-icon
+        <i-ion-reorder-three
           v-if="reorderToggle"
-          :icon="reorderThree"
-          class="reorder-icon cursor-move p-2 text-lg"
+          class="reorder-icon cursor-move text-lg"
         />
         <ion-badge v-show="!reorderToggle">
           {{ itemCounts?.[feed.id || 0] || 0 }}
@@ -44,11 +43,13 @@
                 '-ml-2 h-8': reorderToggle,
               }"
             >
-              <ion-icon
-                :icon="chevronDownOutline"
-                class="p-2 text-lg transition"
-                :class="{ '-rotate-90': !isExpand }"
-              />
+              <div class="p-2">
+                <i-ion-chevron-down-outline
+                  class="transition"
+                  :class="{ '-rotate-90': !isExpand }"
+                />
+              </div>
+
               <div
                 class="flex-1 cursor-pointer transition-all"
                 @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
@@ -56,10 +57,9 @@
               >
                 {{ feed.title }}
               </div>
-              <ion-icon
+              <i-ion-reorder-three
                 v-if="reorderToggle"
-                :icon="reorderThree"
-                class="reorder-icon cursor-move p-2 text-lg transition-all"
+                class="reorder-icon cursor-move text-lg transition-all"
               />
               <ion-badge v-show="!reorderToggle">
                 {{ itemCounts?.[feed.id || 0] || 0 }}
@@ -83,7 +83,6 @@
 
 <script lang="ts" setup>
 import { popoverController } from '@ionic/vue';
-import { chevronDownOutline, reorderThree } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 import Sortable from 'sortablejs';
 

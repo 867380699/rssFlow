@@ -3,8 +3,7 @@
     <div @click="isExpand = !isExpand">
       <slot name="header" :is-expand="isExpand">
         <div class="flex h-12 items-center p-2">
-          <ion-icon
-            :icon="chevronDownOutline"
+          <i-ion-chevron-down-outline
             class="p-2 text-lg transition"
             :class="{ '-rotate-90': !isExpand }"
           />
@@ -25,7 +24,6 @@
 
 <script setup lang="ts">
 import { useIntersectionObserver, useMutationObserver } from '@vueuse/core';
-import { chevronDownOutline } from 'ionicons/icons';
 
 const props = withDefaults(
   defineProps<{ title?: string; isExpand?: boolean }>(),

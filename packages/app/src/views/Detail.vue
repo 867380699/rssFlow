@@ -85,15 +85,15 @@
     >
       <ion-toolbar>
         <div class="flex justify-around">
-          <ion-icon :icon="openOutline" @click="openLink(feedItem)" />
-          <ion-icon
-            :icon="feedItem?.isRead ? ellipseOutline : ellipse"
+          <i-ion-open-outline @click="openLink(feedItem)" />
+          <i-ion-ellipse-outline
+            v-if="feedItem?.isRead"
             @click="toggleRead()"
           />
-          <ion-icon
-            :icon="feedItem?.isFavorite ? star : starOutline"
-            @click="toggleFavorite()"
-          />
+          <i-ion-ellipse v-else @click="toggleRead()" />
+
+          <i-ion-star v-if="feedItem?.isFavorite" @click="toggleFavorite()" />
+          <i-ion-star-outline v-else @click="toggleFavorite()" />
         </div>
       </ion-toolbar>
     </ion-footer>
@@ -106,14 +106,6 @@ import {
   InAppBrowser,
 } from '@capacitor/inappbrowser';
 import { from } from '@vueuse/rxjs';
-import {
-  ellipse,
-  ellipseOutline,
-  openOutline,
-  star,
-  starOutline,
-  swapHorizontalOutline,
-} from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 import { bufferCount, map, throttleTime } from 'rxjs';
 import { Swiper as SwiperClass } from 'swiper';

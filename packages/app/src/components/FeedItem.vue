@@ -2,11 +2,7 @@
   <ion-item-sliding>
     <ion-item-options side="end">
       <ion-item-option color="danger">
-        <ion-icon
-          slot="icon-only"
-          :icon="trashOutline"
-          @click="deleteItem(item)"
-        ></ion-icon>
+        <i-ion-trash-outline slot="icon-only" @click="deleteItem(item)" />
       </ion-item-option>
     </ion-item-options>
 
@@ -31,21 +27,18 @@
           "
           class="media-badge absolute bottom-0 right-0 rounded-tl bg-black px-1 py-0.5 text-white opacity-60"
         >
-          <ion-icon
+          <i-ion-videocam-outline
             v-if="item.meta.videoCount"
-            :icon="videocamOutline"
             class="block text-xs"
-          ></ion-icon>
-          <ion-icon
+          />
+          <i-ion-musical-notes-outline
             v-else-if="item.meta.audioCount"
-            :icon="musicalNotesOutline"
             class="block text-xs"
-          ></ion-icon>
-          <ion-icon
+          />
+          <i-ion-browsers-outline
             v-else-if="item.meta.frameCount"
-            :icon="browsersOutline"
             class="block text-xs"
-          ></ion-icon>
+          />
         </div>
       </ion-thumbnail>
       <ion-label class="m-0 h-20 py-1" :class="{ 'opacity-25': item.isRead }">
@@ -69,7 +62,6 @@
 import type { Animation } from '@ionic/vue';
 import {
   createAnimation,
-  IonIcon,
   IonItem,
   IonItemOption,
   IonItemOptions,
@@ -78,12 +70,6 @@ import {
   IonThumbnail,
   useIonRouter,
 } from '@ionic/vue';
-import {
-  browsersOutline,
-  musicalNotesOutline,
-  trashOutline,
-  videocamOutline,
-} from 'ionicons/icons';
 
 import cacheService from '@/service/cacheService';
 import { deleteFeedItem, updateFeedItem } from '@/service/dbService';

@@ -14,14 +14,14 @@
       <div class="flex items-center">
         <template v-for="(info, i) in metaInfo" :key="i">
           <div class="mr-2 flex items-center">
-            <ion-icon :icon="info.icon" class="text-sm"></ion-icon>
+            <component :is="info.icon" class="text-sm"></component>
             <span class="ml-1 text-sm">{{ info.text }}</span>
           </div>
         </template>
       </div>
 
       <div v-if="feedItem.pubDate" class="flex items-center text-sm">
-        <ion-icon :icon="calendarOutline" class="pr-1 text-sm"></ion-icon>
+        <i-ion-calendar-outline class="mr-1 text-sm" />
         <span @click="toggleTimeFormat">
           {{
             isRelativeTime
@@ -44,14 +44,6 @@
 <script setup lang="ts">
 import { useEventListener } from '@vueuse/core';
 import format from 'date-fns/format';
-import {
-  browsersOutline,
-  calendarOutline,
-  filmOutline,
-  imagesOutline,
-  musicalNotesOutline,
-  textOutline,
-} from 'ionicons/icons';
 import { ComponentPublicInstance } from 'vue';
 import { ComponentExposed } from 'vue-component-type-helpers';
 
@@ -59,6 +51,11 @@ import { formatRelative } from '@/composables/date';
 import { scrollState } from '@/composables/scroll';
 import { parseFeedContent } from '@/service/feedService';
 import { FeedItem } from '@/types';
+import IconBrowsersOutline from '~icons/ion/browsers-outline';
+import IconFilmOutline from '~icons/ion/film-outline';
+import IconImagesOutline from '~icons/ion/images-outline';
+import IconMusicalNotesOutline from '~icons/ion/musical-notes-outline';
+import IconTextOutline from '~icons/ion/text-outline';
 
 import detailCSS from '../theme/detail.less?inline';
 import ShadowHost from './ShadowHost.vue';
@@ -76,31 +73,31 @@ const metaInfo = computed<MetaInfo[]>(() => {
   if (meta) {
     if (meta.contentLength) {
       info.push({
-        icon: textOutline,
+        icon: IconTextOutline,
         text: meta.contentLength,
       });
     }
     if (meta.audioCount) {
       info.push({
-        icon: musicalNotesOutline,
+        icon: IconMusicalNotesOutline,
         text: meta.audioCount,
       });
     }
     if (meta.frameCount) {
       info.push({
-        icon: browsersOutline,
+        icon: IconBrowsersOutline,
         text: meta.frameCount,
       });
     }
     if (meta.videoCount) {
       info.push({
-        icon: filmOutline,
+        icon: IconFilmOutline,
         text: meta.videoCount,
       });
     }
     if (meta.imageCount) {
       info.push({
-        icon: imagesOutline,
+        icon: IconImagesOutline,
         text: meta.imageCount,
       });
     }

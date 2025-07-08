@@ -3,7 +3,7 @@
     <ion-toolbar>
       <ion-buttons slot="end">
         <ion-button @click="$emit('close')">
-          <ion-icon :icon="closeOutline" />
+          <i-ion-close-outline class="text-xl" />
         </ion-button>
       </ion-buttons>
       <ion-title>Add feed</ion-title>
@@ -40,7 +40,6 @@
 
 <script lang="ts" setup>
 import { toastController } from '@ionic/vue';
-import { closeOutline } from 'ionicons/icons';
 
 import { useLoading } from '@/composables';
 import { i18n } from '@/i18n';

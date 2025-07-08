@@ -20,10 +20,9 @@
       <source :src="src" />
     </video>
     <!-- play/pause -->
-    <ion-icon
+    <i-ion-play-circle
       v-if="!useNativeControls"
       v-show="showPlayButtom"
-      :icon="playCircle"
       class="btn-play"
       @click="play"
     />
@@ -37,22 +36,22 @@
         :class="{ 'is-fullscreen': isFullscreen }"
         style="--tw-gradient-from: rgba(0, 0, 0, 0.6)"
       >
-        <div>
+        <div v-show="isFullscreen">
           <!-- rotate -->
-          <ion-icon
-            v-show="isFullscreen"
+          <i-ion-tablet-landscape-outline
+            v-if="isLandscape"
             class="btn-rotate"
-            :icon="isLandscape ? tabletLandscapeOutline : tabletPortraitOutline"
+            @click="rotateScreen"
+          />
+          <i-ion-tablet-portrait-outline
+            v-else
+            class="btn-rotate"
             @click="rotateScreen"
           />
         </div>
 
         <!-- download -->
-        <ion-icon
-          class="btn-download"
-          :icon="downloadOutline"
-          @click="download"
-        />
+        <i-ion-download-outline class="btn-download" @click="download" />
       </div>
     </Transition>
 
@@ -91,21 +90,35 @@
               </div>
             </div>
             <!-- volume -->
-            <ion-icon
-              class="icon-volume"
-              :icon="isMuted ? volumeMute : volumeHigh"
-              @click="toogleMute"
-            />
+            <template v-if="true">
+              <i-ion-volume-mute
+                v-if="isMuted"
+                class="icon-volume"
+                @click="toogleMute"
+              />
+              <i-ion-volume-high
+                v-else
+                class="icon-volume"
+                @click="toogleMute"
+              />
+            </template>
 
             <!-- fullscreen -->
-            <ion-icon
-              v-if="isFullscreenSupported"
-              class="icon-fullscreen"
-              :icon="isFullscreen ? contractOutline : expandOutline"
-              @click="toggleFullscreen"
-            />
+            <template v-if="isFullscreenSupported">
+              <i-ion-contract-outline
+                v-if="isFullscreen"
+                class="icon-fullscreen"
+                @click="toggleFullscreen"
+              />
+              <i-ion-expand-outline
+                v-else
+                class="icon-fullscreen"
+                @click="toggleFullscreen"
+              />
+            </template>
+
             <!-- fullscreen iOS support -->
-            <ion-icon
+            <i-ion-expand-outline
               v-else-if="video.webkitEnterFullscreen"
               class="icon-fullscreen"
               @click="() => video.webkitEnterFullscreen()"
@@ -153,16 +166,6 @@ import { StatusBar } from '@capacitor/status-bar';
 import { useBackButton } from '@ionic/vue';
 import { vOnClickOutside } from '@vueuse/components';
 import { useEventListener, useFullscreen } from '@vueuse/core';
-import {
-  contractOutline,
-  downloadOutline,
-  expandOutline,
-  playCircle,
-  tabletLandscapeOutline,
-  tabletPortraitOutline,
-  volumeHigh,
-  volumeMute,
-} from 'ionicons/icons';
 
 import { useOriention } from '@/composables/oriention';
 import { downloadLink } from '@/utils/flie';

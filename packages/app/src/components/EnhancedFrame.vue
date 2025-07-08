@@ -22,18 +22,27 @@
           'is-active': isBubbleActive,
         }"
       >
-        <ion-icon
-          v-if="isFullscreenSupported"
-          class="icon"
-          :icon="isFullscreen ? contractOutline : expandOutline"
-          @click="toggleFullscreen"
-        />
-        <ion-icon
-          v-show="isFullscreen"
-          class="icon"
-          :icon="isLandscape ? tabletLandscapeOutline : tabletPortraitOutline"
-          @click="rotateScreen"
-        />
+        <template v-if="isFullscreenSupported">
+          <i-ion-contract-outline
+            v-if="isFullscreen"
+            class="icon"
+            @click="toggleFullscreen"
+          />
+          <i-ion-expand-outline v-else class="icon" @click="toggleFullscreen" />
+        </template>
+
+        <template v-if="isFullscreen">
+          <i-ion-tablet-landscape-outline
+            v-if="isLandscape"
+            class="icon"
+            @click="rotateScreen"
+          />
+          <i-ion-tablet-portrait-outline
+            v-else
+            class="icon"
+            @click="rotateScreen"
+          />
+        </template>
       </div>
     </div>
   </div>
@@ -43,12 +52,6 @@
 import { StatusBar } from '@capacitor/status-bar';
 import { useBackButton } from '@ionic/vue';
 import { useFullscreen } from '@vueuse/core';
-import {
-  contractOutline,
-  expandOutline,
-  tabletLandscapeOutline,
-  tabletPortraitOutline,
-} from 'ionicons/icons';
 
 import { useOriention } from '@/composables/oriention';
 

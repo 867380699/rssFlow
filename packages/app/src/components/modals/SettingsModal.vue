@@ -3,7 +3,7 @@
     <ion-toolbar>
       <ion-buttons slot="end">
         <ion-button @click="() => emit('close')">
-          <ion-icon :icon="closeOutline" />
+          <i-ion-close-outline class="text-xl" />
         </ion-button>
       </ion-buttons>
       <ion-title>Settings</ion-title>
@@ -13,8 +13,6 @@
 </template>
 
 <script lang="ts" setup>
-import { closeOutline } from 'ionicons/icons';
-
 defineOptions({ name: 'SettingsModal' });
 
 const emit = defineEmits(['close']);

@@ -3,7 +3,7 @@
     <ion-toolbar>
       <ion-buttons slot="end">
         <ion-button @click="() => emit('close')">
-          <ion-icon :icon="closeOutline" />
+          <i-ion-close-outline class="text-xl" />
         </ion-button>
       </ion-buttons>
       <ion-title>About</ion-title>
@@ -109,7 +109,6 @@
 
 <script lang="ts" setup>
 import { Capacitor } from '@capacitor/core';
-import { closeOutline } from 'ionicons/icons';
 
 import { useAllFeedItemStatistic } from '@/composables';
 import { dbVersion } from '@/service/dbService';

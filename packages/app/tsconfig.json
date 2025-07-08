@@ -14,7 +14,8 @@
       "@/*": ["src/*"]
     },
     "types": [
-      "vite-plugin-pwa/client"
+      "vite-plugin-pwa/client",
+       "unplugin-icons/types/vue",
     ]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "test/**/*.ts","auto-imports.d.ts",]

@@ -3,12 +3,12 @@
     <ion-toolbar>
       <ion-buttons slot="start">
         <ion-button @click="$emit('close')">
-          <ion-icon :icon="closeOutline" />
+          <i-ion-close-outline class="text-xl" />
         </ion-button>
       </ion-buttons>
       <ion-buttons slot="end">
         <ion-button @click="save">
-          <ion-icon :icon="saveOutline" />
+          <i-ion-save-outline />
         </ion-button>
       </ion-buttons>
       <ion-title>Edit feed</ion-title>
@@ -76,8 +76,6 @@
 </template>
 
 <script lang="ts" setup>
-import { closeOutline, saveOutline } from 'ionicons/icons';
-
 import { updateFeed } from '@/service/dbService';
 import { Feed } from '@/types';
 

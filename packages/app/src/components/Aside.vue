@@ -7,7 +7,7 @@
       ></div>
       <ion-buttons slot="primary">
         <ion-button id="more-trigger">
-          <ion-icon slot="icon-only" :icon="ellipsisHorizontal"></ion-icon>
+          <i-ion-ellipsis-horizontal slot="icon-only" />
         </ion-button>
         <ion-popover
           trigger="more-trigger"
@@ -24,25 +24,25 @@
   <ion-content>
     <ion-fab slot="fixed" vertical="bottom" horizontal="end">
       <ion-fab-button size="small">
-        <ion-icon :icon="add" />
+        <i-ion-add class="text-lg" />
       </ion-fab-button>
       <ion-fab-list side="start">
         <ion-fab-button @click="showAddFeedModal">
-          <ion-icon :icon="logoRss" />
+          <i-ion-logo-rss class="text-lg" />
         </ion-fab-button>
         <ion-fab-button @click="showAddGroupModal">
-          <ion-icon :icon="folder" />
+          <i-ion-folder class="text-lg" />
         </ion-fab-button>
         <ion-fab-button @click="toggleReorder">
-          <ion-icon :icon="reorderFour" />
+          <i-ion-reorder-four class="text-lg" />
         </ion-fab-button>
       </ion-fab-list>
       <ion-fab-list side="top">
         <ion-fab-button @click="importOPML">
-          <ion-icon :icon="enterOutline" />
+          <i-ion-enter-outline class="text-lg" />
         </ion-fab-button>
         <ion-fab-button @click="exportOPML">
-          <ion-icon :icon="exitOutline" />
+          <i-ion-exit-outline class="text-lg" />
         </ion-fab-button>
       </ion-fab-list>
     </ion-fab>
@@ -67,15 +67,6 @@
 </template>
 <script lang="ts" setup>
 import { modalController } from '@ionic/vue';
-import {
-  add,
-  ellipsisHorizontal,
-  enterOutline,
-  exitOutline,
-  folder,
-  logoRss,
-  reorderFour,
-} from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 
 import FeedList from '@/components/FeedList.vue';

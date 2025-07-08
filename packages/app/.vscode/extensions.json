@@ -3,6 +3,7 @@
     "folke.vscode-monorepo-workspace",
     "vue.volar",
     "bradlc.vscode-tailwindcss",
-    "lokalise.i18n-ally"
+    "lokalise.i18n-ally",
+    "antfu.iconify"
   ]
 }

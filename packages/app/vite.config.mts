@@ -7,6 +7,8 @@ import { execSync } from 'child_process';
 import path from 'path';
 import analyze from 'rollup-plugin-analyzer';
 import AutoImport from 'unplugin-auto-import/vite';
+import IconsResolver from 'unplugin-icons/resolver';
+import Icons from 'unplugin-icons/vite';
 import { VueUseComponentsResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
 import { fileURLToPath } from 'url';
@@ -62,6 +64,7 @@ export default defineConfig({
     }),
     Components({
       resolvers: [
+        IconsResolver(),
         VueUseComponentsResolver(),
         (componentName) => {
           // where `componentName` is always CapitalCase
@@ -70,6 +73,9 @@ export default defineConfig({
           }
         },
       ],
+    }),
+    Icons({
+      scale: 1,
     }),
     vueI18n({
       include: path.resolve(__dirname, './src/locales/**'),

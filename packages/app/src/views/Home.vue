@@ -27,11 +27,11 @@
           </div>
           <div
             v-show="!!newItemsCount"
-            class="bg-primary ml-2 flex items-center space-x-1 rounded-full px-2 py-1"
+            class="ml-2 flex items-center space-x-1 rounded-full bg-primary px-2 py-1"
             @click="resetHomeFeedItems"
           >
             <span class="text-xs leading-none">{{ newItemsCount }}</span>
-            <ion-icon class="text-xs leading-none" :icon="sparklesOutline" />
+            <i-ion-sparkles-outline class="text-[10px] leading-none" />
           </div>
         </div>
         <ion-buttons slot="end">
@@ -49,14 +49,15 @@
               }"
               @click="() => selectTab(tab)"
             >
-              <ion-icon class="text-2xl" :icon="tab.icon"></ion-icon>
+              <component :is="tab.icon" class="text-xl"></component>
+              <!-- <ion-icon class="text-2xl" :icon="tab.icon"></ion-icon> -->
             </ion-button>
           </ion-buttons>
           <ion-button
             v-bind="{ color: isHomeFeedItemsDesc ? 'medium' : 'primary' }"
             @click="toggleDesc"
           >
-            <ion-icon slot="icon-only" :icon="swapVerticalOutline" />
+            <i-ion-swap-vertical-outline class="text-xl" />
           </ion-button>
         </ion-buttons>
         <progress-bar
@@ -102,7 +103,7 @@
           horizontal="end"
         >
           <ion-fab-button ref="fab">
-            <ion-icon :icon="checkmarkDoneOutline"></ion-icon>
+            <i-ion-checkmark-done-outline class="text-xl" />
           </ion-fab-button>
         </ion-fab>
       </Transition>
@@ -117,14 +118,6 @@ import {
   createGesture,
   menuController,
 } from '@ionic/vue';
-import {
-  checkmarkDoneOutline,
-  eyeOffOutline,
-  listOutline,
-  sparklesOutline,
-  starOutline,
-  swapVerticalOutline,
-} from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 import {
   animationFrameScheduler,
@@ -147,7 +140,9 @@ import { FeedItemFilter } from '@/enums';
 import { readFeedItems } from '@/service/dbService';
 import { fetchFeed } from '@/service/feedService';
 import { useFeedStore } from '@/store';
-import { FeedItem } from '@/types';
+import IconEyeOffOutline from '~icons/ion/eye-off-outline';
+import IconListOutline from '~icons/ion/list-outline';
+import IconStarOutline from '~icons/ion/star-outline';
 
 const { t } = useI18n();
 
@@ -170,9 +165,9 @@ const {
 const resetHomeFeedItems = feedStore.resetHomeFeedItems;
 
 const tabs = [
-  { key: FeedItemFilter.UNREAD, label: t('unread'), icon: eyeOffOutline },
-  { key: FeedItemFilter.ALL, label: t('all'), icon: listOutline },
-  { key: FeedItemFilter.FAVORITE, label: t('favorite'), icon: starOutline },
+  { key: FeedItemFilter.UNREAD, label: t('unread'), icon: IconEyeOffOutline },
+  { key: FeedItemFilter.ALL, label: t('all'), icon: IconListOutline },
+  { key: FeedItemFilter.FAVORITE, label: t('favorite'), icon: IconStarOutline },
 ];
 
 const isTabActive = ref(false);
