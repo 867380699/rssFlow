@@ -33,7 +33,8 @@ describe('FeedDB', () => {
   });
 
   afterAll(async () => {
-    await db.delete();
+    db.feedItems.clear();
+    db.close();
   });
 
   it('getPages ASC', async () => {

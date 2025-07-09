@@ -24,7 +24,8 @@ describe('Home paging', () => {
   });
 
   afterAll(async () => {
-    await db.delete();
+    db.feedItems.clear();
+    db.close();
   });
 
   it('init pages as []', async () => {
