@@ -1,4 +1,3 @@
-import DOMPurify from 'dompurify';
 import { VNode } from 'vue';
 
 import CodeView from '@/components/CodeView.vue';
@@ -16,11 +15,10 @@ import VideoPlayer from '../components/VideoPlayer.vue';
 import { Feed, FeedItem, ItemMeta } from '../types';
 import { getFeeds } from './apiService';
 import { feedDB, storeFeedItems } from './dbService';
-
-const parser = new DOMParser();
+import { parseHTMLString, parseXMLString, sanitize } from './domService';
 
 export const parseFeed = (feed: string, source: string): Feed | null => {
-  const nodeTree = parser.parseFromString(feed, 'text/xml');
+  const nodeTree = parseXMLString(feed);
   if (nodeTree.querySelector('feed')) {
     return parseAtomFeed(nodeTree, source);
   } else if (nodeTree.querySelector('rss')) {
@@ -97,7 +95,7 @@ const parseRSSFeedItems = (nodeTree: Document): Array<FeedItem> => {
     if (enclosure) {
       description = parseEncolsure(enclosure) + description;
     }
-    const contentDocument = parser.parseFromString(description, 'text/html');
+    const contentDocument = parseHTMLString(description);
     const pubDate = node.querySelector('pubDate')?.textContent;
 
     const { image, video, audio, meta } = parseFeedItemMedia(description);
@@ -132,7 +130,7 @@ const parseAtomFeedItems = (nodeTree: Document): Array<FeedItem> => {
     if (enclosure) {
       description = parseEncolsure(enclosure) + description;
     }
-    const contentDocument = parser.parseFromString(description, 'text/html');
+    const contentDocument = parseHTMLString(description);
     const pubDate = node.querySelector('updated')?.textContent;
 
     const { image, video, audio, meta } = parseFeedItemMedia(description);
@@ -158,7 +156,7 @@ const parseAtomFeedItems = (nodeTree: Document): Array<FeedItem> => {
 };
 
 const parseFeedItemMedia = (description: string) => {
-  const contentDocument = parser.parseFromString(description, 'text/html');
+  const contentDocument = parseHTMLString(description);
   const bodyEl = contentDocument.querySelector('body');
   const imageEls = contentDocument.querySelectorAll('img');
   const videoEls = contentDocument.querySelectorAll('video');
@@ -230,33 +228,8 @@ const isVideo = (url = '', mimeType = '') => {
 };
 
 export const parseFeedContent = time((feedItem: FeedItem) => {
-  DOMPurify.removeAllHooks();
-  DOMPurify.addHook('afterSanitizeElements', (node) => {
-    if (node.nodeName === 'A') {
-      if (node.children.length === 1 && node.children[0].nodeName === 'IMG') {
-        node.insertAdjacentElement('beforebegin', node.children[0]);
-        if (!node.textContent?.trim()) {
-          node.textContent = node.getAttribute('href');
-        }
-      }
-    }
-    if (node.nodeName === 'BR' && node.previousSibling?.nodeName === 'BR') {
-      node.remove();
-    }
-    if (node.nodeName === 'P' && !node.textContent && !node.childNodes.length) {
-      node.remove();
-    }
-    if (
-      node.nodeType === Node.TEXT_NODE &&
-      /^ +$/.test(node.textContent || '')
-    ) {
-      node.remove();
-    }
-  });
-  const result = DOMPurify.sanitize(feedItem.description || '', {
-    ADD_TAGS: ['iframe'],
-  });
-  const domObj = parser.parseFromString(result, 'text/html');
+  const result = sanitize(feedItem.description || '');
+  const domObj = parseHTMLString(result);
   const buildScope = { imageIndex: 0, feedItem };
   const vNode = buildVNode(domObj.body, buildScope);
   console.log(buildScope);
