@@ -22,6 +22,27 @@ export const readFileAsString = (accept = '*') => {
   });
 };
 
+export const readFileAsBuffer = (accept = '*') => {
+  return new Promise<{ name: string; buffer: ArrayBuffer }>((resolve) => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', accept);
+    input.addEventListener('change', (event) => {
+      const input = event.target as HTMLInputElement;
+      const file = input.files && input.files[0];
+      if (file) {
+        file.arrayBuffer().then((buffer) => {
+          resolve({
+            name: file.name,
+            buffer,
+          });
+        });
+      }
+    });
+    input.click();
+  });
+};
+
 export const downloadFile = async (data: string, name: string) => {
   if (Capacitor.isNativePlatform()) {
     const result = await Filesystem.writeFile({

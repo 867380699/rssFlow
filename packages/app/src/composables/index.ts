@@ -361,6 +361,18 @@ export const useFeedItem = (id: Ref<number>) => {
   };
 };
 
+export const useFontNames = () => {
+  const fontNames = useObservable<string[]>(
+    from(liveQuery(() => feedDB.fonts.orderBy('name').uniqueKeys())).pipe(
+      map((keys) => keys.filter((key) => typeof key === 'string'))
+    )
+  );
+
+  return {
+    fontNames,
+  };
+};
+
 export const useLoading = <T, P extends any[]>(
   asyncFn: (...params: P) => Promise<T>
 ) => {

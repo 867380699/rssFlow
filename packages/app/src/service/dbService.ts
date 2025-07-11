@@ -2,7 +2,7 @@ import Dexie, { IndexableType, liveQuery, Table } from 'dexie';
 
 import { getNextRank, getRankBetween } from '@/utils/rank';
 
-import { Feed, FeedItem } from '../types';
+import { Feed, FeedItem, Font } from '../types';
 
 export const DB_NAME = 'feedDB';
 
@@ -32,9 +32,13 @@ const feedItemIndexes = [
   '[feedId+pubDate+id]',
 ] as const;
 
+const fontIndexes = ['++id', '&name'] as const;
+
 export type TypeFeedIndexKey = typeof feedIndexes[number];
 
 export type TypeFeedItemIndexKey = typeof feedItemIndexes[number];
+
+export type TypeFontIndexKey = typeof fontIndexes[number];
 
 type TypeFeedIndex = {
   [k in TypeFeedIndexKey]: k;
@@ -42,6 +46,10 @@ type TypeFeedIndex = {
 
 type TypeFeedItemIndex = {
   [k in TypeFeedItemIndexKey]: k;
+};
+
+type TypeFontIndex = {
+  [k in TypeFontIndexKey]: k;
 };
 
 export const FeedIndex: TypeFeedIndex = Object.fromEntries(
@@ -52,17 +60,23 @@ export const FeedItemIndex: TypeFeedItemIndex = Object.fromEntries(
   new Map(feedItemIndexes.map((k) => [k, k]))
 ) as TypeFeedItemIndex;
 
-export const dbVersion = 53;
+export const FontIndex: TypeFontIndex = Object.fromEntries(
+  new Map(fontIndexes.map((k) => [k, k]))
+) as TypeFontIndex;
+
+export const dbVersion = 55;
 
 export class FeedDB extends Dexie {
   feeds!: Table<Feed>;
   feedItems!: Table<FeedItem>;
+  fonts!: Table<Font>;
 
   constructor() {
     super(DB_NAME);
     this.version(dbVersion).stores({
       feeds: feedIndexes.join(','),
       feedItems: feedItemIndexes.join(','),
+      fonts: fontIndexes.join(','),
     });
   }
 }
@@ -333,4 +347,10 @@ export const getPages = async (
     `${(performance.now() - t0).toFixed(2)}ms`
   );
   return keyPages;
+};
+
+export const storeFont = async (font: Font) => {
+  const originFont = await feedDB.fonts.get({ name: font.name });
+  const id = originFont?.id;
+  await feedDB.fonts.put({ id, ...font });
 };

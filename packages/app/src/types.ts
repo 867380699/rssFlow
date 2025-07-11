@@ -50,3 +50,9 @@ export type ItemStatus = {
   isRead?: 0 | 1;
   isFavorite?: 0 | 1;
 };
+
+export type Font = {
+  id?: number;
+  name: string;
+  buffer: ArrayBuffer;
+};

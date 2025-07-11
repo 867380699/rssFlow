@@ -9,6 +9,7 @@ import {
 import { NavigationRoute, registerRoute, Route } from 'workbox-routing';
 import { CacheFirst } from 'workbox-strategies';
 
+import { Font } from './types';
 import { RequestForwardPlugin, RequestPoolingPlugin } from './worker/plugins';
 import { b64toBlob, isImageRequest, isSameOrigin } from './worker/utils';
 
@@ -34,7 +35,7 @@ self.addEventListener('activate', (event) => {
   console.log('Service worker activated', event);
 });
 
-const SW_VERSION = '1.0.2';
+const SW_VERSION = '1.0.3';
 
 let main: MessagePort;
 let platform = 'web';
@@ -182,5 +183,50 @@ const thumbnailRoute = new Route(
   })
 );
 
+const openFontDB = (): Promise<IDBDatabase> => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('feedDB');
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+};
+
+const getFontFromDB = (name: string): Promise<Font | null> => {
+  return openFontDB().then((db) => {
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('fonts', 'readonly');
+      const store = tx.objectStore('fonts');
+      const req = store.index('name').get(name);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  });
+};
+
+const customFontRoute = new Route(
+  ({ request, url }) => {
+    return isSameOrigin(request) && url.pathname.startsWith('/custom-font/');
+  },
+  async ({ url }) => {
+    const fontName = decodeURIComponent(url.pathname.split('/').pop() || '');
+    const format = fontName.split('.').pop() || '';
+    const font = await getFontFromDB(fontName);
+
+    if (font?.buffer) {
+      return new Response(font?.buffer, {
+        status: 200,
+        headers: {
+          'Content-Type': `font/${format}`,
+          'Cache-Control': 'public, max-age=60000',
+        },
+      });
+    } else {
+      return new Response(null, {
+        status: 404,
+      });
+    }
+  }
+);
 registerRoute(thumbnailRoute);
 registerRoute(imageRoute);
+registerRoute(customFontRoute);

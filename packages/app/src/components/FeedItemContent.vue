@@ -207,11 +207,23 @@ const customStyleSheet = computed(() => {
   return styleSheet;
 });
 
+const globalFontStyleSheet = new CSSStyleSheet();
+const fontFamily = getComputedStyle(document.body)
+  .getPropertyValue('--ion-font-family')
+  .trim();
+
+globalFontStyleSheet.replaceSync(`
+  .feed-content-container {
+    font-family: ${fontFamily};
+  }
+`);
+
 const shadowHost = ref<ComponentExposed<typeof ShadowHost> | null>(null);
 
 const detailCustomStyle = computed(() => [
   detaillStyleSheet,
   customStyleSheet.value,
+  globalFontStyleSheet,
 ]);
 
 const now = Date.now();

@@ -63,6 +63,25 @@ observer.observe({
   entryTypes: ['paint', 'longtask'],
 });
 
+new Promise(async (resolve) => {
+  console.time('load font');
+  try {
+    const globalFont = localStorage.getItem('font');
+    if (globalFont) {
+      const fontFace = new FontFace(
+        globalFont,
+        `url(/custom-font/${globalFont})`
+      );
+      await fontFace.load();
+      document.fonts.add(fontFace);
+      document.body.style.setProperty('--ion-font-family', `"${globalFont}"`);
+    }
+  } finally {
+    resolve(null);
+    console.timeEnd('load font');
+  }
+});
+
 const app = createApp(App)
   .use(IonicVue)
   .use(router)

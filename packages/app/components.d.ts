@@ -28,6 +28,7 @@ declare module 'vue' {
     IIonBrowsersOutline: typeof import('~icons/ion/browsers-outline')['default']
     IIonCalendarOutline: typeof import('~icons/ion/calendar-outline')['default']
     IIonCheckmarkDoneOutline: typeof import('~icons/ion/checkmark-done-outline')['default']
+    IIonChevronDown: typeof import('~icons/ion/chevron-down')['default']
     IIonChevronDownOutline: typeof import('~icons/ion/chevron-down-outline')['default']
     IIonCloseOutline: typeof import('~icons/ion/close-outline')['default']
     IIonContractOutline: typeof import('~icons/ion/contract-outline')['default']
