@@ -58,7 +58,8 @@
         </ion-badge>
       </div>
       <feed-list
-        :parent-id="0"
+        v-if="feedIdTree"
+        :feed-id-tree="feedIdTree"
         :reorder-toggle="reorderToggle"
         @item-selected="(id) => emit('itemSelected', id)"
       />
@@ -83,7 +84,7 @@ const emit = defineEmits(['itemSelected']);
 const reorderToggle = ref(false);
 
 const feedStore = useFeedStore();
-const { feedItemCounts: itemCounts } = storeToRefs(feedStore);
+const { feedItemCounts: itemCounts, feedIdTree } = storeToRefs(feedStore);
 
 const selectItem = (id?: number) => {
   feedStore.setFeedId(id || 0);

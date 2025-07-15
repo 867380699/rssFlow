@@ -24,8 +24,6 @@ import {
   buildAllFeedItemPrimaryKeyObservable,
   buildFeedItemPrimaryKeyObservable,
   feedDB,
-  FeedItemIndex,
-  getPages,
 } from '../service/dbService';
 import { Feed, FeedItem } from '../types';
 
@@ -47,12 +45,19 @@ export const useFeed = (id: Ref<number>) => {
   return { feed };
 };
 
-export const useAllFeeds = () => {
-  const feeds = useObservable<Feed[], Feed[]>(
-    liveQuery(() => feedDB.feeds.toArray()) as any
+export const useAllFeedsMap = () => {
+  const feedsMap = useObservable<Record<number, Feed>>(
+    from(liveQuery(() => feedDB.feeds.toArray())).pipe(
+      map((feeds) =>
+        feeds.reduce((o, f) => {
+          o[f.id || 0] = f;
+          return o;
+        }, {} as Record<number, Feed>)
+      )
+    )
   );
   return {
-    feeds,
+    feedsMap,
   };
 };
 
@@ -434,4 +439,42 @@ export const useTrapSwipe = (container: Ref<HTMLElement | null>) => {
     container.value?.removeEventListener('touchstart', onToutchStart);
     container.value?.removeEventListener('touchmove', onTouchMove);
   });
+};
+
+export type FeedIdTree = {
+  id: number;
+  children: FeedIdTree[];
+};
+export const useFeedIdTree = () => {
+  const feedIdTree = useObservable<FeedIdTree>(
+    from(
+      liveQuery(() => feedDB.feeds.orderBy('[parentId+rank+id]').uniqueKeys())
+    ).pipe(
+      map((keys) => {
+        const tree: FeedIdTree = {
+          id: 0,
+          children: [],
+        };
+        const parentMap = new Map<number, FeedIdTree>();
+        parentMap.set(0, tree);
+        keys.forEach(([, , id]) => {
+          if (!parentMap.has(id)) {
+            parentMap.set(id, { id, children: [] });
+          }
+        });
+        keys.forEach(([parentId, , id]) => {
+          const parent = parentMap.get(parentId);
+          const child = parentMap.get(id);
+          if (parent && child) {
+            parent.children.push(child);
+          }
+        });
+        return tree;
+      })
+    )
+  );
+
+  return {
+    feedIdTree,
+  };
 };

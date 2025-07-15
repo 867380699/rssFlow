@@ -13,7 +13,14 @@ export const TABLE_NAME = {
 
 export type TypeTableName = keyof typeof TABLE_NAME;
 
-const feedIndexes = ['++id', 'title', 'parentId', 'rank', 'type'] as const;
+const feedIndexes = [
+  '++id',
+  'title',
+  'parentId',
+  'rank',
+  'type',
+  '[parentId+rank+id]',
+] as const;
 
 const feedItemIndexes = [
   '++id',
@@ -64,7 +71,7 @@ export const FontIndex: TypeFontIndex = Object.fromEntries(
   new Map(fontIndexes.map((k) => [k, k]))
 ) as TypeFontIndex;
 
-export const dbVersion = 55;
+export const dbVersion = 56;
 
 export class FeedDB extends Dexie {
   feeds!: Table<Feed>;

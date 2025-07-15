@@ -1,38 +1,41 @@
 <template>
   <div
     ref="listRef"
-    :data-parent-id="parentId"
+    :data-parent-id="feedIdTree.id"
     :class="{
       'space-y-4 py-2': reorderToggle,
-      'px-2': reorderToggle && !parentId,
-      'pb-0 pt-4': reorderToggle && parentId,
+      'px-2': reorderToggle && !feedIdTree.id,
+      'pb-0 pt-4': reorderToggle && feedIdTree.id,
     }"
   >
-    <template v-for="feed in feeds" :key="feed.id">
+    <template
+      v-for="childFeedTree in feedIdTree.children"
+      :key="childFeedTree.id"
+    >
       <div
-        v-if="feed.type === 'feed'"
-        :key="feed.id"
-        :data-id="feed.id"
+        v-if="feedsMap?.[childFeedTree.id].type === 'feed'"
+        :key="childFeedTree.id"
+        :data-id="childFeedTree.id"
         class="flex items-center border-0 border-dashed border-transparent"
         :class="{ 'h-12 p-2': !reorderToggle, 'h-8': reorderToggle }"
-        @click="selectItem(feed.id)"
-        @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
+        @click="selectItem(childFeedTree.id)"
+        @contextmenu.prevent="(e: any) => showContextMenu(e, feedsMap?.[childFeedTree.id]!)"
       >
         <div class="flex-1 cursor-pointer truncate">
-          {{ feed.title }}
+          {{ feedsMap?.[childFeedTree.id].title }}
         </div>
         <i-ion-reorder-three
           v-if="reorderToggle"
           class="reorder-icon cursor-move text-lg"
         />
         <ion-badge v-show="!reorderToggle">
-          {{ itemCounts?.[feed.id || 0] || 0 }}
+          {{ itemCounts?.[childFeedTree.id || 0] || 0 }}
         </ion-badge>
       </div>
       <div
-        v-if="feed.type === 'group'"
-        :id="`aside-item-${feed.id}`"
-        :data-id="feed.id"
+        v-if="feedsMap?.[childFeedTree.id].type === 'group'"
+        :id="`aside-item-${childFeedTree.id}`"
+        :data-id="childFeedTree.id"
       >
         <accordion>
           <template #header="{ isExpand }">
@@ -52,24 +55,24 @@
 
               <div
                 class="flex-1 cursor-pointer transition-all"
-                @contextmenu.prevent="(e: any) => showContextMenu(e, feed)"
-                @click.prevent.stop="selectItem(feed.id)"
+                @contextmenu.prevent="(e: any) => showContextMenu(e, feedsMap?.[childFeedTree.id]!)"
+                @click.prevent.stop="selectItem(childFeedTree.id)"
               >
-                {{ feed.title }}
+                {{ feedsMap?.[childFeedTree.id].title }}
               </div>
               <i-ion-reorder-three
                 v-if="reorderToggle"
                 class="reorder-icon cursor-move text-lg transition-all"
               />
               <ion-badge v-show="!reorderToggle">
-                {{ itemCounts?.[feed.id || 0] || 0 }}
+                {{ itemCounts?.[childFeedTree.id || 0] || 0 }}
               </ion-badge>
             </div>
           </template>
           <template #content>
             <div class="pl-6">
               <feed-list
-                :parent-id="feed.id || 0"
+                :feed-id-tree="childFeedTree"
                 :reorder-toggle="reorderToggle"
                 @item-selected="(id) => emit('itemSelected', id)"
               />
@@ -86,7 +89,7 @@ import { popoverController } from '@ionic/vue';
 import { storeToRefs } from 'pinia';
 import Sortable from 'sortablejs';
 
-import { useChildFeeds } from '@/composables';
+import type { FeedIdTree } from '@/composables';
 import router from '@/router';
 import { moveFeed } from '@/service/dbService';
 import { useFeedStore } from '@/store';
@@ -96,13 +99,11 @@ import Accordion from './Accordion.vue';
 import FeedList from './FeedList.vue';
 import AsideItemModal from './modals/AsideItemModal.vue';
 
-const props = defineProps<{ parentId: number; reorderToggle: boolean }>();
+const props = defineProps<{ feedIdTree: FeedIdTree; reorderToggle: boolean }>();
 const emit = defineEmits(['itemSelected']);
 
-const { feeds } = useChildFeeds(toRef(props, 'parentId'));
-
 const feedStore = useFeedStore();
-const { feedItemCounts: itemCounts } = storeToRefs(feedStore);
+const { feedItemCounts: itemCounts, feedsMap } = storeToRefs(feedStore);
 
 const listRef = useTemplateRef<HTMLElement>('listRef');
 

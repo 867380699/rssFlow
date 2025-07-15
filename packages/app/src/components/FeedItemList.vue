@@ -35,12 +35,14 @@
 <script lang="ts" setup>
 import { ComponentExposed } from 'vue-component-type-helpers';
 
-import { useAllFeeds, useFeed } from '@/composables';
+import { useFeed } from '@/composables';
 import { formatRelative } from '@/composables/date';
-import { Feed, FeedItem as FeedItemType } from '@/types';
+import { useFeedStore } from '@/store';
+import {  FeedItem as FeedItemType } from '@/types';
 
 import LazyImage from './LazyImage.vue';
 import RecycleList, { RecycleItem } from './RecycleTreeList.vue';
+
 
 const props = withDefaults(
   defineProps<{
@@ -52,16 +54,8 @@ const props = withDefaults(
 
 const { feed } = useFeed(toRef(props, 'feedId'));
 
-const { feeds } = useAllFeeds();
-
-const feedsMap = computed(() => {
-  return feeds.value?.reduce((o, feed) => {
-    if (feed.id !== undefined) {
-      o[feed.id] = feed;
-    }
-    return o;
-  }, {} as Record<number, Feed>);
-});
+const feedStore = useFeedStore();
+const { feedsMap } = storeToRefs(feedStore);
 
 const now = Date.now();
 

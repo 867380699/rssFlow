@@ -1,7 +1,8 @@
 import {
-  useAllFeeds,
+  useAllFeedsMap,
   useChildFeedIds,
   useFeed,
+  useFeedIdTree,
   useFeedItem,
   useFeedItemCounts,
 } from '@/composables';
@@ -55,10 +56,12 @@ export const useFeedStore = defineStore('feed', () => {
 
   const { counts: feedItemCounts } = useFeedItemCounts();
 
-  const { feeds } = useAllFeeds();
+  const { feedsMap } = useAllFeedsMap();
+
+  const { feedIdTree } = useFeedIdTree();
 
   const getLoadingFeedIds = (feedId: number, ids: number[] = []): number[] => {
-    const feed = feeds.value.find((f) => f.id === feedId);
+    const feed = feedsMap.value?.[feedId];
     if (feed?.id) {
       ids.push(feed.id);
       return getLoadingFeedIds(feed.parentId, ids);
@@ -101,7 +104,8 @@ export const useFeedStore = defineStore('feed', () => {
     setFeedItemId,
     feedItemCounts,
     isHomeFeedItemsDesc,
-    feeds,
+    feedsMap,
+    feedIdTree,
     loadingFeedIds,
     addLoadingFeed,
     removeLoadingFeed,
