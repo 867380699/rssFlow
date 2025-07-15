@@ -23,7 +23,7 @@ const gitRevisionHash = execSync('git rev-parse --short HEAD')
 
 export default defineConfig({
   build: {
-    minify: false,
+    // minify: false,
   },
   plugins: [
     // analyzer({}),
@@ -51,6 +51,9 @@ export default defineConfig({
         'vue',
         'vue-router',
         'vue-i18n',
+        {
+          pinia: ['defineStore', 'storeToRefs'],
+        },
         {
           '@vueuse/core': ['useVModel'],
         },
