@@ -1,17 +1,21 @@
 <template>
-  <div
-    ref="listRef"
+  <VueDraggable
+    tag="div"
+    item-key="id"
+    :animation="150"
+    handle=".reorder-icon"
+    :list="feedIdTree.children"
+    :group="'feed-list'"
     :data-parent-id="feedIdTree.id"
     :class="{
       'space-y-4 py-2': reorderToggle,
       'px-2': reorderToggle && !feedIdTree.id,
       'pb-0 pt-4': reorderToggle && feedIdTree.id,
     }"
+    @end="onEnd"
+    @move="onMove"
   >
-    <template
-      v-for="childFeedTree in feedIdTree.children"
-      :key="childFeedTree.id"
-    >
+    <template #item="{ element: childFeedTree }">
       <div
         v-if="feedsMap?.[childFeedTree.id].type === 'feed'"
         :key="childFeedTree.id"
@@ -33,7 +37,7 @@
         </ion-badge>
       </div>
       <div
-        v-if="feedsMap?.[childFeedTree.id].type === 'group'"
+        v-else-if="feedsMap?.[childFeedTree.id].type === 'group'"
         :id="`aside-item-${childFeedTree.id}`"
         :data-id="childFeedTree.id"
       >
@@ -81,7 +85,7 @@
         </accordion>
       </div>
     </template>
-  </div>
+  </VueDraggable>
 </template>
 
 <script lang="ts" setup>
@@ -98,6 +102,7 @@ import { Feed } from '@/types';
 import Accordion from './Accordion.vue';
 import FeedList from './FeedList.vue';
 import AsideItemModal from './modals/AsideItemModal.vue';
+import VueDraggable from './vuedraggable/vuedraggable';
 
 const props = defineProps<{ feedIdTree: FeedIdTree; reorderToggle: boolean }>();
 const emit = defineEmits(['itemSelected']);
@@ -105,35 +110,18 @@ const emit = defineEmits(['itemSelected']);
 const feedStore = useFeedStore();
 const { feedItemCounts: itemCounts, feedsMap } = storeToRefs(feedStore);
 
-const listRef = useTemplateRef<HTMLElement>('listRef');
+const onEnd: Sortable.SortableOptions['onEnd'] = (event) => {
+  const { item, to, newIndex = 0 } = event;
+  const feedId = Number(item.dataset.id);
+  const parentId = Number(to.dataset.parentId);
+  moveFeed({ feedId, parentId, newIndex });
+};
 
-onMounted(() => {
-  if (listRef.value) {
-    const onUpdate = (event: Sortable.SortableEvent) => {
-      const { item, to, newIndex = 0 } = event;
-      const feedId = Number(item.dataset.id);
-      const parentId = Number(to.dataset.parentId);
-      moveFeed({ feedId, parentId, newIndex });
-    };
-    Sortable.create(listRef.value, {
-      group: 'feed-list',
-      handle: '.reorder-icon',
-      animation: 150,
-      forceFallback: false,
-
-      onUpdate,
-      onAdd: (event) => {
-        onUpdate(event);
-        event.item.remove();
-      },
-      onMove: (event) => {
-        if (event.to.dataset.parentId !== '0' && !event.dragged.dataset.id) {
-          return false;
-        }
-      },
-    });
+const onMove: Sortable.SortableOptions['onMove'] = (event) => {
+  if (event.to.dataset.parentId !== '0' && !event.dragged.dataset.id) {
+    return false;
   }
-});
+};
 
 const { setFeedId } = useFeedStore();
 
