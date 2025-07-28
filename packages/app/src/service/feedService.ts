@@ -49,6 +49,8 @@ const parseRSSFeed = (nodeTree: Document, source: string): Feed => {
     link,
     imageUrl,
     items,
+    prevId: 0,
+    nextId: 0,
   };
 };
 
@@ -76,6 +78,8 @@ const parseAtomFeed = (nodeTree: Document, source: string): Feed => {
     link,
     imageUrl,
     items,
+    prevId: 0,
+    nextId: 0,
   };
 };
 

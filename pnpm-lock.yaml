@@ -77,9 +77,6 @@ importers:
       '@vueuse/rxjs':
         specifier: ^10.11.1
         version: 10.11.1(rxjs@7.8.2)(vue@3.5.13(typescript@5.8.3))
-      big-integer:
-        specifier: ^1.6.52
-        version: 1.6.52
       cordova-plugin-screen-orientation:
         specifier: ^3.0.4
         version: 3.0.4

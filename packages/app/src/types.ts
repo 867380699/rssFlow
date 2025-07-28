@@ -10,7 +10,8 @@ export type Feed = {
   lastUpdateTime?: number;
   type: 'feed' | 'group';
   parentId: number;
-  rank?: string;
+  prevId: number; // undefined values are not indexable in IndexedDB
+  nextId: number; // undefined values are not indexable in IndexedDB
   config?: {
     customStyle?: string;
     replaceLink?: {

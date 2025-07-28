@@ -24,6 +24,7 @@ import {
   buildAllFeedItemPrimaryKeyObservable,
   buildFeedItemPrimaryKeyObservable,
   feedDB,
+  FeedIndex,
 } from '../service/dbService';
 import { Feed, FeedItem } from '../types';
 
@@ -89,27 +90,6 @@ export const useAllFeedItemStatistic = () => {
   return {
     feedItemStatistic,
   };
-};
-
-export const useChildFeeds = (parentId: Ref<number>) => {
-  const feeds = ref<Feed[]>([]);
-  let subscription: Subscription;
-  watch(
-    parentId,
-    () => {
-      subscription?.unsubscribe();
-      subscription = liveQuery(() =>
-        feedDB.feeds
-          .orderBy('rank')
-          .filter((feed) => feed.parentId === parentId.value)
-          .toArray()
-      ).subscribe((newFeeds) => {
-        feeds.value = newFeeds;
-      });
-    },
-    { immediate: true }
-  );
-  return { feeds };
 };
 
 export const useChildFeedIds = (parentId: Ref<number>) => {
@@ -448,27 +428,50 @@ export type FeedIdTree = {
 export const useFeedIdTree = () => {
   const feedIdTree = useObservable<FeedIdTree>(
     from(
-      liveQuery(() => feedDB.feeds.orderBy('[parentId+rank+id]').uniqueKeys())
+      liveQuery(() =>
+        feedDB.feeds
+          .orderBy(FeedIndex['[parentId+prevId+nextId+id]'])
+          .uniqueKeys()
+      )
     ).pipe(
       map((keys) => {
+        console.time('build feed tree');
+        const idsMap = new Map<number, Map<number, number>>(); // Map<parentId, Map<prevId, id>>
+        keys.forEach((key) => {
+          const [parentId, prevId, , id] = key as unknown as [
+            number,
+            number,
+            number,
+            number
+          ];
+          if (!idsMap.has(parentId)) {
+            idsMap.set(parentId, new Map());
+          }
+          idsMap.get(parentId)?.set(prevId, id);
+        });
+
         const tree: FeedIdTree = {
           id: 0,
           children: [],
         };
         const parentMap = new Map<number, FeedIdTree>();
         parentMap.set(0, tree);
-        keys.forEach(([, , id]) => {
-          if (!parentMap.has(id)) {
-            parentMap.set(id, { id, children: [] });
+        idsMap.forEach((_, parentId) => {
+          if (!parentMap.has(parentId)) {
+            parentMap.set(parentId, { id: parentId, children: [] });
           }
         });
-        keys.forEach(([parentId, , id]) => {
-          const parent = parentMap.get(parentId);
-          const child = parentMap.get(id);
-          if (parent && child) {
-            parent.children.push(child);
+
+        parentMap.forEach((tree, parentId) => {
+          let headId = idsMap.get(parentId)?.get(0);
+          while (headId) {
+            tree.children.push(
+              parentMap.get(headId) || { id: headId, children: [] }
+            );
+            headId = idsMap.get(parentId)?.get(headId);
           }
         });
+        console.timeEnd('build feed tree');
         return tree;
       })
     )

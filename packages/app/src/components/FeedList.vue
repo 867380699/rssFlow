@@ -112,9 +112,11 @@ const { feedItemCounts: itemCounts, feedsMap } = storeToRefs(feedStore);
 
 const onEnd: Sortable.SortableOptions['onEnd'] = (event) => {
   const { item, to, newIndex = 0 } = event;
+
   const feedId = Number(item.dataset.id);
-  const parentId = Number(to.dataset.parentId);
-  moveFeed({ feedId, parentId, newIndex });
+  const toParentId = Number(to.dataset.parentId);
+
+  moveFeed({ feedId, toParentId, newIndex });
 };
 
 const onMove: Sortable.SortableOptions['onMove'] = (event) => {

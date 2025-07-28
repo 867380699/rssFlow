@@ -1,7 +1,5 @@
 import Dexie, { IndexableType, liveQuery, Table } from 'dexie';
 
-import { getNextRank, getRankBetween } from '@/utils/rank';
-
 import { Feed, FeedItem, Font } from '../types';
 
 export const DB_NAME = 'feedDB';
@@ -17,9 +15,8 @@ const feedIndexes = [
   '++id',
   'title',
   'parentId',
-  'rank',
   'type',
-  '[parentId+rank+id]',
+  '[parentId+prevId+nextId+id]',
 ] as const;
 
 const feedItemIndexes = [
@@ -71,7 +68,7 @@ export const FontIndex: TypeFontIndex = Object.fromEntries(
   new Map(fontIndexes.map((k) => [k, k]))
 ) as TypeFontIndex;
 
-export const dbVersion = 56;
+export const dbVersion = 58;
 
 export class FeedDB extends Dexie {
   feeds!: Table<Feed>;
@@ -80,11 +77,56 @@ export class FeedDB extends Dexie {
 
   constructor() {
     super(DB_NAME);
-    this.version(dbVersion).stores({
-      feeds: feedIndexes.join(','),
+    this.on('blocked', ({ oldVersion, newVersion }) => {
+      console.log('DB blocked', oldVersion, newVersion);
+    });
+    this.version(56).stores({
+      feeds: '++id,title,parentId,rank,type,[parentId+rank+id]',
       feedItems: feedItemIndexes.join(','),
       fonts: fontIndexes.join(','),
     });
+
+    this.version(57)
+      .stores({
+        feeeds:
+          '++id,title,parentId,prevId,nextId,rank,type,[parentId+prevId+nextId+id]',
+      })
+      .upgrade(async (tx) => {
+        const store = tx.table('feeds');
+        const allFeeds = await store.orderBy('rank').toArray();
+        const feedMaps = new Map<number, Feed[]>(); // Map<parentId, Array<Feed>>
+        allFeeds.forEach((feed) => {
+          const parentId = feed.parentId;
+          let feeds = feedMaps.get(parentId);
+          if (!feeds) {
+            feeds = [];
+            feedMaps.set(parentId, feeds);
+          }
+          feeds.push(feed);
+        });
+
+        feedMaps.forEach((feeds) => {
+          feeds.forEach((feed, i) => {
+            feed.prevId = feeds[i - 1]?.id || 0;
+            feed.nextId = feeds[i + 1]?.id || 0;
+          });
+        });
+
+        await store.bulkPut(allFeeds);
+      });
+
+    this.version(dbVersion)
+      .stores({
+        feeds: feedIndexes.join(','),
+        feedItems: feedItemIndexes.join(','),
+        fonts: fontIndexes.join(','),
+      })
+      .upgrade(async (tx) => {
+        const store = tx.table('feeds');
+        await store.toCollection().modify((feed) => {
+          delete feed.rank;
+        });
+      });
   }
 }
 
@@ -96,16 +138,35 @@ if (typeof window !== 'undefined') {
   (window as any).Dexie = Dexie;
 }
 
-export const getNextFeedRank = async () => {
-  const lastFeed = await feedDB.feeds.orderBy('rank').last();
-  return getNextRank(lastFeed?.rank);
+export const queryHeadFeedId = async (parentId: number): Promise<number> => {
+  const rootKeys = (await feedDB.feeds
+    .where(FeedIndex['[parentId+prevId+nextId+id]'])
+    .between(
+      [parentId, Dexie.minKey, Dexie.minKey, Dexie.minKey],
+      [parentId, Dexie.maxKey, Dexie.maxKey, Dexie.maxKey]
+    )
+    .keys()) as unknown as [number, number, number, number][];
+  return rootKeys.find((keys) => keys[1] === 0)?.[3] || 0;
+};
+
+export const queryTailFeedId = async (parentId: number): Promise<number> => {
+  const rootKeys = (await feedDB.feeds
+    .where(FeedIndex['[parentId+prevId+nextId+id]'])
+    .between(
+      [parentId, Dexie.minKey, Dexie.minKey, Dexie.minKey],
+      [parentId, Dexie.maxKey, Dexie.maxKey, Dexie.maxKey]
+    )
+    .keys()) as unknown as [number, number, number, number][];
+  return rootKeys.find((keys) => keys[2] === 0)?.[3] || 0;
 };
 
 export const storeFeed = async (feed: Feed) => {
   feed = toRaw(feed);
-  const rank = await getNextFeedRank();
   const { source, title, type, parentId, description, link, imageUrl, items } =
     feed;
+
+  const prevId = await queryTailFeedId(parentId);
+
   const feedId = (await feedDB.feeds.add({
     source,
     title,
@@ -115,35 +176,77 @@ export const storeFeed = async (feed: Feed) => {
     lastUpdateTime: Date.now(),
     parentId,
     type,
-    rank,
+    prevId,
+    nextId: 0,
   })) as number;
   if (items && items.length) {
     await storeFeedItems(items, feedId);
   }
+  await feedDB.feeds.update(prevId, { nextId: feedId });
   return feedId;
 };
 
 export const moveFeed = async ({
   feedId,
-  parentId,
+  toParentId,
   newIndex,
 }: {
   feedId: number;
-  parentId: number;
+  toParentId: number;
   newIndex: number;
 }) => {
-  const feeds = await feedDB.feeds.where({ parentId }).sortBy('rank');
-  const prevFeed = feeds[newIndex - 1];
-  const nextFeed = feeds[newIndex];
-  feedDB.feeds.update(feedId, {
-    parentId,
-    rank: getRankBetween(prevFeed?.rank, nextFeed?.rank),
+  feedDB.transaction('rw', feedDB.feeds, async () => {
+    const feed = await feedDB.feeds.get(feedId);
+    if (feed) {
+      if (feed.prevId) {
+        await feedDB.feeds.update(feed.prevId, {
+          nextId: feed.nextId,
+        });
+      }
+      if (feed.nextId) {
+        await feedDB.feeds.update(feed.nextId, {
+          prevId: feed.prevId,
+        });
+      }
+    }
+
+    const feedIndexes = (await feedDB.feeds
+      .where(FeedIndex['[parentId+prevId+nextId+id]'])
+      .between(
+        [toParentId, Dexie.minKey, Dexie.minKey, Dexie.minKey],
+        [toParentId, Dexie.maxKey, Dexie.maxKey, Dexie.maxKey]
+      )
+      .keys()) as unknown as [number, number, number, number][];
+    const feedKeyList = [];
+    let headIndex = feedIndexes.find((index) => index[1] === 0);
+
+    while (headIndex) {
+      feedKeyList.push(headIndex);
+      headIndex = feedIndexes.find((index) => index[3] === headIndex![2]);
+    }
+
+    feedDB.feeds.update(feedId, {
+      parentId: toParentId,
+      prevId: feedKeyList[newIndex - 1]?.[3] || 0,
+      nextId: feedKeyList[newIndex]?.[3] || 0,
+    });
+
+    if (feedKeyList[newIndex - 1]) {
+      feedDB.feeds.update(feedKeyList[newIndex - 1][3], {
+        nextId: feedId,
+      });
+    }
+    if (feedKeyList[newIndex]) {
+      feedDB.feeds.update(feedKeyList[newIndex][3], {
+        prevId: feedId,
+      });
+    }
   });
 };
 
 export const storeGroup = async (groupName: string) => {
-  const rank = await getNextFeedRank();
-  await feedDB.feeds.add({
+  const prevId = await queryTailFeedId(0);
+  const feedId = await feedDB.feeds.add({
     parentId: 0,
     source: '',
     title: groupName,
@@ -151,8 +254,10 @@ export const storeGroup = async (groupName: string) => {
     imageUrl: '',
     lastUpdateTime: Date.now(),
     type: 'group',
-    rank,
+    prevId,
+    nextId: 0,
   });
+  await feedDB.feeds.update(prevId, { nextId: feedId });
 };
 
 export const storeFeedItems = async (feedItems: FeedItem[], feedId: number) => {
@@ -217,6 +322,16 @@ export const deleteFeed = async (id: number) => {
       await feedDB.feedItems.where('feedId').equals(id).delete();
     }
     await feedDB.feeds.delete(id);
+    if (feed?.prevId) {
+      await feedDB.feeds.update(feed.prevId, {
+        nextId: feed.nextId,
+      });
+    }
+    if (feed?.nextId) {
+      await feedDB.feeds.update(feed.nextId, {
+        prevId: feed.prevId,
+      });
+    }
   });
 };
 

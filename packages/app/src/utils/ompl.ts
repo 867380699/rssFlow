@@ -1,5 +1,5 @@
 import { i18n } from '@/i18n';
-import { feedDB, storeFeed } from '@/service/dbService';
+import { feedDB, queryTailFeedId } from '@/service/dbService';
 import xmlService from '@/service/xmlService';
 import { downloadFile, readFileAsString } from '@/utils/flie';
 import { toast } from '@/utils/toast';
@@ -14,12 +14,17 @@ export const importOPML = async () => {
   if (opmlString) {
     const opml = xmlService.parse(opmlString);
 
-    feedDB.transaction('rw', feedDB.feeds, async () => {
-      const allFeeds = await feedDB.feeds.toArray();
-      const groups = await feedDB.feeds.where({ type: 'group' }).toArray();
-      const sources = allFeeds.map((feed) => feed.source);
-      const importFeeds = (outlines: NodeListOf<Element>, parentId = 0) => {
-        Array.from(outlines).forEach(async (outline) => {
+    const allFeeds = await feedDB.feeds.toArray();
+    const groups = await feedDB.feeds.where({ type: 'group' }).toArray();
+    const sourceSet = new Set(allFeeds.map((feed) => feed.source));
+
+    const importFeeds = async (outlines: NodeListOf<Element>, parentId = 0) => {
+      await feedDB.transaction('rw', feedDB.feeds, async () => {
+        let prevId = await queryTailFeedId(parentId);
+
+        console.log('prevId', prevId, 'parentId', parentId, outlines);
+        const feedIds = [];
+        for (const outline of outlines) {
           const source =
             outline.getAttribute('xmlUrl') || outline.getAttribute('xmlurl');
           const title =
@@ -32,33 +37,46 @@ export const importOPML = async () => {
               if (group) {
                 feedId = group.id;
               } else {
-                feedId = await storeFeed({
+                feedId = await feedDB.feeds.add({
                   title,
                   source: '',
                   type: 'group',
                   parentId,
+                  prevId,
+                  nextId: 0,
                 });
+                prevId = Number(feedId);
+                feedIds.push(Number(feedId));
               }
-              importFeeds(childOutlines, feedId);
+              await importFeeds(childOutlines, Number(feedId));
             } else if (source) {
-              if (sources.indexOf(source) === -1) {
-                console.log('feed', title, parentId);
-                storeFeed({
+              if (!sourceSet.has(source)) {
+                const feedId = await feedDB.feeds.add({
                   source,
                   title,
                   type: 'feed',
                   parentId,
+                  lastUpdateTime: Date.now(),
+                  prevId,
+                  nextId: 0,
                 });
-                sources.push(source);
+                prevId = Number(feedId);
+                feedIds.push(Number(feedId));
+                sourceSet.add(source);
               }
             }
           }
-        });
-      };
+        }
+        for (let i = 0; i < feedIds.length; i++) {
+          await feedDB.feeds.update(feedIds[i], {
+            nextId: feedIds[i + 1] || 0,
+          });
+        }
+      });
+    };
 
-      const outlines = opml.querySelectorAll('opml > body > outline');
-      importFeeds(outlines);
-    });
+    const outlines = opml.querySelectorAll('opml > body > outline');
+    importFeeds(outlines);
   }
 };
 
@@ -88,10 +106,21 @@ export const exportOPML = async () => {
 };
 
 const buildOutline = async (parentId = 0) => {
-  const feeds = await feedDB.feeds.where({ parentId }).sortBy('rank');
+  const feeds = await feedDB.feeds.where({ parentId }).toArray();
+
+  const feedMap = new Map(feeds.map((f) => [f.id, f]));
+
+  const sortedFeeds = [];
+
+  let headFeed = feeds.find((f) => f.prevId === 0);
+
+  while (headFeed) {
+    sortedFeeds.push(headFeed);
+    headFeed = feedMap.get(headFeed.nextId);
+  }
 
   return Promise.all(
-    feeds.map(async (feed) => {
+    sortedFeeds.map(async (feed) => {
       const outline = document.createElementNS(
         'http://opml.org/spec2',
         'outline'
