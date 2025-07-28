@@ -63,6 +63,7 @@
         :reorder-toggle="reorderToggle"
         @item-selected="(id) => emit('itemSelected', id)"
       />
+      <div class="flex h-20 items-center justify-center opacity-50">~</div>
     </div>
   </ion-content>
 </template>
