@@ -307,7 +307,7 @@ const buildVNode = (
   } else if (e.tagName === 'TABLE') {
     component = TableView;
   } else if (e.tagName === 'PRE') {
-    if (e.children[0].tagName === 'CODE') {
+    if (e.children[0]?.tagName === 'CODE') {
       component = CodeView;
       props.code = e.children[0].textContent?.trim();
     }
