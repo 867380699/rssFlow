@@ -1,10 +1,3 @@
-<script setup lang="ts">
-</script>
-
 <template>
-<div>Hello Teleport</div>
+  <router-view></router-view>
 </template>
-
-<style scoped>
-
-</style>
