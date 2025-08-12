@@ -7,7 +7,8 @@ const resolveMap = new Map();
 let id = 0;
 
 highlightWorker.onmessage = (message) => {
-  const { id, result } = message.data;
+  const { id, result, language } = message.data;
+  console.log('highlight', language)
   const callback = resolveMap.get(id);
   resolveMap.delete(id);
   if (callback) {
