@@ -268,24 +268,16 @@ const buildVNode = (
 
   if (e.tagName === 'BODY') {
     component = LazyFeedContent;
-    props.imgs = scope.imgs || [];
-    props.offset = 2;
   } else if (e.tagName === 'IMG') {
     const { minHeight } = useMinHeight();
-    if (scope.imageIndex < 2) {
       component = LazyImage;
-      props['loading'] = 'eager';
+      props['loading'] = scope.imageIndex < 2 ? 'eager' : 'lazy';
       props['minHeight'] = `${minHeight.value}px`;
       const index = scope.imageIndex;
       props['onClick'] = (ev: Event) => {
         const { openGalleryModal } = useGallery();
         openGalleryModal(scope.imgs, index, ev.target as HTMLImageElement);
       };
-    } else {
-      component = 'div';
-      props.class = 'img-placeholder bg-slate-400 rounded-sm mb-2';
-      props.style = { 'min-height': `${minHeight.value}px` };
-    }
     if (!scope.imgs) {
       scope.imgs = [];
     }
