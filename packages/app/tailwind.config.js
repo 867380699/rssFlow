@@ -1,8 +1,16 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const plugin = require('tailwindcss/plugin');
 
+const isCypress = process.env.CYPRESS === 'true';
+
 module.exports = {
-  content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+  content: isCypress
+    ? [
+        './index.html',
+        './src/**/*.{vue,js,ts,jsx,tsx}',
+        './test/**/*.{vue,js,ts,jsx,tsx}',
+      ]
+    : ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {

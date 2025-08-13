@@ -13,10 +13,18 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": [
-      "vite-plugin-pwa/client",
-       "unplugin-icons/types/vue",
-    ]
+    "types": ["vite-plugin-pwa/client", "unplugin-icons/types/vue", "cypress"]
   },
-  "include": ["src/**/*.ts", "src/**/*.js", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "test/**/*.ts","auto-imports.d.ts",]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "test/**/*.ts",
+    "auto-imports.d.ts",
+        "cypress/**/*.ts",
+    "cypress/**/*.cy.ts",
+    "**/*.cy.ts"
+  ]
 }

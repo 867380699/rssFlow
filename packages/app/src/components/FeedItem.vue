@@ -18,7 +18,7 @@
         class="relative m-1 size-[64px]"
         :class="{ 'opacity-25': item.isRead }"
       >
-        <LazyImage :src="imageSrc" crossorigin="anonymous" />
+        <LazyImage :src="imageSrc" />
         <div
           v-if="
             item.meta?.videoCount ||

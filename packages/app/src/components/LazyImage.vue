@@ -9,7 +9,6 @@
     <img
       class="main-image"
       :style="minStyle"
-      :crossorigin="crossorigin"
       :loading="loading"
       :src="src"
       :onload="onLoad"
@@ -25,18 +24,17 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({ name: 'LazyImage', inheritAttrs: true });
 const props = withDefaults(
   defineProps<{
     src?: string;
     loading?: 'lazy' | 'eager';
     minHeight?: string;
-    crossorigin?: 'anonymous' | 'use-credentials' | '';
   }>(),
   {
     src: '',
     loading: 'lazy',
     minHeight: '36px',
-    crossorigin: '',
   }
 );
 

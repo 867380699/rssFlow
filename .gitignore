@@ -1,9 +1,11 @@
 node_modules
 .DS_Store
 dist
+dev-dist
 dist-ssr
 *.local
 *.log
 **/.idea/**
 .env.local
 .vercel
+**/cypress/fixtures/images
