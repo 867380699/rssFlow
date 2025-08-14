@@ -6,10 +6,7 @@
           <ion-back-button text="" mode="md" />
         </ion-buttons>
         <div class="ml-1 flex items-center">
-          <ion-thumbnail
-            class="shrink-0 overflow-hidden rounded-full"
-            style="--size: 32px"
-          >
+          <ion-thumbnail class="shrink-0 overflow-hidden rounded-full" style="--size: 32px">
             <LazyImage :src="feed?.imageUrl" loading="eager">
               <template v-if="feed?.title" #error-icon>
                 <div class="uppercase">
@@ -19,77 +16,52 @@
             </LazyImage>
           </ion-thumbnail>
           <div class="relative h-12 flex-1" @dblclick="scrollToTop">
-            <div
-              class="absolute top-1/2 -translate-y-1/2 transition-all"
-              :class="{
-                'line-clamp-1': isTitleInvisible,
-                '!top-4': isTitleInvisible,
-              }"
-            >
+            <div class="absolute top-1/2 -translate-y-1/2 transition-all" :class="{
+              'line-clamp-1': isTitleInvisible,
+              '!top-4': isTitleInvisible,
+            }">
               {{ feed?.title }}
             </div>
             <Transition :name="titleTransition">
-              <div
-                v-show="isTitleInvisible"
-                class="absolute bottom-1 line-clamp-1 text-xs opacity-75"
-              >
+              <div v-show="isTitleInvisible" class="absolute bottom-1 line-clamp-1 text-xs opacity-75">
                 {{ feedItem?.title }}
               </div>
             </Transition>
           </div>
         </div>
-        <ion-buttons slot="end"> </ion-buttons>
-        <progress-bar
-          v-show="showProgress"
-          class="absolute inset-x-0 bottom-0 transition-none"
-          :class="{ 'opacity-50': !showToolbar }"
-          position="left"
-          :progress="progress"
-        ></progress-bar>
+        <ion-buttons slot="end">
+          <Transition name="fade">
+            <ion-button v-if="currentOutline.length" @click.stop="toggleOutline">
+              <i-ion-list class="text-lg"/>
+            </ion-button>
+          </Transition>
+        </ion-buttons>
+        <progress-bar v-show="showProgress" class="absolute inset-x-0 bottom-0 transition-none"
+          :class="{ 'opacity-50': !showToolbar }" position="left" :progress="progress"></progress-bar>
       </ion-toolbar>
     </ion-header>
-    <ion-content
-      :fullscreen="true"
-      :scroll-y="false"
-      :style="{
-        '--padding-top': `-${toolbarHeight}px`,
-        '--padding-bottom': `calc(${-toolbarHeight}px - var(--safe-area-inset-bottom))`,
-      }"
-    >
-      <swiper
-        class="detail-swiper h-full overflow-auto"
-        style="background-color: var(--ion-background-color)"
-        :slides-per-view="1"
-        :space-between="24"
-        :resize-observer="resizeObserverEnable"
-        @transition-end="transitionEnd"
-        @after-init="afterSlideInit"
-      >
+    <ion-content class="relative" :fullscreen="true" :scroll-y="false" :style="{
+      '--padding-top': `-${toolbarHeight}px`,
+      '--padding-bottom': `calc(${-toolbarHeight}px - var(--safe-area-inset-bottom))`,
+    }">
+      <swiper class="detail-swiper h-full overflow-auto" style="background-color: var(--ion-background-color)"
+        :slides-per-view="1" :space-between="24" :resize-observer="resizeObserverEnable" @transition-end="transitionEnd"
+        @after-init="afterSlideInit">
         <swiper-slide v-for="item in feedItems" :key="item && item.id">
-          <FeedItemContent
-            :feed-item="item"
-            :custom-style="feed?.config?.customStyle"
-            class="content-container h-full overflow-auto"
-            :style="{
+          <FeedItemContent ref="feedContent" :feed-item="item" :custom-style="feed?.config?.customStyle"
+            class="content-container h-full overflow-auto" :style="{
               'padding-top': `${toolbarHeight}px`,
               'padding-bottom': `${toolbarHeight}px`,
-            }"
-          />
+            }" />
         </swiper-slide>
       </swiper>
     </ion-content>
-    <ion-footer
-      :style="bottomToolbarStyle"
-      class="transition-all duration-200"
-      :class="{ 'shadow-none': !showToolbar }"
-    >
+    <ion-footer :style="bottomToolbarStyle" class="transition-all duration-200"
+      :class="{ 'shadow-none': !showToolbar }">
       <ion-toolbar>
         <div class="flex justify-around">
           <i-ion-open-outline @click="openLink(feedItem)" />
-          <i-ion-ellipse-outline
-            v-if="feedItem?.isRead"
-            @click="toggleRead()"
-          />
+          <i-ion-ellipse-outline v-if="feedItem?.isRead" @click="toggleRead()" />
           <i-ion-ellipse v-else @click="toggleRead()" />
 
           <i-ion-star v-if="feedItem?.isFavorite" @click="toggleFavorite()" />
@@ -97,6 +69,18 @@
         </div>
       </ion-toolbar>
     </ion-footer>
+    <Transition name="slide-right">
+      <div v-if="showOutline" class="absolute right-0 top-0 overflow-hidden z-[20] h-full w-full flex justify-end"
+        :style="{ 'paddingTop': `${toolbarHeight}px`, 'paddingBottom': `calc(${toolbarHeight}px` }">
+        <div class="h-full max-w-[320px] w-2/3 overflow-auto p-2 border-l-2 border-t-2 border-b-2"
+          :style="{ 'background-color': 'var(--ion-background-color)' }" v-on-click-outside="() => toggleOutline()">
+          <component :is="`h${header.level}`" v-for="(header, index) in currentOutline" :key="index" class="py-1"
+            @click="scrollToHeader(header)">
+            <span class="text-gray-500 text-xs">{{ '#'.repeat(header.level) }}</span> {{ header.text }}
+          </component>
+        </div>
+      </div>
+    </Transition>
   </ion-page>
 </template>
 
@@ -117,16 +101,35 @@ import LazyImage from '@/components/LazyImage.vue';
 import { useFeed, useFeedItem } from '@/composables';
 import { scrollState } from '@/composables/scroll';
 import { useFeedStore } from '@/store';
-import { FeedItem } from '@/types';
+import { Feed, FeedItem } from '@/types';
+
+import { vOnClickOutside } from '@vueuse/components';
+import { useRouteQuery } from '@vueuse/router'
 
 import { loadFeedItem, updateFeedItem } from '../service/dbService';
 
-const route = useRoute();
 const router = useRouter();
 const feedStore = useFeedStore();
 
-const itemId = ref(parseInt(route.query.id?.toString() || ''));
+const feedContent = useTemplateRef<typeof FeedItemContent>('feedContent');
 
+const itemId = useRouteQuery('id', '0', { transform: Number })
+
+const currentOutline = computed(() => {
+  const currentFeecContent = feedContent.value?.find(
+    (item: typeof FeedItemContent) => item.feedItem.id === itemId.value
+  )
+  return currentFeecContent?.headers || []
+})
+
+const showOutline = ref(false)
+const toggleOutline = () => {
+  showOutline.value = !showOutline.value
+}
+const scrollToHeader = (header: any) => {
+  header.scrollIntoView?.();
+  showOutline.value = false
+}
 const { homeFeedItems: cacheFeedItems, homeNextPage } = storeToRefs(feedStore);
 
 let { feedItem } = useFeedItem(itemId); // live query
@@ -257,9 +260,8 @@ from(currentScrollState, { deep: true })
   });
 
 const topToolbarStyle = computed(() => ({
-  top: `${
-    showToolbar.value ? 0 : -toolbarHeight.value + (showProgress.value ? 2 : 1)
-  }px`,
+  top: `${showToolbar.value ? 0 : -toolbarHeight.value + (showProgress.value ? 2 : 1)
+    }px`,
 }));
 
 const bottomToolbarStyle = computed(() => ({
@@ -322,7 +324,7 @@ const scrollToTop = () => {
 </script>
 <style lang="less" scoped>
 .content-container {
-  & > h1 {
+  &>h1 {
     max-width: 800px;
     margin: auto;
   }

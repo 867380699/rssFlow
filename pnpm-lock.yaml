@@ -74,6 +74,9 @@ importers:
       '@vueuse/core':
         specifier: ^10.11.1
         version: 10.11.1(vue@3.5.13(typescript@5.8.3))
+      '@vueuse/router':
+        specifier: ^13.6.0
+        version: 13.6.0(vue-router@4.5.1(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))
       '@vueuse/rxjs':
         specifier: ^10.11.1
         version: 10.11.1(rxjs@7.8.2)(vue@3.5.13(typescript@5.8.3))
@@ -4126,6 +4129,12 @@ packages:
   '@vueuse/metadata@10.11.1':
     resolution: {integrity: sha512-IGa5FXd003Ug1qAZmyE8wF3sJ81xGLSqTqtQ6jaVfkeZ4i5kS2mwQF61yhVqojRnenVew5PldLyRgvdl4YYuSw==}
 
+  '@vueuse/router@13.6.0':
+    resolution: {integrity: sha512-iXRwR4K7nz4PReW0QudhnM9NtYGvN4KrskFgF9G7NouM43big3bpSNRRocJKFWK7iu97ww5y82B3QA2zz3S/vw==}
+    peerDependencies:
+      vue: ^3.5.0
+      vue-router: ^4.0.0
+
   '@vueuse/rxjs@10.11.1':
     resolution: {integrity: sha512-e0Bvw8fbe0u/p+/lrzgycStitjf6poPwEhS23Tlnw3cvDE0vjrSfmu2MyY5dpXen2+B+KO3clELJieZaip07lQ==}
     peerDependencies:
@@ -4133,6 +4142,11 @@ packages:
 
   '@vueuse/shared@10.11.1':
     resolution: {integrity: sha512-LHpC8711VFZlDaYUXEBbFBCQ7GS3dVU9mjOhhMhXP6txTV4EhYQg/KGnQuvt/sPAtoUKq7VVUnL6mVtFoL42sA==}
+
+  '@vueuse/shared@13.6.0':
+    resolution: {integrity: sha512-pDykCSoS2T3fsQrYqf9SyF0QXWHmcGPQ+qiOVjlYSzlWd9dgppB2bFSM1GgKKkt7uzn0BBMV3IbJsUfHG2+BCg==}
+    peerDependencies:
+      vue: ^3.5.0
 
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -13492,6 +13506,12 @@ snapshots:
 
   '@vueuse/metadata@10.11.1': {}
 
+  '@vueuse/router@13.6.0(vue-router@4.5.1(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))':
+    dependencies:
+      '@vueuse/shared': 13.6.0(vue@3.5.13(typescript@5.8.3))
+      vue: 3.5.13(typescript@5.8.3)
+      vue-router: 4.5.1(vue@3.5.13(typescript@5.8.3))
+
   '@vueuse/rxjs@10.11.1(rxjs@7.8.2)(vue@3.5.13(typescript@5.8.3))':
     dependencies:
       '@vueuse/shared': 10.11.1(vue@3.5.13(typescript@5.8.3))
@@ -13507,6 +13527,10 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
+
+  '@vueuse/shared@13.6.0(vue@3.5.13(typescript@5.8.3))':
+    dependencies:
+      vue: 3.5.13(typescript@5.8.3)
 
   '@xmldom/xmldom@0.8.10': {}
 

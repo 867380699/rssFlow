@@ -16,6 +16,7 @@ import { Feed, FeedItem, ItemMeta } from '../types';
 import { getFeeds } from './apiService';
 import { feedDB, storeFeedItems } from './dbService';
 import { parseHTMLString, parseXMLString, sanitize } from './domService';
+import Header from '@/components/content/Header.vue';
 
 export const parseFeed = (feed: string, source: string): Feed | null => {
   const nodeTree = parseXMLString(feed);
@@ -241,6 +242,7 @@ export const parseFeedContent = time((feedItem: FeedItem) => {
   return () => vNode;
 }, 'parseFeedContent');
 
+const headerTagSet = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
 const buildVNode = (
   e: HTMLElement,
   scope: { [key: string]: any; imageIndex: number }
@@ -303,6 +305,12 @@ const buildVNode = (
       component = CodeView;
       props.code = e.children[0].textContent?.trim();
     }
+  } 
+  else if (headerTagSet.has(e.tagName)) {
+    component = Header;
+    props.id = scope.feedItem?.id;
+    props.level = Number(e.tagName.slice(1));
+    props.text = e.textContent?.trim() || '';
   }
 
   return h(

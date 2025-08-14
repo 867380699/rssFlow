@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { useEventListener } from '@vueuse/core';
-import format from 'date-fns/format';
+import {format} from 'date-fns/format';
 import { ComponentPublicInstance } from 'vue';
 import { ComponentExposed } from 'vue-component-type-helpers';
 
@@ -59,13 +59,17 @@ import IconTextOutline from '~icons/ion/text-outline';
 
 import detailCSS from '../theme/detail.less?inline';
 import ShadowHost from './ShadowHost.vue';
+import { useProvideContentContext } from '@/composables/content';
+
+
+const {headers} = useProvideContentContext();
 
 const props = defineProps<{
   feedItem: FeedItem;
   customStyle?: string;
 }>();
 
-type MetaInfo = { icon: string; text: string | number };
+type MetaInfo = { icon: any; text: string | number };
 
 const metaInfo = computed<MetaInfo[]>(() => {
   const info: MetaInfo[] = [];
@@ -233,4 +237,10 @@ const isRelativeTime = ref(false);
 const toggleTimeFormat = () => {
   isRelativeTime.value = !isRelativeTime.value;
 };
+
+defineExpose({
+  headers,
+  feedItem: props.feedItem
+})
+
 </script>

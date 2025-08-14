@@ -28,6 +28,28 @@
   transform: translate(0, 30px);
 }
 
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: transform 0.2s;
+}
+
+.slide-right-enter-from,
+.slide-right-leave-to {
+  transform: translate(100%, 0);
+}
+
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+
 html {
   ion-header ion-toolbar:first-of-type {
     padding-top: var(--safe-area-inset-top);
